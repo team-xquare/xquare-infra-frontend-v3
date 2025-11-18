@@ -11,10 +11,14 @@
     "prettier": "^3.2.5",
     "turbo": "^2.6.1"
   },
-  "name": "with-vite",
+  "name": "xquare-workspace",
   "packageManager": "bun@1.3.2",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "./modules/xquare-eslint-configs",
+    "./modules/xquare-tsconfigs",
+    "./modules/xquare-utils",
+    "./modules/xquare-interfaces",
+    "./applications/xquare-application",
+    "./applications/xquare-application-manager"
   ]
 }
