@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "xquare-workspace",
+      "dependencies": {
+        "xquare-workspace": ".",
+      },
       "devDependencies": {
         "@eslint/js": "^9.39.1",
         "eslint": "^9.39.1",
@@ -15,8 +18,8 @@
         "typescript-eslint": "^8.46.3",
       },
     },
-    "applications/xquare-application": {
-      "name": "xquare-application",
+    "applications/xquare-admin-application": {
+      "name": "xquare-admin-application",
       "version": "0.0.0",
       "dependencies": {
         "react": "^19.2.0",
@@ -31,8 +34,8 @@
         "vite": "npm:rolldown-vite@7.2.2",
       },
     },
-    "applications/xquare-application-manager": {
-      "name": "xquare-application-manager",
+    "applications/xquare-user-application": {
+      "name": "xquare-user-application",
       "version": "0.0.0",
       "dependencies": {
         "react": "^19.2.0",
@@ -525,9 +528,11 @@
 
     "word-wrap": ["word-wrap@1.2.5", "", {}, "sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA=="],
 
-    "xquare-application": ["xquare-application@workspace:applications/xquare-application"],
+    "xquare-admin-application": ["xquare-admin-application@workspace:applications/xquare-admin-application"],
 
-    "xquare-application-manager": ["xquare-application-manager@workspace:applications/xquare-application-manager"],
+    "xquare-user-application": ["xquare-user-application@workspace:applications/xquare-user-application"],
+
+    "xquare-workspace": ["xquare-workspace@root:", {}],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
 
