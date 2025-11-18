@@ -4,9 +4,6 @@
   "workspaces": {
     "": {
       "name": "xquare-workspace",
-      "dependencies": {
-        "xquare-workspace": ".",
-      },
       "devDependencies": {
         "@eslint/js": "^9.39.1",
         "eslint": "^9.39.1",
@@ -54,12 +51,16 @@
       "name": "@xquare-eslint-configs",
       "version": "0.0.0",
     },
-    "modules/xquare-interfaces": {
-      "name": "@xquare-interfaces",
+    "modules/xquare-hooks": {
+      "name": "@xquare-hooks",
       "version": "0.0.0",
     },
-    "modules/xquare-tsconfigs": {
-      "name": "@xquare-tsconfigs",
+    "modules/xquare-typescript-configs": {
+      "name": "@xquare-typescript-configs",
+      "version": "0.0.0",
+    },
+    "modules/xquare-user-interfaces": {
+      "name": "@xquare-user-interfaces",
       "version": "0.0.0",
     },
     "modules/xquare-utils": {
@@ -246,9 +247,11 @@
 
     "@xquare-eslint-configs": ["@xquare-eslint-configs@workspace:modules/xquare-eslint-configs"],
 
-    "@xquare-interfaces": ["@xquare-interfaces@workspace:modules/xquare-interfaces"],
+    "@xquare-hooks": ["@xquare-hooks@workspace:modules/xquare-hooks"],
 
-    "@xquare-tsconfigs": ["@xquare-tsconfigs@workspace:modules/xquare-tsconfigs"],
+    "@xquare-typescript-configs": ["@xquare-typescript-configs@workspace:modules/xquare-typescript-configs"],
+
+    "@xquare-user-interfaces": ["@xquare-user-interfaces@workspace:modules/xquare-user-interfaces"],
 
     "@xquare-utils": ["@xquare-utils@workspace:modules/xquare-utils"],
 
@@ -531,8 +534,6 @@
     "xquare-admin-application": ["xquare-admin-application@workspace:applications/xquare-admin-application"],
 
     "xquare-user-application": ["xquare-user-application@workspace:applications/xquare-user-application"],
-
-    "xquare-workspace": ["xquare-workspace@root:", {}],
 
     "yallist": ["yallist@3.1.1", "", {}, "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="],
 
