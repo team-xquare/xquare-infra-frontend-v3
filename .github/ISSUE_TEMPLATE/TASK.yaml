@@ -1,0 +1,25 @@
+name: TASK
+description: 기타 작업
+title: "[TASK] "
+labels: ["task"]
+body:
+  - type: dropdown
+    id: application
+    attributes:
+      label: 애플리케이션
+      options:
+        - xquare-user-application
+        - xquare-admin-application
+        - 공유 모듈
+        - 전체
+        - 인프라
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 내용
+      placeholder: 작업 내용 / 이유
+    validations:
+      required: true

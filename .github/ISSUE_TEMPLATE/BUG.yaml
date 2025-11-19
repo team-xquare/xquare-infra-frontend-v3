@@ -1,0 +1,23 @@
+name: BUG
+description: 버그 리포트
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: application
+    attributes:
+      label: 애플리케이션
+      options:
+        - xquare-user-application
+        - xquare-admin-application
+        - 공유 모듈
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 내용
+      placeholder: 버그 설명 / 재현 방법 / 예상 동작
+    validations:
+      required: true
