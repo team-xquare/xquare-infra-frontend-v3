@@ -1,0 +1,24 @@
+name: FEATURE
+description: 기능 개발
+title: "[FEATURE] "
+labels: ["feature"]
+body:
+  - type: dropdown
+    id: application
+    attributes:
+      label: 애플리케이션
+      options:
+        - xquare-user-application
+        - xquare-admin-application
+        - 공유 모듈
+        - 전체
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 내용
+      placeholder: 기능 설명 / 필요한 이유
+    validations:
+      required: true
