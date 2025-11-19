@@ -1,3 +1,3 @@
-import eslintConfiguration from "@xquare-eslint-configs";
+import eslintConfiguration from "@xquare/eslint-configs";
 
 export default eslintConfiguration;

@@ -1,5 +1,5 @@
 {
-  "name": "xquare-admin-application",
+  "name": "@xquare/admin-application",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -18,10 +18,8 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react-swc": "^4.2.1",
+    "@xquare/eslint-configs": "workspace:*",
     "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@7.2.2"
-  },
-  "overrides": {
-    "vite": "npm:rolldown-vite@7.2.2"
+    "vite": "^7.2.2"
   }
 }

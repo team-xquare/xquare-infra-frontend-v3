@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# TypeScript compiled output (should not exist due to noEmit)
+src/**/*.js
+src/**/*.jsx
+*.config.js
+!vite.config.js
+!eslint.config.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
