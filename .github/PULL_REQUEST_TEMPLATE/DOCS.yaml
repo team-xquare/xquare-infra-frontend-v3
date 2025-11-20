@@ -1,0 +1,24 @@
+name: DOCS
+description: 문서 작업
+labels: ["documentation"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: 문서 타입
+      options:
+        - README
+        - API 문서
+        - 가이드
+        - 주석
+        - 기타
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 변경 사항
+      placeholder: 어떤 문서를 추가/수정했는지 / 변경 이유
+    validations:
+      required: true

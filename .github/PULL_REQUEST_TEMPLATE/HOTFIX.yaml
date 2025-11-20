@@ -1,0 +1,30 @@
+name: HOTFIX
+description: 긴급 수정
+labels: ["hotfix", "priority:high"]
+body:
+  - type: dropdown
+    id: application
+    attributes:
+      label: 애플리케이션
+      options:
+        - xquare-user-application
+        - xquare-admin-application
+        - 공유 모듈
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 긴급 수정 내용
+      placeholder: 왜 긴급하게 수정해야 하는지 / 어떻게 수정했는지
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 영향 범위
+      placeholder: 이 수정이 영향을 미치는 범위를 설명해주세요
+    validations:
+      required: true
