@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "composite": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "es2022"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2022",
+    "baseUrl": ".",
+    "paths": {
+      "@xquare/hooks": ["../../modules/xquare-hooks/index.ts"],
+      "@xquare/hooks/*": ["../../modules/xquare-hooks/*"],
+      "@xquare/utils": ["../../modules/xquare-utils/index.ts"],
+      "@xquare/utils/*": ["../../modules/xquare-utils/*"],
+      "@xquare/user-interfaces": [
+        "../../modules/xquare-user-interfaces/index.ts"
+      ],
+      "@xquare/user-interfaces/*": ["../../modules/xquare-user-interfaces/*"]
+    }
+  }
+}
