@@ -12,7 +12,7 @@ export interface TextProps {
 }
 
 const Typography = ({
-  size = "md",
+  size = "3x",
   weight = "regular",
   color = "#000",
   align = "left",
@@ -36,4 +36,4 @@ const Typography = ({
   );
 };
 
-export default Typography;
+export { Typography };

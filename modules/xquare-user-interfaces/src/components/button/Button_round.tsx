@@ -1,16 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
-
-// 타입 정의
-interface ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-  width?: string;
-  height?: string;
-  type?: "button" | "submit" | "reset";
-}
+import { ButtonProps } from "./Button.types";
 
 // 스타일 정의
 const StyledButton = styled.button<ButtonProps>`
@@ -43,7 +34,7 @@ const StyledButton = styled.button<ButtonProps>`
   }
 
   &:disabled {
-    background-color: ${Xquare_colors.gray[300]};
+    border: 1px solid ${Xquare_colors.gray[300]};
     color: ${Xquare_colors.gray[300]};
     cursor: not-allowed;
   }

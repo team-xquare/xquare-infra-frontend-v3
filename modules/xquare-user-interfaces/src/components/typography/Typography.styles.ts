@@ -1,17 +1,17 @@
 import styled from "@emotion/styled";
 
 export const fontSizes = {
-  xs: "10px",
-  sm: "12px",
-  md: "14px",
-  lg: "16px",
-  xl: "18px",
-  "1x": "20px",
-  "2x": "24px",
-  "3x": "28px",
-  "4x": "32px",
-  "5x": "35px",
-  "6x": "48px",
+  "1x": "10px",
+  "2x": "12px",
+  "3x": "14px",
+  "4x": "16px",
+  "5x": "18px",
+  "6x": "20px",
+  "7x": "24px",
+  "8x": "28px",
+  "9x": "32px",
+  "10x": "35px",
+  "11x": "48px",
 };
 
 export const fontWeights = {
