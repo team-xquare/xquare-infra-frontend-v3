@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
 
 // 타입정의
-interface InputProps {
+interface SearchBoxProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
@@ -14,7 +14,7 @@ interface InputProps {
 }
 
 // 스타일 정의
-const StyledInput = styled.input<InputProps>`
+const StyledInput = styled.input<SearchBoxProps>`
   width: ${({ width }) => width || "400px"};
   height: ${({ height }) => height || "30px"};
   box-sizing: border-box;
@@ -35,6 +35,7 @@ const StyledInput = styled.input<InputProps>`
   }
 
   &:disabled {
+    border: none;
     border-bottom: 1.2px solid ${Xquare_colors.gray[300]};
 
     &::placeholder {
@@ -44,7 +45,7 @@ const StyledInput = styled.input<InputProps>`
 `;
 
 // 컴포넌트
-export const SearchBox: React.FC<InputProps> = ({
+export const SearchBox: React.FC<SearchBoxProps> = ({
   value,
   onChange,
   placeholder,
