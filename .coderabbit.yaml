@@ -56,11 +56,11 @@ reviews:
       enabled: true
     biome:
       enabled: true
-    oxlint:
+    oxc:
       enabled: true
     github-checks:
       enabled: true
-      timeout: 90000
+      timeout_ms: 90000
     languagetool:
       enabled: true
       level: default
