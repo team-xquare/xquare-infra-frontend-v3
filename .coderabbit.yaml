@@ -74,6 +74,9 @@ chat:
 
 knowledge_base:
   opt_out: false
-  learnings: auto
-  issues: auto
-  pull_requests: auto
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  pull_requests:
+    scope: auto
