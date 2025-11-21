@@ -1,5 +1,6 @@
 export interface ColorGroup {
   [key: string]: string | ColorGroup;
+  [key: number]: string | ColorGroup;
 }
 
 export const Xquare_colors: ColorGroup = {
