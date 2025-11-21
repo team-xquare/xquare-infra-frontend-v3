@@ -1,0 +1,82 @@
+language: ko
+early_access: false
+enable_free_tier: true
+
+reviews:
+  profile: assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+      - master
+      - develop
+  path_instructions:
+    - path: "**/*.{ts,tsx}"
+      instructions: |
+        - TypeScript 타입 안정성 확인
+        - React 함수형 컴포넌트 사용 확인
+        - Props와 State에 대한 명확한 인터페이스/타입 정의 확인
+        - React Hooks 올바른 사용 (useState, useEffect, useMemo, useCallback)
+        - 불필요한 리렌더링 방지 (React.memo, useMemo 활용)
+        - 컴포넌트 재사용성과 단일 책임 원칙 준수
+    - path: "**/*.{js,jsx}"
+      instructions: |
+        - JavaScript 모범 사례 확인
+        - React 컴포넌트 패턴 준수
+        - Props validation (PropTypes 사용)
+        - 이벤트 핸들러 명명 규칙 (handle*, on*)
+        - 불필요한 인라인 함수 생성 방지
+    - path: "**/components/**"
+      instructions: |
+        - 컴포넌트는 작고 집중적이어야 함
+        - 재사용 가능한 구조로 작성
+        - 적절한 props 인터페이스 정의
+        - Semantic HTML 요소 사용
+        - 접근성(a11y) 고려
+    - path: "**/hooks/**"
+      instructions: |
+        - Custom hooks는 use* 접두사 사용
+        - 단일 책임 원칙 준수
+        - 의존성 배열 올바른 사용
+        - 메모리 누수 방지 (cleanup 함수 구현)
+    - path: "**/utils/**"
+      instructions: |
+        - 순수 함수로 작성
+        - 명확한 타입 정의
+        - 단위 테스트 가능한 구조
+        - 적절한 에러 처리
+  tools:
+    eslint:
+      enabled: true
+    biome:
+      enabled: true
+    oxc:
+      enabled: true
+    github-checks:
+      enabled: true
+      timeout_ms: 90000
+    languagetool:
+      enabled: true
+      level: default
+    markdownlint:
+      enabled: true
+    gitleaks:
+      enabled: true
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  opt_out: false
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  pull_requests:
+    scope: auto
