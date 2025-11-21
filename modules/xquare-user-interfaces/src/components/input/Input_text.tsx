@@ -91,7 +91,7 @@ export const Input_text: React.FC<InputProps> = ({
         disabled={disabled}
         type={type}
       />
-      <Title titleColor={titleColor}>{title}</Title>
+      {title && <Title titleColor={titleColor}>{title}</Title>}
     </Wraper>
   );
 };

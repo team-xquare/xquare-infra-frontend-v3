@@ -20,7 +20,7 @@ const StyledInput = styled.input<InputProps>`
   box-sizing: border-box;
 
   background-color: ${Xquare_colors.white};
-  border: 2px solid ${Xquare_colors.purple[600]};
+  border: 2px solid ${Xquare_colors.purple[500]};
   border-radius: 30px;
 
   padding: 22px;

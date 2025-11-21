@@ -39,8 +39,6 @@ const StyledInput = styled.input<InputProps>`
   }
 
   &:disabled {
-    border-bottom: 1.2px solid ${Xquare_colors.gray[300]};
-
     &::placeholder {
       color: ${Xquare_colors.gray[300]};
     }
