@@ -26,6 +26,7 @@ const StyledInput = styled.input<SearchBoxProps>`
   padding: 22px;
 
   color: ${Xquare_colors.purple[600]};
+  font-family: "Pretendard";
   font-size: 1.15rem;
   font-weight: 400;
   line-height: 1rem;

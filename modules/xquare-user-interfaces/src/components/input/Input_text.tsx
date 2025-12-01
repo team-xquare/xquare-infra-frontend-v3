@@ -35,6 +35,7 @@ const StyledInput = styled.input<InputProps>`
   background-color: ${Xquare_colors.white};
 
   color: ${Xquare_colors.black};
+  font-family: "Pretendard";
   font-size: 1.1rem;
   font-weight: 400;
   line-height: 1.1rem;
