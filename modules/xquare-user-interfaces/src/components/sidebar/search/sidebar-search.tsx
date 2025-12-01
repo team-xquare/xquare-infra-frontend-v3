@@ -6,6 +6,7 @@ import {
 } from "./sidebar-search-style";
 
 interface SidebarSearchProps {
+  value: string;
   placeholder?: string;
   onSearch?: (value: string) => void;
 }
@@ -13,6 +14,7 @@ interface SidebarSearchProps {
 const DEFAULT_PLACEHOLDER = "검색어를 입력해주세요.";
 
 function SidebarSearchComponent({
+  value,
   placeholder = DEFAULT_PLACEHOLDER,
   onSearch,
 }: SidebarSearchProps) {
@@ -29,6 +31,7 @@ function SidebarSearchComponent({
         <SideBarSearchInput
           type="text"
           placeholder={placeholder}
+          value={value}
           onChange={handleChange}
         />
       </SideBarSearch>

@@ -12,7 +12,7 @@ interface SideBarHeaderDescriptionDivProps {
   isExpanded?: boolean;
 }
 
-export const SideBarHeader = styled.footer`
+export const SideBarHeader = styled.header`
   align-items: center;
   align-self: stretch;
   background-color: ${Xquare_colors.purple[700]};

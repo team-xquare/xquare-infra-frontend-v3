@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import {
   SideBarHeader,
   SideBarHeaderDescriptionDiv,
@@ -16,10 +16,7 @@ interface SidebarHeaderProps {
 }
 
 function SidebarHeaderComponent({ isExpanded = false }: SidebarHeaderProps) {
-  const descriptionText = useMemo(
-    () => (isExpanded ? EXPANDED_TEXT : COLLAPSED_TEXT),
-    [isExpanded],
-  );
+  const descriptionText = isExpanded ? EXPANDED_TEXT : COLLAPSED_TEXT;
 
   return (
     <SideBarHeader>
