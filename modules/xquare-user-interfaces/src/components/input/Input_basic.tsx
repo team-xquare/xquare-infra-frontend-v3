@@ -22,6 +22,7 @@ const StyledInput = styled.input<InputProps>`
   border: none;
 
   color: ${({ color }) => color || Xquare_colors.black};
+  font-family: "Pretendard";
   font-size: 1.1rem;
   font-weight: 400;
   line-height: 1.1rem;

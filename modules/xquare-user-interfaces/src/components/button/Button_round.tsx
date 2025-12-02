@@ -17,6 +17,7 @@ const StyledButton = styled.button<ButtonProps>`
   background-color: ${Xquare_colors.white};
   color: ${Xquare_colors.gray[500]};
 
+  font-family: "Pretendard";
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
