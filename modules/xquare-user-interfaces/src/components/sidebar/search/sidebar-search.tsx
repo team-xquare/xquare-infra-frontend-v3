@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, type ChangeEvent } from "react";
 import {
   SideBarDiv,
   SideBarSearch,
@@ -8,7 +8,7 @@ import {
 interface SidebarSearchProps {
   value: string;
   placeholder?: string;
-  onSearch?: (value: string) => void;
+  onSearch: (value: string) => void;
 }
 
 const DEFAULT_PLACEHOLDER = "검색어를 입력해주세요.";
@@ -19,7 +19,7 @@ function SidebarSearchComponent({
   onSearch,
 }: SidebarSearchProps) {
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: ChangeEvent<HTMLInputElement>) => {
       onSearch?.(e.target.value);
     },
     [onSearch],
