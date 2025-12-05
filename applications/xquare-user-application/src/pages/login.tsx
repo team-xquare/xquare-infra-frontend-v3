@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 import {
   Logo,
   Input_text,
@@ -60,8 +61,8 @@ const LoginPage: React.FC = () => {
                 XQUARE계정이 없으신가요?
               </Typography>
 
-              <a
-                href="/signup"
+              <Link
+                to="/signup"
                 style={{ textDecoration: "none", height: "1.8rem" }}
               >
                 <Typography
@@ -71,7 +72,7 @@ const LoginPage: React.FC = () => {
                 >
                   가입하기
                 </Typography>
-              </a>
+              </Link>
             </LinkRow>
           </FormActions>
         </FormCard>

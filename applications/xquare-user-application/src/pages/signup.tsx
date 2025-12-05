@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
   Logo,
@@ -23,10 +24,8 @@ const SignupPage: React.FC = () => {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
   const handleSubmit = (e: React.FormEvent) => {
-    if (step !== 3) {
-      e.preventDefault();
-      return;
-    }
+    e.preventDefault();
+    if (step !== 3) return;
 
     // TODO: 로직 연결
 
@@ -197,8 +196,8 @@ const SignupPage: React.FC = () => {
                   XQUARE계정이 있으신가요?
                 </Typography>
 
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   style={{ textDecoration: "none", height: "1.8rem" }}
                 >
                   <Typography
@@ -208,7 +207,7 @@ const SignupPage: React.FC = () => {
                   >
                     로그인하기
                   </Typography>
-                </a>
+                </Link>
               </LinkRow>
             )}
           </FormActions>
