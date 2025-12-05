@@ -1,4 +1,6 @@
 {
+  "name": "@xquare/user-interfaces",
+  "version": "1.0.0",
   "compilerOptions": {
     "composite": true,
     "declaration": true,

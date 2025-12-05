@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
@@ -19,7 +19,6 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2022",
-    "baseUrl": ".",
     "paths": {
       "@xquare/hooks": ["../../modules/xquare-hooks/index.ts"],
       "@xquare/hooks/*": ["../../modules/xquare-hooks/*"],
