@@ -20,7 +20,6 @@
     "@vitejs/plugin-react-swc": "^4.2.1",
     "@xquare/eslint-configs": "workspace:*",
     "@xquare/user-interfaces": "workspace:*",
-    "eslint": "^8.48.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.2"
   }
