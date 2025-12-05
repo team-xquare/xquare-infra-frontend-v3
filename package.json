@@ -13,6 +13,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@xquare/eslint-configs": "workspace:*",
+    "@xquare/user-interfaces": "workspace:*",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
@@ -43,6 +44,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.10.1"
   }
 }

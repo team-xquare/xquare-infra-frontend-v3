@@ -1,11 +1,13 @@
 {
-  "name": "@xquare/user-interfaces",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
-  "exports": {
-    ".": "./index.ts"
-  }
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "outDir": "dist",
+    "module": "esnext",
+    "target": "esnext"
+  },
+  "include": [
+    "index.ts",
+    "src"
+  ]
 }
