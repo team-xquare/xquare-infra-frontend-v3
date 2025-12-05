@@ -271,7 +271,7 @@ const Inputs = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.2rem;
   align-items: center;
   margin-bottom: 9.8rem;
 
