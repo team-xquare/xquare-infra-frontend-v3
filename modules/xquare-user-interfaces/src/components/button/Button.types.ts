@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 // 타입 정의
 export interface ButtonProps {
-  children: React.ReactNode;
+  children: ReactNode;
   onClick?: () => void;
   disabled?: boolean;
   width?: string;

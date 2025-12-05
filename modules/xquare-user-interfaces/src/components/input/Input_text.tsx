@@ -24,11 +24,13 @@ const Wraper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+
+  margin-top: 0.5rem;
 `;
 
 const StyledInput = styled.input<InputProps>`
   width: ${({ width }) => width || "300px"};
-  height: ${({ height }) => height || "50px"};
+  height: ${({ height }) => height || "60px"};
 
   border: none;
   border-bottom: 1.2px solid ${Xquare_colors.gray[500]};
@@ -36,9 +38,9 @@ const StyledInput = styled.input<InputProps>`
 
   color: ${Xquare_colors.black};
   font-family: "Pretendard";
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.1rem;
+  line-height: 1rem;
 
   &::placeholder {
     color: ${Xquare_colors.gray[500]};
