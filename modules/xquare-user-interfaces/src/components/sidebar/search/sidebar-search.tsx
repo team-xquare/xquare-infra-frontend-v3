@@ -6,9 +6,9 @@ import {
 } from "./sidebar-search-style";
 
 interface SidebarSearchProps {
-  value: string;
-  placeholder?: string;
-  onSearch: (value: string) => void;
+  value?: string;
+  placeholder: string;
+  onSearch?: (value: string) => void;
 }
 
 const DEFAULT_PLACEHOLDER = "검색어를 입력해주세요.";
