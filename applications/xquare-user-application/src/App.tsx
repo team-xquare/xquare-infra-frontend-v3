@@ -1,12 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import { Global } from "@emotion/react";
+import LoginPage from "./pages/login";
+import globalStyles from "./styles/global";
 
 function App() {
   return (
-    <BrowserRouter>
+    <>
+      <Global styles={globalStyles} />
       <Routes>
-        <Route path="/" element={<div>Hello, Xquare User Application!</div>} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

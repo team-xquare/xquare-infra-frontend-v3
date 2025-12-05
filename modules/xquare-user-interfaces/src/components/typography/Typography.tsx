@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import * as S from "./typography.styles";
+import * as S from "./Typography.styles";
 
 export interface TextProps {
   size?: keyof typeof S.fontSizes;
