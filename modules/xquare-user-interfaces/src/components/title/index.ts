@@ -1,2 +1,1 @@
-export { Button_square } from "./title";
-export { Button_round } from "./Button_round";
+export { default as title } from "./title";
