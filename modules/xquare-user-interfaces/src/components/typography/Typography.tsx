@@ -1,13 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import * as S from "./Typography.styles";
+import type { ElementType, HTMLAttributes } from "react";
 
-export interface TextProps {
+export interface TextProps extends HTMLAttributes<HTMLElement> {
   size?: keyof typeof S.fontSizes;
   weight?: keyof typeof S.fontWeights;
   color?: string;
   align?: "left" | "center" | "right" | "justify";
   underline?: boolean;
-  as?: React.ElementType;
+  as?: ElementType;
   children: React.ReactNode;
 }
 

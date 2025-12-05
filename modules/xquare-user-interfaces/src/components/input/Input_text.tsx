@@ -30,7 +30,7 @@ const Wraper = styled.div`
 
 const StyledInput = styled.input<InputProps>`
   width: ${({ width }) => width || "300px"};
-  height: ${({ height }) => height || "70px"};
+  height: ${({ height }) => height || "60px"};
 
   border: none;
   border-bottom: 1.2px solid ${Xquare_colors.gray[500]};

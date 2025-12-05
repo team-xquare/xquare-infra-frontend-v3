@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
-import { ButtonProps } from "./Button.types";
+import type { ButtonProps } from "./Button.types";
 
 // 스타일 정의
 const StyledButton = styled.button<ButtonProps>`
