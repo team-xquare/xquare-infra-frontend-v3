@@ -60,7 +60,10 @@ const LoginPage: React.FC = () => {
                 XQUARE계정이 없으신가요?
               </Typography>
 
-              <a href="" style={{ textDecoration: "none", height: "1.8rem" }}>
+              <a
+                href="/signup"
+                style={{ textDecoration: "none", height: "1.8rem" }}
+              >
                 <Typography
                   size="2x"
                   weight="regular"
@@ -80,7 +83,7 @@ const LoginPage: React.FC = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   background-color: ${Xquare_colors.white};
 
