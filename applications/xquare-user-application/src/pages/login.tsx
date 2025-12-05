@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 import {
   Logo,
   Input_text,
@@ -27,7 +28,7 @@ const LoginPage: React.FC = () => {
       <Right aria-label="로그인 영역">
         <FormCard onSubmit={handleSubmit} aria-label="로그인 폼">
           <Typography size="10x" weight="extraBold" align="center">
-            XQUARE
+            XQUARE LOGIN
           </Typography>
 
           <Inputs>
@@ -60,8 +61,8 @@ const LoginPage: React.FC = () => {
                 XQUARE계정이 없으신가요?
               </Typography>
 
-              <a
-                href="/signup"
+              <Link
+                to="/signup"
                 style={{ textDecoration: "none", height: "1.8rem" }}
               >
                 <Typography
@@ -71,7 +72,7 @@ const LoginPage: React.FC = () => {
                 >
                   가입하기
                 </Typography>
-              </a>
+              </Link>
             </LinkRow>
           </FormActions>
         </FormCard>
@@ -89,7 +90,6 @@ const Container = styled.div`
 
   @media (max-width: 600px) {
     flex-direction: column;
-    height: auto;
   }
 `;
 
@@ -97,10 +97,9 @@ const Left = styled.div`
   display: flex;
   flex: 1 1 65%;
   background-color: ${Xquare_colors.purple[400]};
-  box-shadow: inset -4px 0 10px rgba(0, 0, 0, 0.12);
+  box-shadow: inset -4px 0 10px rgba(0, 0, 0, 0.35);
   align-items: center;
   justify-content: center;
-  padding: 2rem;
 
   @media (max-width: 600px) {
     width: 100%;
@@ -117,16 +116,10 @@ const LogoImg = styled.img`
 const Right = styled.div`
   display: flex;
   flex: 1 1 35%;
-  justify-content: center;
-  align-items: center;
+  margin-top: 15vh;
   flex-direction: column;
+  align-items: center;
   gap: 2rem;
-  padding: 2rem;
-
-  @media (max-width: 600px) {
-    width: 100%;
-    padding: 1.5rem;
-  }
 `;
 
 const FormCard = styled.form`
@@ -136,14 +129,13 @@ const FormCard = styled.form`
   flex-direction: column;
   gap: 1.25rem;
   align-items: center;
-  background: transparent;
 `;
 
 const Inputs = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.2rem;
   align-items: center;
   margin-bottom: 9.8rem;
 `;
@@ -160,7 +152,6 @@ const LinkRow = styled.div`
   display: flex;
   gap: 0.6rem;
   align-items: center;
-  justify-content: center;
 `;
 
 export default LoginPage;

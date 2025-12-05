@@ -1,7 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import { Global } from "@emotion/react";
-import LoginPage from "./pages/login";
 import globalStyles from "./styles/global";
+
+import LoginPage from "./pages/login";
+import SignupPage from "./pages/signup";
 
 function App() {
   return (
@@ -9,6 +11,7 @@ function App() {
       <Global styles={globalStyles} />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
       </Routes>
     </>
   );
