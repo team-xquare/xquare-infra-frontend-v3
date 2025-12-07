@@ -33,7 +33,9 @@ function Layout({
       monitor: "/monitor",
     };
 
-    navigate(routeMap[itemId]);
+    const path = routeMap[itemId];
+    if (!path) return;
+    navigate(path);
   };
 
   return (
@@ -44,7 +46,7 @@ function Layout({
         projectName=""
         searchPlaceholder={searchPlaceholder}
         onNavItemClick={handleNavItemClick}
-        onSearch={onSearch ?? (() => {})}
+        onSearch={onSearch}
       />
       {children}
     </Container>
