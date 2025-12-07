@@ -4,7 +4,6 @@ import {
   SideBarFooterDiv,
   SideBarFooterNameSpan,
   SideBarFooterProjectDiv,
-  SideBarFooterProjectDivSpan,
 } from "./sidebar-footer-style";
 
 interface SidebarFooterProps {
@@ -17,9 +16,7 @@ function SidebarFooterComponent({ name, project }: SidebarFooterProps) {
     <SideBarFooter>
       <SideBarFooterDiv>
         <SideBarFooterNameSpan>{name}</SideBarFooterNameSpan>
-        <SideBarFooterProjectDiv>
-          <SideBarFooterProjectDivSpan>{project}</SideBarFooterProjectDivSpan>
-        </SideBarFooterProjectDiv>
+        <SideBarFooterProjectDiv>{project}</SideBarFooterProjectDiv>
       </SideBarFooterDiv>
     </SideBarFooter>
   );

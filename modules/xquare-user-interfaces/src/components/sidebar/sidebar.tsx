@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { SidebarHeader } from "./header/sidebar-header";
 import { SidebarSearch } from "./search/sidebar-search";
 import { SidebarItem } from "./item/sidebar-item";
@@ -9,7 +9,6 @@ import {
   SidebarNavContainer,
   SidebarNavContent,
   SidebarNavItemWrapper,
-  SidebarSubNavContainer,
 } from "./sidebar-style";
 
 interface SidebarNavItem {
@@ -36,7 +35,6 @@ export function Sidebar({
   onSearch,
 }: SidebarProps) {
   const [activeItemId, setActiveItemId] = useState<string>(navItems[0].id);
-  const [hoveredItemId, setHoveredItemId] = useState<string | null>(null);
 
   const isMainItemActive = useCallback(
     (itemId: string) =>
@@ -47,15 +45,6 @@ export function Sidebar({
     [activeItemId, navItems],
   );
 
-  const subItems = useMemo(() => {
-    const activeItem = navItems.find(
-      (item) =>
-        item.id === activeItemId ||
-        item.subItems?.some((sub) => sub.id === activeItemId),
-    );
-    return activeItem?.subItems || [];
-  }, [activeItemId, navItems]);
-
   const handleMainItemClick = useCallback(
     (itemId: string) => {
       setActiveItemId(itemId);
@@ -64,36 +53,15 @@ export function Sidebar({
     [onNavItemClick],
   );
 
-  const handleSubItemClick = useCallback(
-    (itemId: string) => {
-      setActiveItemId(itemId);
-      onNavItemClick(itemId);
-    },
-    [onNavItemClick],
-  );
-
-  const handleNavLeave = useCallback(() => {
-    setHoveredItemId(null);
-  }, []);
-
-  const handleItemHover = useCallback((itemId: string) => {
-    setHoveredItemId(itemId);
-  }, []);
-
-  const isExpanded = !!hoveredItemId;
-
   return (
-    <SidebarContainer isExpanded={isExpanded}>
-      <SidebarHeader isExpanded={isExpanded} />
+    <SidebarContainer>
+      <SidebarHeader />
       <SidebarContent>
         <SidebarSearch placeholder={searchPlaceholder} onSearch={onSearch} />
-        <SidebarNavContent onMouseLeave={handleNavLeave}>
+        <SidebarNavContent>
           <SidebarNavContainer>
             {navItems.map((item) => (
-              <SidebarNavItemWrapper
-                key={item.id}
-                onMouseEnter={() => handleItemHover(item.id)}
-              >
+              <SidebarNavItemWrapper key={item.id}>
                 <SidebarItem
                   label={item.label}
                   isActive={isMainItemActive(item.id)}
@@ -102,20 +70,6 @@ export function Sidebar({
               </SidebarNavItemWrapper>
             ))}
           </SidebarNavContainer>
-          <SidebarSubNavContainer isExpanded={isExpanded}>
-            {subItems.map((item: SidebarNavItem) => (
-              <SidebarNavItemWrapper
-                key={item.id}
-                onMouseEnter={() => handleItemHover(item.id)}
-              >
-                <SidebarItem
-                  label={item.label}
-                  isActive={item.id === activeItemId}
-                  onClick={() => handleSubItemClick(item.id)}
-                />
-              </SidebarNavItemWrapper>
-            ))}
-          </SidebarSubNavContainer>
         </SidebarNavContent>
       </SidebarContent>
       <SidebarFooter name={userName} project={projectName} />
