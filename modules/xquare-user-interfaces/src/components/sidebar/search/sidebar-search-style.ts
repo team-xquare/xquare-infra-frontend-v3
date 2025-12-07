@@ -4,7 +4,7 @@ import { Xquare_colors } from "../../../styles/colors";
 const SEARCH_CONTAINER_GAP = "5px";
 const SEARCH_CONTAINER_PADDING = "20px";
 const SEARCH_HEIGHT = "40px";
-const INPUT_FONT_SIZE = "12px";
+const INPUT_FONT_SIZE = "14px";
 const INPUT_FONT_WEIGHT = "400";
 const INPUT_LETTER_SPACING = "-0.32px";
 const INPUT_LINE_HEIGHT = "140%";
@@ -31,7 +31,7 @@ export const SideBarSearch = styled.section`
 export const SideBarSearchInput = styled.input`
   background: transparent;
   border: none;
-  border-bottom: 1px solid ${Xquare_colors.purple[700]};
+  border-bottom: 1px solid ${Xquare_colors.purple[600]};
   color: ${Xquare_colors.white};
   font-family: "Pretendard";
   font-size: ${INPUT_FONT_SIZE};

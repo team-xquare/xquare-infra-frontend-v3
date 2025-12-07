@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Xquare_colors } from "../../../styles/colors";
 
 const ITEM_PADDING = "10px 0";
-const LABEL_FONT_SIZE = "14px";
+const LABEL_FONT_SIZE = "15px";
 const LABEL_FONT_WEIGHT = "600";
 const TRANSITION_DURATION = "0.05s";
 const LABEL_MARGIN_RIGHT = "5px";
@@ -30,7 +30,7 @@ export const SideBarMenuItemWrapper = styled.div`
 
 export const SideBarMenuItemLabel = styled.span<SideBarMenuItemLabelProps>`
   color: ${(props) =>
-    props.isActive ? Xquare_colors.white : Xquare_colors.purple[200]};
+    props.isActive ? Xquare_colors.white : Xquare_colors.purple[600]};
   font-size: ${LABEL_FONT_SIZE};
   font-style: normal;
   font-weight: ${LABEL_FONT_WEIGHT};

@@ -174,7 +174,7 @@ const SignupPage: React.FC = () => {
 
             {step > 1 && (
               <LinkRow>
-                <Typography size="2x" weight="regular" align="center">
+                <Typography size="2x" weight="regular">
                   잘못입력하셨나요?
                 </Typography>
 
@@ -275,7 +275,6 @@ const Inputs = styled.div`
   align-items: center;
   margin-bottom: 9.8rem;
 
-  /* 기본: 부드러운 등장 */
   &.fade-in {
     opacity: 1;
     transform: translateY(0);
@@ -284,7 +283,6 @@ const Inputs = styled.div`
       transform 0.18s ease;
   }
 
-  /* 사라지는 중 */
   &.fade-out {
     opacity: 0;
     transform: translateY(10px);
