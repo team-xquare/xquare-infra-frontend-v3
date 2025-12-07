@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
 
-const SIDEBAR_WIDTH = "300px";
+const SIDEBAR_WIDTH = "280px";
 const ANIMATION_DURATION = "0.3s";
 const CONTENT_GAP = "10px";
 const NAV_GAP = "5px";
