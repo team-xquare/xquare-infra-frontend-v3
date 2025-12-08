@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { SidebarHeader } from "./header/sidebar-header";
 import { SidebarSearch } from "./search/sidebar-search";
 import { SidebarItem } from "./item/sidebar-item";
@@ -15,6 +16,7 @@ interface SidebarNavItem {
   id: string;
   label: string;
   subItems?: SidebarNavItem[];
+  path?: string;
 }
 
 interface SidebarProps {
@@ -26,7 +28,7 @@ interface SidebarProps {
   onSearch?: (value: string) => void;
 }
 
-export function Sidebar({
+function Sidebar({
   navItems,
   userName,
   projectName,
@@ -34,7 +36,21 @@ export function Sidebar({
   onNavItemClick,
   onSearch,
 }: SidebarProps) {
+  const location = useLocation();
+
   const [activeItemId, setActiveItemId] = useState<string>(navItems[0].id);
+
+  useEffect(() => {
+    const current = navItems.find(
+      (i) =>
+        i.path === location.pathname ||
+        i.subItems?.some((s) => s.path === location.pathname),
+    );
+
+    if (current) {
+      queueMicrotask(() => setActiveItemId(current.id));
+    }
+  }, [location.pathname, navItems]);
 
   const isMainItemActive = useCallback(
     (itemId: string) =>
@@ -76,3 +92,5 @@ export function Sidebar({
     </SidebarContainer>
   );
 }
+
+export default Sidebar;

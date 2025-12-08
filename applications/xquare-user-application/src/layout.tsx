@@ -17,12 +17,12 @@ function Layout({
   const navigate = useNavigate();
 
   const navItems = [
-    { id: "home", label: "HOME" },
-    { id: "deployment", label: "DEPLOYMENT" },
-    { id: "network", label: "NETWORK" },
-    { id: "monitor", label: "MONITOR" },
-    { id: "notice", label: "NOTICE" },
-    { id: "feed", label: "FEED" },
+    { id: "home", label: "HOME", path: "/" },
+    { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
+    { id: "network", label: "NETWORK", path: "/network" },
+    { id: "monitor", label: "MONITOR", path: "/monitor" },
+    { id: "notice", label: "NOTICE", path: "/notice" },
+    { id: "feed", label: "FEED", path: "/feed" },
   ];
 
   const handleNavItemClick = (itemId: string) => {
