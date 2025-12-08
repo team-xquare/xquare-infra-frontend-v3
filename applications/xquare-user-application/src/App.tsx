@@ -8,6 +8,7 @@ import SignupPage from "./pages/signup";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 import FeedPage from "./pages/feedpage";
+import NoticeView from "./pages/noticeview";
 
 function App() {
   return (
@@ -40,6 +41,24 @@ function App() {
           element={
             <Layout>
               <FeedPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/notice/view/:id"
+          element={
+            <Layout>
+              <NoticeView />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/feed/view/:id"
+          element={
+            <Layout>
+              <NoticeView />
             </Layout>
           }
         />

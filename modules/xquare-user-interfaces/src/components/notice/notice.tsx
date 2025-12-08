@@ -83,7 +83,8 @@ function Notice({ page }: NoticeProps) {
       <div>
         {displayItems.map((item) => (
           <NoticeItem
-            key={item.id}
+            type="notice"
+            id={item.id}
             NoticeValue={item.NoticeValue}
             date={item.date}
           />

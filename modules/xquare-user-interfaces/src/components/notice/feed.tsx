@@ -83,7 +83,8 @@ function Feed({ page }: feedProps) {
       <div>
         {displayItems.map((item) => (
           <NoticeItem
-            key={item.id}
+            type="feed"
+            id={item.id}
             NoticeValue={item.NoticeValue}
             date={item.date}
           />
