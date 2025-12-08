@@ -9,6 +9,7 @@ const NAV_PADDING = "20px";
 
 export const SidebarContainer = styled.div`
   display: flex;
+  position: fixed;
   flex-direction: column;
   height: 100vh;
   width: ${SIDEBAR_WIDTH};
