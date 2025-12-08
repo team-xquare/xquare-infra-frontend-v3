@@ -5,11 +5,11 @@ import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
 
-interface feedProps {
+interface FeedProps {
   page: number;
 }
 
-function Feed({ page }: feedProps) {
+function Feed({ page }: FeedProps) {
   const navigate = useNavigate();
 
   function handleDeployClick() {
@@ -94,7 +94,7 @@ function Feed({ page }: feedProps) {
   );
 }
 
-const Feedcontainer = styled.div<feedProps>`
+const Feedcontainer = styled.div<FeedProps>`
   display: flex;
   width: ${({ page }) => (page === 1 ? "55%" : page === 2 ? "50%" : "100%")};
   flex-direction: column;

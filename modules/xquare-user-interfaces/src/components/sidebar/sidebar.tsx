@@ -38,7 +38,9 @@ function Sidebar({
 }: SidebarProps) {
   const location = useLocation();
 
-  const [activeItemId, setActiveItemId] = useState<string>(navItems[0].id);
+  const [activeItemId, setActiveItemId] = useState<string>(
+    navItems[0]?.id ?? "",
+  );
 
   useEffect(() => {
     const current = navItems.find(
