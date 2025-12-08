@@ -174,7 +174,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
-  height: 200vh;
+  height: 100vh;
   width: 100%;
   padding: 10px 40px;
 `;
