@@ -1,15 +1,24 @@
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 import { Xquare_colors } from "../../../styles/colors";
 
 interface NoticeItemProps {
+  type: "notice" | "feed";
+  id: string | number;
   NoticeValue: string;
   date: string;
 }
 
-function NoticeItem({ NoticeValue, date }: NoticeItemProps) {
+function NoticeItem({ type, id, NoticeValue, date }: NoticeItemProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/${type}/view/${id}`);
+  };
+
   return (
     <Container>
-      <Item>{NoticeValue}</Item>
+      <Item onClick={handleClick}>{NoticeValue}</Item>
       <Date>{date}</Date>
     </Container>
   );
@@ -28,6 +37,7 @@ const Container = styled.div`
 const Item = styled.div`
   display: flex;
   width: 90%;
+  cursor: pointer;
 
   font-size: 15px;
   font-weight: 500;
@@ -36,6 +46,11 @@ const Item = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  &:hover {
+    text-decoration: underline;
+    color: ${Xquare_colors.purple[600]};
+  }
 `;
 
 const Date = styled.div`

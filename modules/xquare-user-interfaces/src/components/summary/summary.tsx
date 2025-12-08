@@ -3,10 +3,10 @@ import { SummaryItem } from "./summaryitem/index";
 import { Subtitle } from "../title/index";
 
 interface SummaryProps {
-  isHome: boolean;
+  page?: number;
 }
 
-function Summary({ isHome }: SummaryProps) {
+function Summary({ page }: SummaryProps) {
   const items = [
     {
       id: 1,
@@ -55,10 +55,10 @@ function Summary({ isHome }: SummaryProps) {
     },
   ];
 
-  const displayItems = isHome ? items.slice(0, 4) : items;
+  const displayItems = page === 1 ? items.slice(0, 4) : items;
 
   return (
-    <Summarycontainer>
+    <Summarycontainer page={page}>
       <Subtitle title={`Summary`} subTitle={"service status"} />
       <div>
         {displayItems.map((item) => (
@@ -72,9 +72,9 @@ function Summary({ isHome }: SummaryProps) {
   );
 }
 
-const Summarycontainer = styled.div`
+const Summarycontainer = styled.div<SummaryProps>`
   display: flex;
-  width: 45%;
+  width: ${({ page }) => (page === 1 ? "45%" : "100%")};
   flex-direction: column;
   gap: 10px;
 `;

@@ -17,20 +17,22 @@ function Layout({
   const navigate = useNavigate();
 
   const navItems = [
-    { id: "home", label: "HOME" },
-    { id: "notification", label: "NOTIFICATION" },
-    { id: "deployment", label: "DEPLOYMENT" },
-    { id: "network", label: "NETWORK" },
-    { id: "monitor", label: "MONITOR" },
+    { id: "home", label: "HOME", path: "/" },
+    { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
+    { id: "network", label: "NETWORK", path: "/network" },
+    { id: "monitor", label: "MONITOR", path: "/monitor" },
+    { id: "notice", label: "NOTICE", path: "/notice" },
+    { id: "feed", label: "FEED", path: "/feed" },
   ];
 
   const handleNavItemClick = (itemId: string) => {
     const routeMap: Record<string, string> = {
       home: "/",
-      notification: "/notification",
       deployment: "/deployment",
       network: "/network",
       monitor: "/monitor",
+      notice: "/notice",
+      feed: "/feed",
     };
 
     const path = routeMap[itemId];

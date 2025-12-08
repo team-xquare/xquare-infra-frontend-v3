@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { SidebarHeader } from "./header/sidebar-header";
 import { SidebarSearch } from "./search/sidebar-search";
 import { SidebarItem } from "./item/sidebar-item";
@@ -15,6 +16,7 @@ interface SidebarNavItem {
   id: string;
   label: string;
   subItems?: SidebarNavItem[];
+  path?: string;
 }
 
 interface SidebarProps {
@@ -26,7 +28,7 @@ interface SidebarProps {
   onSearch?: (value: string) => void;
 }
 
-export function Sidebar({
+function Sidebar({
   navItems,
   userName,
   projectName,
@@ -34,7 +36,19 @@ export function Sidebar({
   onNavItemClick,
   onSearch,
 }: SidebarProps) {
-  const [activeItemId, setActiveItemId] = useState<string>(navItems[0].id);
+  const location = useLocation();
+
+  const isMatch = (basePath?: string) =>
+    basePath != null &&
+    (location.pathname === basePath ||
+      location.pathname.startsWith(`${basePath}/`));
+
+  const activeItemId =
+    navItems.find(
+      (i) => isMatch(i.path) || i.subItems?.some((s) => isMatch(s.path)),
+    )?.id ??
+    navItems[0]?.id ??
+    "";
 
   const isMainItemActive = useCallback(
     (itemId: string) =>
@@ -47,7 +61,6 @@ export function Sidebar({
 
   const handleMainItemClick = useCallback(
     (itemId: string) => {
-      setActiveItemId(itemId);
       onNavItemClick(itemId);
     },
     [onNavItemClick],
@@ -76,3 +89,5 @@ export function Sidebar({
     </SidebarContainer>
   );
 }
+
+export { Sidebar };
