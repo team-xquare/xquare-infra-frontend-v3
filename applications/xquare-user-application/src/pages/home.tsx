@@ -19,14 +19,19 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      // 로직
-      setUsername(username);
-      setDeployCount(deployCount);
-      setTraffic(Traffic);
+      // TODO: 실제 API 호출 로직 구현
+      const userData = {
+        username: "testuser",
+        deployCount: 42,
+        traffic: 1280,
+      };
+      setUsername(userData.username);
+      setDeployCount(userData.deployCount);
+      setTraffic(userData.traffic);
     };
-
     fetchUser();
-  }, [username, deployCount, Traffic]);
+  }, []);
+
   const handleTabClick = (index: number) => {
     setActiveTab(index);
   };
@@ -40,40 +45,21 @@ const HomePage = () => {
   };
 
   const tabContents = [
-    <div
-      key="notice"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "48px",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: "13px" }}>
+    <TabContentWrapper key="notice">
+      <TextGroup>
         <Typography size="5x" weight="semiBold">
           대덕소프트웨어마이스터고등학교 배포 플랫폼
         </Typography>
         <Typography size="4x" weight="medium">
           스퀘어 인프라는 완전 자동화된 CI / CD 배포를 가능하게 제공합니다.
         </Typography>
-      </div>
-      <Typography
-        size="5x"
-        weight="medium"
-        onClick={handleNoticeClick}
-        style={{ cursor: "pointer" }}
-      >
+      </TextGroup>
+      <ClickableText size="5x" weight="medium" onClick={handleNoticeClick}>
         공지보기 →
-      </Typography>
-    </div>,
-    <div
-      key="deploy"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "48px",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: "13px" }}>
+      </ClickableText>
+    </TabContentWrapper>,
+    <TabContentWrapper key="deploy">
+      <TextGroup>
         <Typography size="5x" weight="semiBold">
           현재 XQUARE를 통하여 <Highlight>{deployCount}</Highlight>개의 서비스가
           배포되었어요.
@@ -81,25 +67,13 @@ const HomePage = () => {
         <Typography size="4x" weight="medium">
           Deployment를 통하여 배포된 서비스를 한 눈에 확인하세요.
         </Typography>
-      </div>
-      <Typography
-        size="5x"
-        weight="medium"
-        onClick={handleDeployClick}
-        style={{ cursor: "pointer" }}
-      >
+      </TextGroup>
+      <ClickableText size="5x" weight="medium" onClick={handleDeployClick}>
         바로가기 →
-      </Typography>
-    </div>,
-    <div
-      key="status"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "48px",
-      }}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: "13px" }}>
+      </ClickableText>
+    </TabContentWrapper>,
+    <TabContentWrapper key="status">
+      <TextGroup>
         <Typography size="5x" weight="semiBold">
           XQUARE를 통하여 시간당 <Highlight>{Traffic}</Highlight> 개의 요청을
           처리하고 있어요.
@@ -107,8 +81,8 @@ const HomePage = () => {
         <Typography size="4x" weight="medium">
           XQUARE 인프라를 통해 안정적인 서비스 운영이 가능합니다.
         </Typography>
-      </div>
-    </div>,
+      </TextGroup>
+    </TabContentWrapper>,
   ];
 
   return (
@@ -239,6 +213,22 @@ const Tab = styled.div<{ active?: boolean }>`
     active ? Xquare_colors.black : "transparent"};
   color: ${({ active }) =>
     active ? Xquare_colors.white : Xquare_colors.black};
+`;
+
+const TabContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+`;
+
+const TextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+`;
+
+const ClickableText = styled(Typography)`
+  cursor: pointer;
 `;
 
 const Contents = styled.div`

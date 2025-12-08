@@ -2,17 +2,24 @@ import styled from "@emotion/styled";
 import { NoticeItem } from "./noticeitem/index";
 import { Subtitle } from "../title/index";
 
-function Notice({ isHome }: { isHome: boolean }) {
+interface NoticeProps {
+  isHome: boolean;
+}
+
+function Notice({ isHome }: NoticeProps) {
   const items = [
     {
+      id: 1,
       NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
       date: "2024.06.01",
     },
     {
+      id: 2,
       NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
       date: "2024.06.01",
     },
     {
+      id: 3,
       NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
       date: "2024.06.01",
     },
@@ -27,9 +34,9 @@ function Notice({ isHome }: { isHome: boolean }) {
         subTitle={"xquare infrastructure 의 주요 수정사항 및, 공지사항"}
       ></Subtitle>
       <div>
-        {displayItems.map((item, index) => (
+        {displayItems.map((item) => (
           <NoticeItem
-            key={index}
+            key={item.id}
             NoticeValue={item.NoticeValue}
             date={item.date}
           />
