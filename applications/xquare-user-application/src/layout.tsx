@@ -18,19 +18,21 @@ function Layout({
 
   const navItems = [
     { id: "home", label: "HOME" },
-    { id: "notification", label: "NOTIFICATION" },
     { id: "deployment", label: "DEPLOYMENT" },
     { id: "network", label: "NETWORK" },
     { id: "monitor", label: "MONITOR" },
+    { id: "notice", label: "NOTICE" },
+    { id: "feed", label: "FEED" },
   ];
 
   const handleNavItemClick = (itemId: string) => {
     const routeMap: Record<string, string> = {
       home: "/",
-      notification: "/notification",
       deployment: "/deployment",
       network: "/network",
       monitor: "/monitor",
+      notice: "/notice",
+      feed: "/feed",
     };
 
     const path = routeMap[itemId];

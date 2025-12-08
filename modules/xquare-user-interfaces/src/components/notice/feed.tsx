@@ -5,15 +5,15 @@ import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
 
-interface NoticeProps {
+interface feedProps {
   page: number;
 }
 
-function Notice({ page }: NoticeProps) {
+function Feed({ page }: feedProps) {
   const navigate = useNavigate();
 
   function handleDeployClick() {
-    navigate("/notice");
+    navigate("/feed");
   }
 
   const items = [
@@ -68,11 +68,11 @@ function Notice({ page }: NoticeProps) {
     page === 1 ? items.slice(0, 4) : page === 2 ? items.slice(0, 7) : items;
 
   return (
-    <Noticecontainer page={page}>
+    <Feedcontainer page={page}>
       <TileArea>
         <Subtitle
-          title={`System Notice`}
-          subTitle={"xquare infrastructure 의 주요 수정사항 및, 공지사항"}
+          title={`XQUARE 소식 피드`}
+          subTitle={"team xquare 의 최신 소식"}
         ></Subtitle>
         {page !== 3 && (
           <ClickableText size="5x" weight="medium" onClick={handleDeployClick}>
@@ -89,11 +89,11 @@ function Notice({ page }: NoticeProps) {
           />
         ))}
       </div>
-    </Noticecontainer>
+    </Feedcontainer>
   );
 }
 
-const Noticecontainer = styled.div<NoticeProps>`
+const Feedcontainer = styled.div<feedProps>`
   display: flex;
   width: ${({ page }) => (page === 1 ? "55%" : page === 2 ? "50%" : "100%")};
   flex-direction: column;
@@ -116,4 +116,4 @@ const ClickableText = styled(Typography)`
   color: ${Xquare_colors.gray[500]};
 `;
 
-export { Notice };
+export { Feed };

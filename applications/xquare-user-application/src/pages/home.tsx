@@ -41,7 +41,7 @@ const HomePage = () => {
   }, [navigate]);
 
   const handleNoticeClick = useCallback(() => {
-    navigate("/notification");
+    navigate("/notice");
   }, [navigate]);
 
   const tabContents = [
@@ -162,8 +162,8 @@ const HomePage = () => {
         </ImgText>
       </HeroSection>
       <NoticeSection>
-        <Summary isHome />
-        <Notice isHome />
+        <Summary page={1} />
+        <Notice page={1} />
       </NoticeSection>
     </Container>
   );
