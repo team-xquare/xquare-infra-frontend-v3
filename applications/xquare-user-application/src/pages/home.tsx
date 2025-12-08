@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
   HomeImg,
@@ -10,16 +11,105 @@ import {
 } from "@xquare/user-interfaces";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(0);
+  const [deployCount, setDeployCount] = useState(0);
+  const [Traffic, setTraffic] = useState(0);
   const [username, setUsername] = useState("UserName");
 
   useEffect(() => {
     const fetchUser = async () => {
       // 로직
       setUsername(username);
+      setDeployCount(deployCount);
+      setTraffic(Traffic);
     };
 
     fetchUser();
-  }, [username]);
+  }, [username, deployCount, Traffic]);
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+  };
+
+  const handleDeployClick = () => {
+    navigate("/deployments");
+  };
+
+  const handleNoticeClick = () => {
+    navigate("/notification");
+  };
+
+  const tabContents = [
+    <div
+      key="notice"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "48px",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "13px" }}>
+        <Typography size="5x" weight="semiBold">
+          대덕소프트웨어마이스터고등학교 배포 플랫폼
+        </Typography>
+        <Typography size="4x" weight="medium">
+          스퀘어 인프라는 완전 자동화된 CI / CD 배포를 가능하게 제공합니다.
+        </Typography>
+      </div>
+      <Typography
+        size="5x"
+        weight="medium"
+        onClick={handleNoticeClick}
+        style={{ cursor: "pointer" }}
+      >
+        공지보기 →
+      </Typography>
+    </div>,
+    <div
+      key="deploy"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "48px",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "13px" }}>
+        <Typography size="5x" weight="semiBold">
+          현재 XQUARE를 통하여 <Highlight>{deployCount}</Highlight>개의 서비스가
+          배포되었어요.
+        </Typography>
+        <Typography size="4x" weight="medium">
+          Deployment를 통하여 배포된 서비스를 한 눈에 확인하세요.
+        </Typography>
+      </div>
+      <Typography
+        size="5x"
+        weight="medium"
+        onClick={handleDeployClick}
+        style={{ cursor: "pointer" }}
+      >
+        바로가기 →
+      </Typography>
+    </div>,
+    <div
+      key="status"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "48px",
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "13px" }}>
+        <Typography size="5x" weight="semiBold">
+          XQUARE를 통하여 시간당 <Highlight>{Traffic}</Highlight> 개의 요청을
+          처리하고 있어요.
+        </Typography>
+        <Typography size="4x" weight="medium">
+          XQUARE 인프라를 통해 안정적인 서비스 운영이 가능합니다.
+        </Typography>
+      </div>
+    </div>,
+  ];
 
   return (
     <Container>
@@ -31,8 +121,26 @@ const HomePage = () => {
       </ContentsArea>
 
       <NoticeContent>
-        <Menu></Menu>
-        <Contents></Contents>
+        <Menu>
+          {["서비스 공지", "서비스 배포", "서비스 상태"].map((label, index) => (
+            <Tab
+              key={index}
+              active={activeTab === index}
+              onClick={() => handleTabClick(index)}
+            >
+              <Typography
+                size="4x"
+                weight="medium"
+                align="left"
+                color="inherit"
+              >
+                {label}
+              </Typography>
+            </Tab>
+          ))}
+        </Menu>
+
+        <Contents>{tabContents[activeTab]}</Contents>
       </NoticeContent>
 
       <HeroSection>
@@ -80,8 +188,8 @@ const HomePage = () => {
         </ImgText>
       </HeroSection>
       <NoticeSection>
-        <Summary />
-        <Notice />
+        <Summary isHome={true} />
+        <Notice isHome={true} />
       </NoticeSection>
     </Container>
   );
@@ -108,7 +216,7 @@ const NoticeContent = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 170px;
+  height: 160px;
   padding-bottom: 10px;
   margin-bottom: 15px;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
@@ -117,21 +225,41 @@ const NoticeContent = styled.div`
 const Menu = styled.div`
   display: flex;
   flex-direction: column;
-  width: 10%;
-  height: 160px;
+  width: 15%;
+  height: 150px;
   border-right: 1px solid ${Xquare_colors.black};
+`;
+
+const Tab = styled.div<{ active?: boolean }>`
+  margin-bottom: 2px;
+  padding: 8px 0;
+  padding-left: 10px;
+  cursor: pointer;
+  background-color: ${({ active }) =>
+    active ? Xquare_colors.black : "transparent"};
+  color: ${({ active }) =>
+    active ? Xquare_colors.white : Xquare_colors.black};
 `;
 
 const Contents = styled.div`
   display: flex;
   flex-direction: column;
-  width: 90%;
-  height: 160px;
+  width: 85%;
+  height: 150px;
+  padding-left: 20px;
+  margin-top: 20px;
+`;
+
+const Highlight = styled.span`
+  background-color: ${Xquare_colors.green[500]};
+  padding: 2px 8px;
+  margin: 0 4px;
+  border-radius: 8px;
 `;
 
 const HeroSection = styled.div`
   width: 100%;
-  height: 190px;
+  height: 180px;
   border-radius: 12px;
   display: flex;
   padding: 0 30px;
@@ -151,7 +279,7 @@ const NoticeSection = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  min-height: 250px;
+  height: 230px;
   gap: 25px;
 `;
 

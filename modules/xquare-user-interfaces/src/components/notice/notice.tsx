@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { NoticeItem } from "./noticeitem/index";
 import { Subtitle } from "../title/index";
 
-function Notice() {
+function Notice({ isHome }: { isHome: boolean }) {
   const items = [
     {
       NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
@@ -18,6 +18,8 @@ function Notice() {
     },
   ];
 
+  const displayItems = isHome ? items.slice(0, 4) : items;
+
   return (
     <Summarycontainer>
       <Subtitle
@@ -25,8 +27,12 @@ function Notice() {
         subTitle={"xquare infrastructure 의 주요 수정사항 및, 공지사항"}
       ></Subtitle>
       <div>
-        {items.map((item) => (
-          <NoticeItem NoticeValue={item.NoticeValue} date={item.date} />
+        {displayItems.map((item, index) => (
+          <NoticeItem
+            key={index}
+            NoticeValue={item.NoticeValue}
+            date={item.date}
+          />
         ))}
       </div>
     </Summarycontainer>
