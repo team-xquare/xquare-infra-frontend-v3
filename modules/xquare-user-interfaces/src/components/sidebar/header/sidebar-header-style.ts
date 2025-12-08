@@ -11,7 +11,7 @@ export const SideBarHeader = styled.header`
   background-color: ${Xquare_colors.purple[700]};
   display: flex;
   justify-content: space-between;
-  min-width: 300px;
+  min-width: 280px;
 `;
 
 export const SideBarHeaderDiv = styled.div`

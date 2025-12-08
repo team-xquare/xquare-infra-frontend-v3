@@ -18,20 +18,20 @@ const TitleContainer = styled.div`
 `;
 
 const MainTitle = styled.h1`
-  font-size: 29px;
+  font-size: 26px;
   font-weight: 600;
   color: ${Xquare_colors.black};
   margin: 0;
 `;
 
 const SubTitle = styled.h2`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   color: ${Xquare_colors.black};
   margin-bottom: 4px;
 `;
 
-const Title: React.FC<TitleProps> = ({ title, subTitle }) => {
+const Subtitle: React.FC<TitleProps> = ({ title, subTitle }) => {
   return (
     <TitleContainer>
       <MainTitle>{title}</MainTitle>
@@ -40,4 +40,4 @@ const Title: React.FC<TitleProps> = ({ title, subTitle }) => {
   );
 };
 
-export { Title };
+export { Subtitle };

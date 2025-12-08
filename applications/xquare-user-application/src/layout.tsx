@@ -48,7 +48,7 @@ function Layout({
         onNavItemClick={handleNavItemClick}
         onSearch={onSearch}
       />
-      {children}
+      <Page>{children}</Page>
     </Container>
   );
 }
@@ -56,6 +56,13 @@ function Layout({
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+`;
+
+const Page = styled.div`
+  margin-left: 280px;
+  width: calc(100% - 280px);
+  height: 100vh;
+  overflow-y: auto;
 `;
 
 export default Layout;
