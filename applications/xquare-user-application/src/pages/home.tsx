@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -13,9 +13,9 @@ import {
 const HomePage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
-  const [deployCount, setDeployCount] = useState(0);
-  const [Traffic, setTraffic] = useState(0);
-  const [username, setUsername] = useState("UserName");
+  const [deployCount, setDeployCount] = useState<number>(0);
+  const [traffic, setTraffic] = useState<number>(0);
+  const [username, setUsername] = useState<string>("UserName");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -32,17 +32,17 @@ const HomePage = () => {
     fetchUser();
   }, []);
 
-  const handleTabClick = (index: number) => {
+  const handleTabClick = useCallback((index: number) => {
     setActiveTab(index);
-  };
+  }, []);
 
-  const handleDeployClick = () => {
+  const handleDeployClick = useCallback(() => {
     navigate("/deployments");
-  };
+  }, [navigate]);
 
-  const handleNoticeClick = () => {
+  const handleNoticeClick = useCallback(() => {
     navigate("/notification");
-  };
+  }, [navigate]);
 
   const tabContents = [
     <TabContentWrapper key="notice">
@@ -75,7 +75,7 @@ const HomePage = () => {
     <TabContentWrapper key="status">
       <TextGroup>
         <Typography size="5x" weight="semiBold">
-          XQUARE를 통하여 시간당 <Highlight>{Traffic}</Highlight> 개의 요청을
+          XQUARE를 통하여 시간당 <Highlight>{traffic}</Highlight> 개의 요청을
           처리하고 있어요.
         </Typography>
         <Typography size="4x" weight="medium">
@@ -162,8 +162,8 @@ const HomePage = () => {
         </ImgText>
       </HeroSection>
       <NoticeSection>
-        <Summary isHome={true} />
-        <Notice isHome={true} />
+        <Summary isHome />
+        <Notice isHome />
       </NoticeSection>
     </Container>
   );
@@ -273,4 +273,4 @@ const NoticeSection = styled.div`
   gap: 25px;
 `;
 
-export default HomePage;
+export default React.memo(HomePage);
