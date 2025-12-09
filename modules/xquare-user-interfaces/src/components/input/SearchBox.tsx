@@ -20,19 +20,20 @@ const StyledInput = styled.input<SearchBoxProps>`
   box-sizing: border-box;
 
   background-color: ${Xquare_colors.white};
-  border: 2px solid ${Xquare_colors.purple[500]};
+  border: 2px solid ${Xquare_colors.gray[400]};
   border-radius: 30px;
+  outline: none;
 
   padding: 22px;
 
-  color: ${Xquare_colors.purple[600]};
+  color: ${Xquare_colors.gray[400]};
   font-family: "Pretendard";
   font-size: 1.15rem;
   font-weight: 400;
   line-height: 1rem;
 
   &::placeholder {
-    color: ${Xquare_colors.gray[600]};
+    color: ${Xquare_colors.gray[400]};
   }
 
   &:disabled {
@@ -41,6 +42,15 @@ const StyledInput = styled.input<SearchBoxProps>`
 
     &::placeholder {
       color: ${Xquare_colors.gray[300]};
+    }
+  }
+
+  &:focus {
+    border: 2px solid ${Xquare_colors.purple[400]};
+    color: ${Xquare_colors.purple[400]};
+
+    &::placeholder {
+      color: ${Xquare_colors.purple[400]};
     }
   }
 `;

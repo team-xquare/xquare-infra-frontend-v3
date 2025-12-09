@@ -8,8 +8,10 @@ import SignupPage from "./pages/signup";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 import FeedPage from "./pages/feedpage";
+import MonitorPage from "./pages/monitor";
 import NoticeView from "./pages/noticeview";
 import AddonPage from "./pages/addonpage";
+import DeploymentHome from "./pages/deploymenthome";
 
 function App() {
   return (
@@ -29,10 +31,28 @@ function App() {
         />
 
         <Route
+          path="/deployment"
+          element={
+            <Layout>
+              <DeploymentHome />
+            </Layout>
+          }
+        />
+
+        <Route
           path="/addons"
           element={
             <Layout>
               <AddonPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/monitor"
+          element={
+            <Layout>
+              <MonitorPage />
             </Layout>
           }
         />
