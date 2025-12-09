@@ -1,13 +1,15 @@
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
-import { PodImg, DatabaseImg, Typography } from "../../../index";
+import { Typography } from "../typography";
+import PodImg from "../../assets/pod.svg";
+import DatabaseImg from "../../assets/db.svg";
 
 interface AddonItemProps {
   title: string;
   domain: string;
   type: string;
   description: string;
-  traefix: number;
+  traffic: number;
   health: number;
   lastdeploy: string;
   lastbuild: string;
@@ -19,7 +21,7 @@ function AddonItem({
   domain = "https://undefined.dsmhs.kr",
   type = "pod",
   description = "서비스 설명이 없습니다.",
-  traefix = 0,
+  traffic = 0,
   health = 1,
   lastdeploy = "0000.00.00",
   lastbuild = "0000.00.00",
@@ -49,7 +51,7 @@ function AddonItem({
           {description}
         </Typography>
         <Status>
-          <Set>
+          <ItemSet>
             <Typography size="4x" weight="semiBold">
               Traffic
             </Typography>
@@ -59,8 +61,8 @@ function AddonItem({
                 <Box key={idx} isFirst={idx === 0 && health <= 2} />
               ))}
             </TrafficWrapper>
-          </Set>
-          <Set>
+          </ItemSet>
+          <ItemSet>
             <Typography size="4x" weight="semiBold">
               {"Traefix"}
             </Typography>
@@ -69,12 +71,12 @@ function AddonItem({
               weight="regular"
               color={String(Xquare_colors.gray[500])}
             >
-              {traefix}req/sec
+              {traffic}req/sec
             </Typography>
-          </Set>
+          </ItemSet>
         </Status>
         <Status>
-          <Set>
+          <ItemSet>
             <Typography size="4x" weight="semiBold">
               Last Deploy
             </Typography>
@@ -85,8 +87,8 @@ function AddonItem({
             >
               {lastdeploy}
             </Typography>
-          </Set>
-          <Set>
+          </ItemSet>
+          <ItemSet>
             <Typography size="4x" weight="semiBold">
               Last Build
             </Typography>
@@ -97,7 +99,7 @@ function AddonItem({
             >
               {lastbuild}
             </Typography>
-          </Set>
+          </ItemSet>
         </Status>
       </Contents>
 
@@ -168,7 +170,7 @@ const Status = styled.div`
   gap: 25px;
 `;
 
-const Set = styled.div`
+const ItemSet = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;

@@ -7,14 +7,16 @@ import {
 } from "@xquare/user-interfaces";
 
 function AddonPage() {
-  const handleAddAddonClick = () => {};
+  const handleAddAddonClick = () => {
+    // TODO: Addon 추가하기 클릭 시 동작 구현
+  };
   const displayItems = [
     {
       title: "Redis Addon",
       domain: "redis.xquare.dev",
       type: "pod",
       description: "Redis service for caching and management.",
-      traefix: 10,
+      traffic: 10,
       health: 3,
       lastdeploy: "2024.06.01",
       lastbuild: "2024.06.01",
@@ -25,7 +27,7 @@ function AddonPage() {
       domain: "redis.xquare.dev",
       type: "pod",
       description: "Redis service for caching and management.",
-      traefix: 10,
+      traffic: 10,
       health: 1,
       lastdeploy: "2024.06.01",
       lastbuild: "2024.06.01",
@@ -36,7 +38,7 @@ function AddonPage() {
       domain: "redis.xquare.dev",
       type: "pod",
       description: "Redis service for caching and management.",
-      traefix: 10,
+      traffic: 10,
       health: 2,
       lastdeploy: "2024.06.01",
       lastbuild: "2024.06.01",
@@ -55,13 +57,14 @@ function AddonPage() {
         </Button_round>
       </ContentsArea>
       <Addons>
-        {displayItems.map((item) => (
+        {displayItems.map((item, index) => (
           <AddonItem
+            key={`addon-${index}`}
             title={item.title}
             domain={item.domain}
             type={item.type}
             description={item.description}
-            traefix={Number(item.traefix)}
+            traffic={Number(item.traffic)}
             health={Number(item.health)}
             lastdeploy={item.lastdeploy}
             lastbuild={item.lastbuild}
