@@ -19,7 +19,7 @@ function Layout({
   const navItems = [
     { id: "home", label: "HOME", path: "/" },
     { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
-    { id: "network", label: "NETWORK", path: "/network" },
+    { id: "addons", label: "ADDONS", path: "/addons" },
     { id: "monitor", label: "MONITOR", path: "/monitor" },
     { id: "notice", label: "NOTICE", path: "/notice" },
     { id: "feed", label: "FEED", path: "/feed" },
@@ -29,7 +29,7 @@ function Layout({
     const routeMap: Record<string, string> = {
       home: "/",
       deployment: "/deployment",
-      network: "/network",
+      addons: "/addons",
       monitor: "/monitor",
       notice: "/notice",
       feed: "/feed",
