@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { SummaryItem } from "./summaryitem/index";
@@ -68,7 +68,7 @@ function Summary({ page }: SummaryProps) {
     navigate("/monitor");
   }
 
-  const [searchValue, setSearchValue] = React.useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <Summarycontainer page={page}>
