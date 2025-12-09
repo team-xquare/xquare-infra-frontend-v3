@@ -1,3 +1,4 @@
+export * from "./src/components/deploymentitem/index";
 export * from "./src/components/typography/index";
 export * from "./src/components/addonsitem/index";
 export * from "./src/components/sidebar/index";

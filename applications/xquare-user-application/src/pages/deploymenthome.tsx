@@ -6,6 +6,7 @@ import {
   Title,
   Xquare_colors,
   Button_round,
+  DeploymentItem,
 } from "@xquare/user-interfaces";
 
 const DeploymentHome = () => {
@@ -18,6 +19,30 @@ const DeploymentHome = () => {
     // Addons 추가하기 버튼 클릭 시 동작할 함수
     console.log("Addons 추가하기 버튼 클릭됨");
   };
+
+  const displayItems = [
+    {
+      title: "My First Deployment",
+      domain: "https://first-deployment.dsmhs.kr",
+      type: "pod",
+      description: "This is the first deployment of my service.",
+      charge: "Alice Johnson",
+    },
+    {
+      title: "Database Service",
+      domain: "https://db-service.dsmhs.kr",
+      type: "database",
+      description: "Managed database service for applications.",
+      charge: "Bob Smith",
+    },
+    {
+      title: "Analytics Pod",
+      domain: "https://analytics-pod.dsmhs.kr",
+      type: "pod",
+      description: "Pod for handling analytics data processing.",
+      charge: "Charlie Brown",
+    },
+  ];
   return (
     <Container>
       <ContentsArea>
@@ -47,7 +72,18 @@ const DeploymentHome = () => {
           </Typography>
         </ImgText>
       </HeroSection>
-      <DploymentSell></DploymentSell>
+      <DploymentSell>
+        {displayItems.map((item, index) => (
+          <DeploymentItem
+            key={`addon-${index}`}
+            title={item.title}
+            domain={item.domain}
+            type={item.type}
+            description={item.description}
+            charge={item.charge}
+          />
+        ))}
+      </DploymentSell>
     </Container>
   );
 };
@@ -91,8 +127,12 @@ const ImgText = styled.div`
 `;
 
 const DploymentSell = styled.div`
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+  grid-auto-rows: auto;
   width: 100%;
-  min-height: 200px;
+  row-gap: 20px;
 `;
 
 export default React.memo(DeploymentHome);
