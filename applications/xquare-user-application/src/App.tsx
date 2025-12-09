@@ -9,6 +9,7 @@ import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 import FeedPage from "./pages/feedpage";
 import NoticeView from "./pages/noticeview";
+import AddonPage from "./pages/addonpage";
 
 function App() {
   return (
@@ -23,6 +24,15 @@ function App() {
           element={
             <Layout>
               <HomePage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/addons"
+          element={
+            <Layout>
+              <AddonPage />
             </Layout>
           }
         />

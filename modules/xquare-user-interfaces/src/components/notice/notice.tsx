@@ -71,7 +71,7 @@ function Notice({ page }: NoticeProps) {
     <Noticecontainer page={page}>
       <TileArea>
         <Subtitle
-          title={`System Notice`}
+          title={`XQUARE 공지사항`}
           subTitle={"xquare infrastructure 의 주요 수정사항 및, 공지사항"}
         ></Subtitle>
         {page !== 3 && (
