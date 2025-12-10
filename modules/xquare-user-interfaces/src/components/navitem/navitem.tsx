@@ -48,8 +48,8 @@ export const NavItem: React.FC<ButtonProps> = ({
   active = false,
   onClick,
 }) => {
-  return +(
-    <StyledButton active={active} onClick={onClick} type="button">
+  return (
+    <StyledButton active={active} onClick={onClick}>
       {children}
     </StyledButton>
   );
