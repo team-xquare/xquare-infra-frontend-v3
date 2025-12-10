@@ -75,6 +75,7 @@ const DeploymentHome = () => {
       <DploymentSell>
         {displayItems.map((item, index) => (
           <DeploymentItem
+            id={`addon-${index}`}
             key={`addon-${index}`}
             title={item.title}
             domain={item.domain}

@@ -6,7 +6,7 @@ import PodImg from "../../assets/pod.svg";
 import DatabaseImg from "../../assets/db.svg";
 
 interface DeploymentItemProps {
-  id?: string;
+  id: string;
   title: string;
   domain: string;
   type: string;

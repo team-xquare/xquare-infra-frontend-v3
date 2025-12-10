@@ -15,8 +15,7 @@ import AddonPage from "./pages/addonpage";
 import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
 
-function App() {
-  const art = `
+const art = `
                                                               
   ##     ##  #######  ##     ##    ###    ########  ########  
    ##   ##  ##     ## ##     ##   ## ##   ##     ## ##        
@@ -28,6 +27,7 @@ function App() {
                                                               
 `;
 
+function App() {
   console.log(art);
   return (
     <>
@@ -55,7 +55,7 @@ function App() {
         />
 
         <Route
-          path="/deployment/view/:id/"
+          path="/deployment/view/:id"
           element={
             <Layout>
               <DeploymentView />

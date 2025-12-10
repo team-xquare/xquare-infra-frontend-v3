@@ -26,6 +26,7 @@ export default function RoutesContents({
         { url: "PORT", port: 8080 },
       ];
       setRoutes(dummy);
+      setIsDirty(false);
     };
 
     loadDummy();
@@ -74,7 +75,6 @@ export default function RoutesContents({
               placeholder="URL"
               width="850px"
               height="35px"
-              type="number"
               disabled={!editable}
               align="left"
             />

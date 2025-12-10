@@ -88,8 +88,6 @@ function Feed({ page }: FeedProps) {
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="검색어를 입력하세요"
-            disabled={false}
-            type="text"
             width="300px"
             height="20px"
           />

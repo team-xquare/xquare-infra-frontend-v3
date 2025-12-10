@@ -25,7 +25,7 @@ function SecretContents() {
   const domain = "userdb.xquare.app";
   const description = "Database for user information storage.";
   const type = "database";
-  const rapository = "1200-1300 ";
+  const repository = "1200-1300 ";
   const owner = "john.doe";
   const health = 3; // 1 to 5
   const lastDeploy = "2025-10-10 15:00";
@@ -57,7 +57,7 @@ function SecretContents() {
           </Typography>
           <Status>
             <Typography size="5x" weight="semiBold">
-              Rapository
+              Repository
             </Typography>
 
             <Typography
@@ -65,7 +65,7 @@ function SecretContents() {
               weight="semiBold"
               color={String(Xquare_colors.gray[500])}
             >
-              {rapository}
+              {repository}
             </Typography>
           </Status>
           <Status>

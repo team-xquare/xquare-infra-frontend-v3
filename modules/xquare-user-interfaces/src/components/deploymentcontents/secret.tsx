@@ -5,6 +5,7 @@ import { Typography } from "../typography/index";
 import { Xquare_colors } from "../../styles/colors";
 
 interface SecretItem {
+  id: string;
   key: string;
   value: string;
 }
@@ -22,8 +23,8 @@ export default function SecretContents({
   useEffect(() => {
     const loadDummy = async () => {
       const dummy = [
-        { key: "API_KEY", value: "1234" },
-        { key: "PORT", value: "8080" },
+        { id: "1", key: "API_KEY", value: "1234" },
+        { id: "2", key: "PORT", value: "8080" },
       ];
       setSecrets(dummy);
     };
@@ -51,7 +52,10 @@ export default function SecretContents({
   };
 
   const addSecret = () => {
-    setSecrets((prev) => [...prev, { key: "", value: "" }]);
+    setSecrets((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), key: "", value: "" },
+    ]);
     setIsDirty(true);
   };
 
@@ -67,7 +71,7 @@ export default function SecretContents({
           Secret
         </Typography>
         {secrets.map((item, i) => (
-          <InputArea key={i}>
+          <InputArea key={item.id}>
             <Input_basic
               value={item.key}
               onChange={(e) => handleKeyChange(i, e.target.value)}
@@ -138,13 +142,13 @@ const InputArea = styled.div`
 const AddBtn = styled.button`
   background: none;
   border: none;
-  color: ${Xquare_colors.gray[600]};
+  color: ${Xquare_colors.gray[500]};
   cursor: pointer;
   font-size: 0.9rem;
   margin-bottom: 1rem;
 
   &:hover {
-    color: ${Xquare_colors.gray[800]};
+    color: ${Xquare_colors.gray[400]};
   }
 `;
 
