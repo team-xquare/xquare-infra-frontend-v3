@@ -12,8 +12,6 @@ function DeploymentContents({
   editable: boolean;
 }) {
   const PageId = id;
-  const servicename = "undefined";
-  const servicerecord = "undefined";
   const [repoName, setRepoName] = useState("pageid-" + PageId);
   const [repoOwner, setRepoOwner] = useState("");
   const [installationId, setInstallationId] = useState("");
@@ -61,17 +59,6 @@ function DeploymentContents({
 
   return (
     <Container>
-      <InfoBox>
-        <Img></Img>
-        <Text>
-          <Typography size="7x" weight="bold">
-            {servicename}
-          </Typography>
-          <Typography size="5x" weight="regular">
-            {servicerecord}
-          </Typography>
-        </Text>
-      </InfoBox>
       <ValueBox>
         <Typography size="6x" weight="bold">
           Repository
@@ -235,36 +222,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`;
-
-const InfoBox = styled.div`
-  width: 100%;
-  height: auto;
-
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 5px;
-
-  margin-bottom: 2rem;
-`;
-
-const Img = styled.div`
-  width: 70px;
-  height: 70px;
-  margin-right: 2rem;
-
-  background-color: ${Xquare_colors.gray[200]};
-  border-radius: 12px;
-`;
-
-const Text = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 0.8rem;
+  gap: 2rem;
 `;
 
 const ValueBox = styled.div`
@@ -276,7 +234,6 @@ const ValueBox = styled.div`
   align-items: flex-start;
   justify-content: center;
   gap: 1.2rem;
-  margin-bottom: 2rem;
 `;
 
 const InputArea = styled.div`
