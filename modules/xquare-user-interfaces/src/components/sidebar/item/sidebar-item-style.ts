@@ -30,7 +30,7 @@ export const SideBarMenuItemWrapper = styled.div`
 
 export const SideBarMenuItemLabel = styled.span<SideBarMenuItemLabelProps>`
   color: ${(props) =>
-    props.isActive ? Xquare_colors.white : Xquare_colors.purple[600]};
+    props.isActive ? Xquare_colors.white : Xquare_colors.purple[500]};
   font-size: ${LABEL_FONT_SIZE};
   font-style: normal;
   font-weight: ${LABEL_FONT_WEIGHT};

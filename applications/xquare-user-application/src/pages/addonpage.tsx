@@ -52,7 +52,7 @@ function AddonPage() {
           title={`Addons`}
           subTitle={"Deploy addons via xquare infra"}
         ></Title>
-        <Button_round width="170px" onClick={handleAddAddonClick}>
+        <Button_round width="150px" onClick={handleAddAddonClick}>
           Addons 추가하기
         </Button_round>
       </ContentsArea>

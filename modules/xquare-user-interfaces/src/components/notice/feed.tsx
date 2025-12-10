@@ -1,8 +1,10 @@
+import { useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { NoticeItem } from "./noticeitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
+import { SearchBox } from "../input/index";
 import Xquare_colors from "../../styles";
 
 interface FeedProps {
@@ -67,6 +69,8 @@ function Feed({ page }: FeedProps) {
   const displayItems =
     page === 1 ? items.slice(0, 4) : page === 2 ? items.slice(0, 7) : items;
 
+  const [searchValue, setSearchValue] = useState("");
+
   return (
     <Feedcontainer page={page}>
       <TileArea>
@@ -78,6 +82,15 @@ function Feed({ page }: FeedProps) {
           <ClickableText size="5x" weight="medium" onClick={handleDeployClick}>
             전체보기 →
           </ClickableText>
+        )}
+        {page === 3 && (
+          <SearchBox
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="검색어를 입력하세요"
+            width="300px"
+            height="20px"
+          />
         )}
       </TileArea>
       <div>

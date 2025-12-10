@@ -8,10 +8,27 @@ import SignupPage from "./pages/signup";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 import FeedPage from "./pages/feedpage";
+import MonitorPage from "./pages/monitor";
 import NoticeView from "./pages/noticeview";
+import FeedView from "./pages/feedview";
 import AddonPage from "./pages/addonpage";
+import DeploymentHome from "./pages/deploymenthome";
+import DeploymentView from "./pages/deploymentview";
+
+const art = `
+                                                              
+  ##     ##  #######  ##     ##    ###    ########  ########  
+   ##   ##  ##     ## ##     ##   ## ##   ##     ## ##        
+    ## ##   ##     ## ##     ##  ##   ##  ##     ## ##        
+     ###    ##     ## ##     ## ##     ## ########  #######   
+    ## ##   ##  ## ## ##     ## ######### ##   ##   ##        
+   ##   ##  ##    ##  ##     ## ##     ## ##    ##  ##        
+  ##     ##  ##### ##  #######  ##     ## ##     ## ########  
+                                                              
+`;
 
 function App() {
+  console.log(art);
   return (
     <>
       <Global styles={globalStyles} />
@@ -29,10 +46,37 @@ function App() {
         />
 
         <Route
+          path="/deployment"
+          element={
+            <Layout>
+              <DeploymentHome />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/deployment/view/:id"
+          element={
+            <Layout>
+              <DeploymentView />
+            </Layout>
+          }
+        />
+
+        <Route
           path="/addons"
           element={
             <Layout>
               <AddonPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/monitor"
+          element={
+            <Layout>
+              <MonitorPage />
             </Layout>
           }
         />
@@ -68,7 +112,7 @@ function App() {
           path="/feed/view/:id"
           element={
             <Layout>
-              <NoticeView />
+              <FeedView />
             </Layout>
           }
         />

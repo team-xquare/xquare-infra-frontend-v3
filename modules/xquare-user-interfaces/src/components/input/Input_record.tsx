@@ -27,8 +27,8 @@ const StyledInput = styled.input<InputProps>`
 
   color: ${Xquare_colors.white};
   font-family: "Pretendard";
-  font-size: 1.15rem;
-  font-weight: 400;
+  font-size: 1rem;
+  font-weight: 300;
   line-height: 1rem;
 
   &::placeholder {
@@ -37,10 +37,10 @@ const StyledInput = styled.input<InputProps>`
 
   &:focus {
     outline: none;
-    color: ${Xquare_colors.purple[300]};
+    color: ${Xquare_colors.white};
 
     &::placeholder {
-      color: ${Xquare_colors.purple[300]};
+      color: ${Xquare_colors.white};
     }
   }
 

@@ -1,12 +1,18 @@
+import { useState } from "react";
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 import { SummaryItem } from "./summaryitem/index";
 import { Subtitle } from "../title/index";
+import { Typography } from "../typography/index";
+import Xquare_colors from "../../styles";
+import { SearchBox } from "../input";
 
 interface SummaryProps {
   page?: number;
 }
 
 function Summary({ page }: SummaryProps) {
+  const navigate = useNavigate();
   const items = [
     {
       id: 1,
@@ -55,11 +61,36 @@ function Summary({ page }: SummaryProps) {
     },
   ];
 
-  const displayItems = page === 1 ? items.slice(0, 4) : items;
+  const displayItems =
+    page === 1 ? items.slice(0, 4) : page === 2 ? items.slice(0, 3) : items;
+
+  function handleViewAllClick() {
+    navigate("/monitor");
+  }
+
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <Summarycontainer page={page}>
-      <Subtitle title={`Summary`} subTitle={"service status"} />
+      <TileArea>
+        <Subtitle title={`Summary`} subTitle={"service status"} />
+        {page !== 3 && (
+          <ClickableText size="5x" weight="medium" onClick={handleViewAllClick}>
+            전체보기 →
+          </ClickableText>
+        )}
+        {page === 3 && (
+          <SearchBox
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="검색어를 입력하세요"
+            disabled={false}
+            type="text"
+            width="300px"
+            height="20px"
+          />
+        )}
+      </TileArea>
       <div>
         {displayItems.map((item) => (
           <SummaryItem
@@ -74,9 +105,25 @@ function Summary({ page }: SummaryProps) {
 
 const Summarycontainer = styled.div<SummaryProps>`
   display: flex;
-  width: ${({ page }) => (page === 1 ? "45%" : "100%")};
+  width: ${({ page }) => (page === 1 ? "45%" : page === 2 ? "100%" : "100%")};
   flex-direction: column;
   gap: 10px;
+`;
+
+const TileArea = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ClickableText = styled(Typography)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: ${Xquare_colors.gray[500]};
 `;
 
 export { Summary };
