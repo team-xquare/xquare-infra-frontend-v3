@@ -11,7 +11,7 @@ export interface ButtonProps {
 // 스타일 정의
 const StyledButton = styled.button<ButtonProps>`
   width: auto;
-  height: 32px;
+  height: 100%;
 
   display: flex;
   align-items: center;
@@ -19,7 +19,6 @@ const StyledButton = styled.button<ButtonProps>`
 
   border-radius: 11px;
 
-  font-family: "Pretendard";
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;

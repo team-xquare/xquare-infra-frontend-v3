@@ -16,6 +16,7 @@ import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
 import CreateApplication from "./pages/createapplication";
 import CreateAddon from "./pages/createaddon";
+import NotFound from "./pages/Pagenotfound";
 
 const art = `
                                                               
@@ -136,6 +137,8 @@ function App() {
             </Layout>
           }
         />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

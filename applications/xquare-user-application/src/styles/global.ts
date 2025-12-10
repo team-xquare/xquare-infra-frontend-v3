@@ -1,4 +1,5 @@
 import { css } from "@emotion/react";
+import "../../../../modules/xquare-user-interfaces/src/styles/font.css";
 
 const globalStyles = css`
   *,
@@ -36,6 +37,21 @@ const globalStyles = css`
   body,
   #root {
     height: 100%;
+  }
+
+  * {
+    font-family:
+      "Pretendard",
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      "Helvetica Neue",
+      "Segoe UI",
+      "Apple SD Gothic Neo",
+      "Noto Sans KR",
+      "Malgun Gothic",
+      sans-serif;
   }
 `;
 

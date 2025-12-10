@@ -16,8 +16,9 @@ const CreateApplication = () => {
   const [tier, setTier] = useState("nano"); // 기본값 nano
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
-  const [installationId, setInstallationId] = useState("");
+  // const [installationId, setInstallationId] = useState("");
   const [branch, setBranch] = useState("");
+  const [triggerPaths, setTriggerPaths] = useState<string[]>([""]);
   const [buildTools, setBuildTools] = useState("");
   const [javaVersion, setJavaVersion] = useState("");
   const [startCommand, setStartCommand] = useState("");
@@ -34,8 +35,9 @@ const CreateApplication = () => {
     tier.trim() !== "" &&
     repoName.trim() !== "" &&
     repoOwner.trim() !== "" &&
-    installationId.trim() !== "" &&
+    // installationId.trim() !== "" &&
     branch.trim() !== "" &&
+    triggerPaths.every((path) => path.trim() !== "") &&
     buildTools.trim() !== "" &&
     javaVersion.trim() !== "" &&
     workingDirectory.trim() !== "" &&
@@ -136,20 +138,6 @@ const CreateApplication = () => {
           </InputArea>
           <InputArea>
             <Typography size="5x" weight="semiBold">
-              Installation ID
-            </Typography>
-            <Input_basic
-              value={installationId}
-              onChange={(e) => {
-                setInstallationId(e.target.value);
-              }}
-              placeholder="Installation ID"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
               Branch
             </Typography>
             <Input_basic
@@ -162,6 +150,54 @@ const CreateApplication = () => {
               height="35px"
             />
           </InputArea>
+          <InputAreaSecond>
+            <InputAreaVertical>
+              <Typography size="5x" weight="semiBold">
+                Trigger Paths
+              </Typography>
+
+              {triggerPaths.map((path, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    gap: "1rem",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <Input_record
+                    value={path}
+                    onChange={(e) =>
+                      setTriggerPaths((prev) =>
+                        prev.map((p, idx) => (idx === i ? e.target.value : p)),
+                      )
+                    }
+                    placeholder="ex) src/main/**"
+                    width="100%"
+                    height="35px"
+                  />
+
+                  {triggerPaths.length > 1 && (
+                    <DeleteBtn
+                      onClick={() =>
+                        setTriggerPaths((prev) =>
+                          prev.filter((_, idx) => idx !== i),
+                        )
+                      }
+                    >
+                      삭제
+                    </DeleteBtn>
+                  )}
+                </div>
+              ))}
+
+              <AddBtn onClick={() => setTriggerPaths((prev) => [...prev, ""])}>
+                + 추가
+              </AddBtn>
+            </InputAreaVertical>
+          </InputAreaSecond>
         </ValueBox>
         <ValueBox>
           <Typography size="5x" weight="bold">
@@ -411,14 +447,13 @@ const InputAreaVertical = styled.div`
 const AddBtn = styled.button`
   background: none;
   border: none;
-  color: ${Xquare_colors.gray[600]};
+  color: ${Xquare_colors.gray[500]};
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-bottom: 1rem;
-  padding-left: 40px;
 
   &:hover {
-    color: ${Xquare_colors.gray[800]};
+    color: ${Xquare_colors.gray[400]};
   }
 `;
 

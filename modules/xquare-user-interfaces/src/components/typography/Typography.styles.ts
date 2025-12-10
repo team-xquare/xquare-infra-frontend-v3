@@ -33,7 +33,6 @@ export const Typography = styled.span<{
   $align: "left" | "center" | "right" | "justify";
   $underline: boolean;
 }>`
-  font-family: "Pretendard";
   font-size: ${({ $size }) => fontSizes[$size]};
   font-weight: ${({ $weight }) => fontWeights[$weight]};
   color: ${({ $color }) => $color};

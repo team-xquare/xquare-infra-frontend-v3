@@ -25,7 +25,6 @@ export const SideBarHeaderDiv = styled.div`
 
 export const SideBarHeaderNameSpan = styled.span`
   color: ${Xquare_colors.white};
-  font-family: "Pretendard";
   font-size: ${TEXT_FONT_SIZE};
   font-style: normal;
   font-weight: ${TEXT_FONT_WEIGHT};
@@ -41,7 +40,6 @@ export const SideBarHeaderDescriptionDiv = styled.div`
 
 export const SideBarHeaderDescriptionDivSpan = styled.span`
   color: ${Xquare_colors.white};
-  font-family: "Pretendard";
   font-size: ${TEXT_FONT_SIZE};
   font-style: normal;
   font-weight: ${TEXT_FONT_WEIGHT};

@@ -7,51 +7,79 @@ import { Input_basic, Input_record } from "../input";
 function DeploymentContents({
   id,
   editable,
+  onSave,
 }: {
   id: number;
   editable: boolean;
+  onSave: () => void;
 }) {
-  const PageId = id;
-  const [repoName, setRepoName] = useState("pageid-" + PageId);
-  const [repoOwner, setRepoOwner] = useState("");
-  const [installationId, setInstallationId] = useState("");
-  const [commit, setCommit] = useState("");
-  const [isDirty1, setIsDirty1] = useState(false);
+  const [owner, setOwner] = useState(id.toString());
+  const [repo, setRepo] = useState("");
+  const [branch, setBranch] = useState("main");
+  // const [installationId, setInstallationId] = useState("");
+  // const [hash, setHash] = useState(id.toString());
+  const [triggerPaths, setTriggerPaths] = useState<string[]>([]);
 
-  const handleSave1 = async () => {
+  const [isDirtyGithub, setIsDirtyGithub] = useState(false);
+
+  const handleAddTriggerPath = () => {
+    setTriggerPaths([...triggerPaths, ""]);
+    setIsDirtyGithub(true);
+  };
+
+  const handleChangeTriggerPath = (index: number, value: string) => {
+    const updated = [...triggerPaths];
+    updated[index] = value;
+    setTriggerPaths(updated);
+    setIsDirtyGithub(true);
+  };
+
+  const handleSaveGithub = async () => {
     try {
       // const body = {
-      //   repoName,
-      //   repoOwner,
+      //   owner,
+      //   repo,
+      //   branch,
       //   installationId,
-      //   commit,
+      //   hash,
+      //   triggerPaths,
       // };
 
-      // 여기에 API 호출 로직 추가
+      // API 로직 들어갈 자리
 
-      window.location.reload();
-      setIsDirty1(false);
+      setIsDirtyGithub(false);
+      onSave();
     } catch (err) {
       console.error(err);
     }
   };
 
-  const [buildTools, setBuildTools] = useState("");
-  const [javaVersion, setJavaVersion] = useState("");
-  const [buildpath, setBuildpath] = useState("");
-  const [buildcommand, setBuildcommand] = useState("");
-  const [isDirty2, setIsDirty2] = useState(false);
+  const [type, setType] = useState("gradle");
+  const [version, setVersion] = useState("");
+  const [buildCommand, setBuildCommand] = useState("");
+  const [startCommand, setStartCommand] = useState("");
+  const [inputPath, setInputPath] = useState("");
+  const [outputPath, setOutputPath] = useState("");
+  const [workingDirectory, setWorkingDirectory] = useState("");
 
-  const handleSave2 = async () => {
+  const [isDirtyBuild, setIsDirtyBuild] = useState(false);
+
+  const handleSaveBuild = async () => {
     try {
       // const body = {
-      //   buildTools,
-      //   javaVersion,
+      //   type,
+      //   version,
+      //   buildCommand,
+      //   startCommand,
+      //   inputPath,
+      //   outputPath,
+      //   workingDirectory,
       // };
 
-      // 여기에 API 호출 로직 추가
-      window.location.reload();
-      setIsDirty2(false);
+      // API 로직 들어갈 자리
+
+      setIsDirtyBuild(false);
+      onSave();
     } catch (err) {
       console.error(err);
     }
@@ -61,17 +89,18 @@ function DeploymentContents({
     <Container>
       <ValueBox>
         <Typography size="6x" weight="bold">
-          Repository
+          GitHub
         </Typography>
+
         <InputArea>
           <Typography size="5x" weight="semiBold">
-            Repository Name
+            Repository
           </Typography>
           <Input_basic
-            value={repoName}
+            value={repo}
             onChange={(e) => {
-              setRepoName(e.target.value);
-              setIsDirty1(true);
+              setRepo(e.target.value);
+              setIsDirtyGithub(true);
             }}
             placeholder="Repository Name"
             width="950px"
@@ -81,73 +110,105 @@ function DeploymentContents({
         </InputArea>
         <InputArea>
           <Typography size="5x" weight="semiBold">
-            Repository Owner
+            Owner
           </Typography>
           <Input_basic
-            value={repoOwner}
+            value={owner}
             onChange={(e) => {
-              setRepoOwner(e.target.value);
-              setIsDirty1(true);
+              setOwner(e.target.value);
+              setIsDirtyGithub(true);
             }}
-            placeholder="Repository Owner"
+            placeholder="GitHub Owner"
             width="950px"
             height="35px"
             disabled={!editable}
           />
         </InputArea>
+
         <InputArea>
           <Typography size="5x" weight="semiBold">
-            Installation ID
+            Branch
           </Typography>
           <Input_basic
-            value={installationId}
+            value={branch}
             onChange={(e) => {
-              setInstallationId(e.target.value);
-              setIsDirty1(true);
+              setBranch(e.target.value);
+              setIsDirtyGithub(true);
             }}
-            placeholder="Installation ID"
+            placeholder="Branch"
             width="950px"
             height="35px"
             disabled={!editable}
           />
         </InputArea>
-        <InputArea>
-          <Typography size="5x" weight="semiBold">
-            Commit
-          </Typography>
-          <Input_basic
-            value={commit}
-            onChange={(e) => {
-              setCommit(e.target.value);
-              setIsDirty1(true);
-            }}
-            placeholder="Commit"
-            width="950px"
-            height="35px"
-            disabled={!editable}
-          />
-        </InputArea>
-        {editable && isDirty1 && (
+
+        <Typography size="5x" weight="semiBold" style={{ marginLeft: "15px" }}>
+          Trigger Paths
+        </Typography>
+
+        {triggerPaths.map((path, index) => (
+          <InputArea key={index}>
+            <Typography size="5x" weight="semiBold">
+              #{index + 1}
+            </Typography>
+
+            <Input_basic
+              value={path}
+              onChange={(e) => handleChangeTriggerPath(index, e.target.value)}
+              placeholder="ex) src/**"
+              width="950px"
+              height="35px"
+              disabled={!editable}
+            />
+          </InputArea>
+        ))}
+
+        {editable && (
+          <AddTriggerBtn onClick={handleAddTriggerPath}>
+            + Add Path
+          </AddTriggerBtn>
+        )}
+
+        {editable && isDirtyGithub && (
           <SaveBox>
-            <SaveBtn onClick={handleSave1}>저장</SaveBtn>
+            <SaveBtn onClick={handleSaveGithub}>저장</SaveBtn>
           </SaveBox>
         )}
       </ValueBox>
+
       <ValueBox>
         <Typography size="6x" weight="bold">
           Builds
         </Typography>
+
         <InputArea>
           <Typography size="5x" weight="semiBold">
-            Build Tools
+            Build Type
           </Typography>
           <Input_basic
-            value={buildTools}
+            value={type}
             onChange={(e) => {
-              setBuildTools(e.target.value);
-              setIsDirty2(true);
+              setType(e.target.value);
+              setIsDirtyBuild(true);
             }}
-            placeholder="Build Tools"
+            placeholder="ex) gradle / npm / maven"
+            width="950px"
+            height="35px"
+            disabled={!editable}
+          />
+        </InputArea>
+
+        <InputArea>
+          <Typography size="5x" weight="semiBold">
+            Version
+          </Typography>
+          <Input_basic
+            value={version}
+            onChange={(e) => {
+              setVersion(e.target.value);
+              setIsDirtyBuild(true);
+            }}
+            placeholder="ex) 17, 21"
             width="950px"
             height="35px"
             disabled={!editable}
@@ -155,57 +216,96 @@ function DeploymentContents({
         </InputArea>
         <InputArea>
           <Typography size="5x" weight="semiBold">
-            Java Version
+            Working Directory
           </Typography>
           <Input_basic
-            value={javaVersion}
+            value={workingDirectory}
             onChange={(e) => {
-              setJavaVersion(e.target.value);
-              setIsDirty2(true);
+              setWorkingDirectory(e.target.value);
+              setIsDirtyBuild(true);
             }}
-            placeholder="Java Version"
+            placeholder="ex) ./"
             width="950px"
             height="35px"
             disabled={!editable}
           />
         </InputArea>
+
         <InputAreaSecond>
-          <InputAreaVertical>
-            <Typography size="5x" weight="semiBold">
-              Build Output Path
-            </Typography>
-            <Input_record
-              value={buildpath}
-              onChange={(e) => {
-                setBuildpath(e.target.value);
-                setIsDirty2(true);
-              }}
-              placeholder="Build Output Path"
-              width="100%"
-              height="35px"
-              disabled={!editable}
-            />
-          </InputAreaVertical>
           <InputAreaVertical>
             <Typography size="5x" weight="semiBold">
               Build Command
             </Typography>
             <Input_record
-              value={buildcommand}
+              value={buildCommand}
               onChange={(e) => {
-                setBuildcommand(e.target.value);
-                setIsDirty2(true);
+                setBuildCommand(e.target.value);
+                setIsDirtyBuild(true);
               }}
-              placeholder="Build Command"
+              placeholder="ex) ./gradlew build"
+              width="100%"
+              height="35px"
+              disabled={!editable}
+            />
+          </InputAreaVertical>
+
+          <InputAreaVertical>
+            <Typography size="5x" weight="semiBold">
+              Start Command
+            </Typography>
+            <Input_record
+              value={startCommand}
+              onChange={(e) => {
+                setStartCommand(e.target.value);
+                setIsDirtyBuild(true);
+              }}
+              placeholder="ex) java -jar app.jar"
               width="100%"
               height="35px"
               disabled={!editable}
             />
           </InputAreaVertical>
         </InputAreaSecond>
-        {editable && isDirty2 && (
+
+        <InputAreaSecond>
+          <InputAreaVertical>
+            <Typography size="5x" weight="semiBold">
+              Input Path
+            </Typography>
+            <Input_record
+              value={inputPath}
+              onChange={(e) => {
+                setInputPath(e.target.value);
+                setIsDirtyBuild(true);
+              }}
+              placeholder="ex) ./"
+              width="100%"
+              height="35px"
+              disabled={!editable}
+            />
+          </InputAreaVertical>
+
+          <InputAreaVertical>
+            <Typography size="5x" weight="semiBold">
+              Output Path
+            </Typography>
+            <Input_record
+              value={outputPath}
+              onChange={(e) => {
+                setOutputPath(e.target.value);
+                setIsDirtyBuild(true);
+              }}
+              placeholder="ex) build/libs"
+              width="100%"
+              height="35px"
+              disabled={!editable}
+            />
+          </InputAreaVertical>
+        </InputAreaSecond>
+
+        {editable && isDirtyBuild && (
           <SaveBox>
-            <SaveBtn onClick={handleSave2}>저장</SaveBtn>
+            <SaveBtn onClick={handleSaveBuild}>저장</SaveBtn>
           </SaveBox>
         )}
       </ValueBox>
@@ -217,22 +317,17 @@ const Container = styled.div`
   width: 100%;
   min-height: 100%;
   height: auto;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 2rem;
 `;
 
 const ValueBox = styled.div`
   width: 100%;
   height: auto;
-
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
   gap: 1.2rem;
 `;
 
@@ -263,8 +358,6 @@ const InputAreaVertical = styled.div`
   display: flex;
   width: 50%;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
   gap: 0.5rem;
 `;
 
@@ -281,9 +374,24 @@ const SaveBtn = styled.button`
   border-radius: 8px;
   cursor: pointer;
   border: none;
-
   &:hover {
     background-color: ${Xquare_colors.gray[500]};
+  }
+`;
+
+const AddTriggerBtn = styled.button`
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  background: none;
+  border: none;
+  color: ${Xquare_colors.gray[500]};
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+
+  &:hover {
+    color: ${Xquare_colors.gray[400]};
   }
 `;
 

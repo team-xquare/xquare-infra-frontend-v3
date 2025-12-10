@@ -19,7 +19,6 @@ export const SideBarMenuItem = styled.div<SideBarMenuItemProps>`
   align-items: center;
   background-color: ${Xquare_colors.purple[700]};
   display: flex;
-  font-family: "Pretendard";
   padding: ${ITEM_PADDING};
   width: 100%;
 `;
