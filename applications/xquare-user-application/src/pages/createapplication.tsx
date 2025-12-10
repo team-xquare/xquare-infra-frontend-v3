@@ -16,7 +16,7 @@ const CreateApplication = () => {
   const [tier, setTier] = useState("nano"); // 기본값 nano
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
-  const [installationId, setInstallationId] = useState("");
+  // const [installationId, setInstallationId] = useState("");
   const [branch, setBranch] = useState("");
   const [triggerPaths, setTriggerPaths] = useState<string[]>([""]);
   const [buildTools, setBuildTools] = useState("");
@@ -35,7 +35,7 @@ const CreateApplication = () => {
     tier.trim() !== "" &&
     repoName.trim() !== "" &&
     repoOwner.trim() !== "" &&
-    installationId.trim() !== "" &&
+    // installationId.trim() !== "" &&
     branch.trim() !== "" &&
     triggerPaths.every((path) => path.trim() !== "") &&
     buildTools.trim() !== "" &&
@@ -138,20 +138,6 @@ const CreateApplication = () => {
           </InputArea>
           <InputArea>
             <Typography size="5x" weight="semiBold">
-              Installation ID
-            </Typography>
-            <Input_basic
-              value={installationId}
-              onChange={(e) => {
-                setInstallationId(e.target.value);
-              }}
-              placeholder="Installation ID"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
               Branch
             </Typography>
             <Input_basic
@@ -193,7 +179,6 @@ const CreateApplication = () => {
                     height="35px"
                   />
 
-                  {/* 개수 1개 이상일 때만 삭제 버튼 표시 */}
                   {triggerPaths.length > 1 && (
                     <DeleteBtn
                       onClick={() =>

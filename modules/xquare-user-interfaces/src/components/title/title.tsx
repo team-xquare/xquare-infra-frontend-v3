@@ -13,8 +13,6 @@ const TitleContainer = styled.div`
   align-items: flex-start;
   flex-direction: column;
   gap: 2px;
-
-  font-family: "Pretendard";
 `;
 
 const MainTitle = styled.h1`

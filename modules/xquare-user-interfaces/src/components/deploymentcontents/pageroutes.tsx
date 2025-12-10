@@ -12,9 +12,11 @@ interface RoutesItem {
 export default function RoutesContents({
   id,
   editable,
+  onSave,
 }: {
   id: number;
   editable: boolean;
+  onSave: () => void;
 }) {
   const [routes, setRoutes] = useState<RoutesItem[]>([]);
   const [isDirty, setIsDirty] = useState(false);
@@ -64,6 +66,7 @@ export default function RoutesContents({
     }
     console.log("전송될 데이터:", routes);
     setIsDirty(false);
+    onSave();
   };
 
   return (

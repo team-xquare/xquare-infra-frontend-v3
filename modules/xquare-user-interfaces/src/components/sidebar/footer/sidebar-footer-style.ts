@@ -27,7 +27,6 @@ export const SideBarFooterDiv = styled.div`
 
 export const SideBarFooterNameSpan = styled.span`
   color: ${Xquare_colors.white};
-  font-family: "Pretendard";
   font-size: ${NAME_FONT_SIZE};
   font-style: normal;
   font-weight: ${NAME_FONT_WEIGHT};
@@ -45,7 +44,6 @@ export const SideBarFooterProjectDiv = styled.div`
   justify-content: center;
   padding: ${PROJECT_PADDING};
   color: ${Xquare_colors.purple[500]};
-  font-family: "Pretendard";
   font-size: ${PROJECT_FONT_SIZE};
   font-style: normal;
   font-weight: ${PROJECT_FONT_WEIGHT};

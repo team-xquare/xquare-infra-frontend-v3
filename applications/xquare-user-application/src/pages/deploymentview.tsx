@@ -20,28 +20,36 @@ const DeploymentView = () => {
   const servicename = "service-name";
   const servicedesc = "service-description";
 
+  const handleSave = useCallback(() => {
+    setEditable(false);
+  }, []);
+
   const tabContents = [
     <SummaryContents key="summary" />,
     <DeploymentContents
       key={`deployment-${editable ? "edit" : "readonly"}`}
       id={id}
       editable={editable}
+      onSave={handleSave}
     />,
     <SecretContents
       key={`secret-${editable ? "edit" : "readonly"}`}
       id={id}
       editable={editable}
+      onSave={handleSave}
     />,
     <RoutesContents
       key={`routes-${editable ? "edit" : "readonly"}`}
       id={id}
       editable={editable}
+      onSave={handleSave}
     />,
     <LogContents key="log" />,
   ];
 
   const handleTabClick = useCallback((index: number) => {
     setActiveTab(index);
+    setEditable(false);
   }, []);
 
   const handleeditClick = useCallback(() => {

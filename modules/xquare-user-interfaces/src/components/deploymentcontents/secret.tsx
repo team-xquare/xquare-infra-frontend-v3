@@ -13,9 +13,11 @@ interface SecretItem {
 export default function SecretContents({
   id,
   editable,
+  onSave,
 }: {
   id: number;
   editable: boolean;
+  onSave: () => void;
 }) {
   const [secrets, setSecrets] = useState<SecretItem[]>([]);
   const [isDirty, setIsDirty] = useState(false);
@@ -62,6 +64,7 @@ export default function SecretContents({
   const saveSecrets = async () => {
     console.log("전송될 데이터:", secrets);
     setIsDirty(false);
+    onSave();
   };
 
   return (

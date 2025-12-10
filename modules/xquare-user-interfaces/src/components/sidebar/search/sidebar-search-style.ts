@@ -33,7 +33,6 @@ export const SideBarSearchInput = styled.input`
   border: none;
   border-bottom: 1px solid ${Xquare_colors.purple[600]};
   color: ${Xquare_colors.white};
-  font-family: "Pretendard";
   font-size: ${INPUT_FONT_SIZE};
   font-style: normal;
   font-weight: ${INPUT_FONT_WEIGHT};

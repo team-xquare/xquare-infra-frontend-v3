@@ -7,15 +7,17 @@ import { Input_basic, Input_record } from "../input";
 function DeploymentContents({
   id,
   editable,
+  onSave,
 }: {
   id: number;
   editable: boolean;
+  onSave: () => void;
 }) {
-  const [owner, setOwner] = useState("");
+  const [owner, setOwner] = useState(id.toString());
   const [repo, setRepo] = useState("");
   const [branch, setBranch] = useState("main");
-  const [installationId, setInstallationId] = useState("");
-  const [hash, setHash] = useState(id.toString());
+  // const [installationId, setInstallationId] = useState("");
+  // const [hash, setHash] = useState(id.toString());
   const [triggerPaths, setTriggerPaths] = useState<string[]>([]);
 
   const [isDirtyGithub, setIsDirtyGithub] = useState(false);
@@ -45,8 +47,8 @@ function DeploymentContents({
 
       // API 로직 들어갈 자리
 
-      window.location.reload();
       setIsDirtyGithub(false);
+      onSave();
     } catch (err) {
       console.error(err);
     }
@@ -76,8 +78,8 @@ function DeploymentContents({
 
       // API 로직 들어갈 자리
 
-      window.location.reload();
-      setIsDirtyBuild(false);
+      setIsDirtyGithub(false);
+      onSave();
     } catch (err) {
       console.error(err);
     }
@@ -134,40 +136,6 @@ function DeploymentContents({
               setIsDirtyGithub(true);
             }}
             placeholder="Branch"
-            width="950px"
-            height="35px"
-            disabled={!editable}
-          />
-        </InputArea>
-
-        <InputArea>
-          <Typography size="5x" weight="semiBold">
-            Installation ID
-          </Typography>
-          <Input_basic
-            value={installationId}
-            onChange={(e) => {
-              setInstallationId(e.target.value);
-              setIsDirtyGithub(true);
-            }}
-            placeholder="GitHub Installation ID"
-            width="950px"
-            height="35px"
-            disabled={!editable}
-          />
-        </InputArea>
-
-        <InputArea>
-          <Typography size="5x" weight="semiBold">
-            Commit Hash
-          </Typography>
-          <Input_basic
-            value={hash}
-            onChange={(e) => {
-              setHash(e.target.value);
-              setIsDirtyGithub(true);
-            }}
-            placeholder="Commit Hash"
             width="950px"
             height="35px"
             disabled={!editable}
@@ -344,10 +312,6 @@ function DeploymentContents({
     </Container>
   );
 }
-
-// ===============================
-// Styled Components
-// ===============================
 
 const Container = styled.div`
   width: 100%;
