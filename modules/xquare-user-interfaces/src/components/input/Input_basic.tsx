@@ -4,7 +4,7 @@ import { Xquare_colors } from "../../styles/colors";
 
 // 타입정의
 interface InputProps {
-  value: string;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -12,10 +12,18 @@ interface InputProps {
   width?: string;
   height?: string;
   color?: string;
+  align?: "left" | "center" | "right";
+  min?: number;
+  max?: number;
 }
 
-// 스타일 정의
-const StyledInput = styled.input<InputProps>`
+// transient prop: 앞에 $를 붙여 styled 내부에서만 사용하게 함
+const StyledInput = styled.input<{
+  width?: string;
+  height?: string;
+  color?: string;
+  $align?: "left" | "center" | "right";
+}>`
   width: ${({ width }) => width || "300px"};
   height: ${({ height }) => height || "50px"};
 
@@ -26,6 +34,8 @@ const StyledInput = styled.input<InputProps>`
   font-size: 1.1rem;
   font-weight: 400;
   line-height: 1.1rem;
+  outline: none;
+  text-align: ${({ $align }) => $align || "right"};
 
   &::placeholder {
     color: ${Xquare_colors.gray[500]};
@@ -40,9 +50,7 @@ const StyledInput = styled.input<InputProps>`
   }
 
   &:disabled {
-    &::placeholder {
-      color: ${Xquare_colors.gray[300]};
-    }
+    background-color: ${Xquare_colors.white};
   }
 `;
 
@@ -55,6 +63,10 @@ export const Input_basic: React.FC<InputProps> = ({
   type = "text",
   width,
   height,
+  align,
+  color,
+  min,
+  max,
 }) => {
   return (
     <StyledInput
@@ -65,6 +77,10 @@ export const Input_basic: React.FC<InputProps> = ({
       placeholder={placeholder}
       disabled={disabled}
       type={type}
+      $align={align}
+      color={color}
+      min={min}
+      max={max}
     />
   );
 };

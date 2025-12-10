@@ -25,7 +25,7 @@ function DeploymentItem({
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/deployments/${id}/summary`);
+    navigate(`/deployment/view/${id}`);
   };
 
   return (

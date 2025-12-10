@@ -10,8 +10,10 @@ import NoticePage from "./pages/noticepage";
 import FeedPage from "./pages/feedpage";
 import MonitorPage from "./pages/monitor";
 import NoticeView from "./pages/noticeview";
+import FeedView from "./pages/feedview";
 import AddonPage from "./pages/addonpage";
 import DeploymentHome from "./pages/deploymenthome";
+import DeploymentView from "./pages/deploymentview";
 
 function App() {
   return (
@@ -35,6 +37,15 @@ function App() {
           element={
             <Layout>
               <DeploymentHome />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/deployment/view/:id/"
+          element={
+            <Layout>
+              <DeploymentView />
             </Layout>
           }
         />
@@ -88,7 +99,7 @@ function App() {
           path="/feed/view/:id"
           element={
             <Layout>
-              <NoticeView />
+              <FeedView />
             </Layout>
           }
         />
