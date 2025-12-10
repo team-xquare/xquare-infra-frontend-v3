@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
   HomeImg,
@@ -10,14 +11,14 @@ import {
 } from "@xquare/user-interfaces";
 
 const DeploymentHome = () => {
+  const navigate = useNavigate();
+
   const handleAddApplicationClick = () => {
-    // Application 추가하기 버튼 클릭 시 동작할 함수
-    console.log("Application 추가하기 버튼 클릭됨");
+    navigate("/deployment/createapplication");
   };
 
   const handleAddAddonsClick = () => {
-    // Addons 추가하기 버튼 클릭 시 동작할 함수
-    console.log("Addons 추가하기 버튼 클릭됨");
+    navigate("/addons/createaddon");
   };
 
   const displayItems = [
@@ -55,7 +56,7 @@ const DeploymentHome = () => {
             Application 추가하기
           </Button_round>
           <Button_round width="150px" onClick={handleAddAddonsClick}>
-            Addons 추가하기
+            Addon 추가하기
           </Button_round>
         </div>
       </ContentsArea>

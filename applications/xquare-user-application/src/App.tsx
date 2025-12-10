@@ -14,6 +14,8 @@ import FeedView from "./pages/feedview";
 import AddonPage from "./pages/addonpage";
 import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
+import CreateApplication from "./pages/createapplication";
+import CreateAddon from "./pages/createaddon";
 
 const art = `
                                                               
@@ -59,6 +61,24 @@ function App() {
           element={
             <Layout>
               <DeploymentView />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/deployment/createapplication"
+          element={
+            <Layout>
+              <CreateApplication />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/addons/createaddon"
+          element={
+            <Layout>
+              <CreateAddon />
             </Layout>
           }
         />

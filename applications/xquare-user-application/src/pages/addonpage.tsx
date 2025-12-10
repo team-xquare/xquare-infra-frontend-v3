@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useNavigate } from "react-router-dom";
 import {
   Title,
   Xquare_colors,
@@ -7,8 +8,9 @@ import {
 } from "@xquare/user-interfaces";
 
 function AddonPage() {
+  const navigate = useNavigate();
   const handleAddAddonClick = () => {
-    // TODO: Addon 추가하기 클릭 시 동작 구현
+    navigate("/addons/createaddon");
   };
   const displayItems = [
     {
@@ -53,7 +55,7 @@ function AddonPage() {
           subTitle={"Deploy addons via xquare infra"}
         ></Title>
         <Button_round width="150px" onClick={handleAddAddonClick}>
-          Addons 추가하기
+          Addon 추가하기
         </Button_round>
       </ContentsArea>
       <Addons>
