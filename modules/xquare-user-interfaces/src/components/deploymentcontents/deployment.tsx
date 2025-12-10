@@ -78,7 +78,7 @@ function DeploymentContents({
 
       // API 로직 들어갈 자리
 
-      setIsDirtyGithub(false);
+      setIsDirtyBuild(false);
       onSave();
     } catch (err) {
       console.error(err);
