@@ -57,6 +57,11 @@ export default function RoutesContents({
   };
 
   const saveRoutes = async () => {
+    const invalidRoutes = routes.filter((r) => r.port < 1 || r.port > 65535);
+    if (invalidRoutes.length > 0) {
+      // 에러 처리 (예: 토스트 메시지)
+      return;
+    }
     console.log("전송될 데이터:", routes);
     setIsDirty(false);
   };
