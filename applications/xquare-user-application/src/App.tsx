@@ -16,6 +16,19 @@ import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
 
 function App() {
+  const art = `
+                                                              
+  ##     ##  #######  ##     ##    ###    ########  ########  
+   ##   ##  ##     ## ##     ##   ## ##   ##     ## ##        
+    ## ##   ##     ## ##     ##  ##   ##  ##     ## ##        
+     ###    ##     ## ##     ## ##     ## ########  #######   
+    ## ##   ##  ## ## ##     ## ######### ##   ##   ##        
+   ##   ##  ##    ##  ##     ## ##     ## ##    ##  ##        
+  ##     ##  ##### ##  #######  ##     ## ##     ## ########  
+                                                              
+`;
+
+  console.log(art);
   return (
     <>
       <Global styles={globalStyles} />
