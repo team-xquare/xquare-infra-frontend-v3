@@ -1,4 +1,5 @@
-import { memo } from "react";
+import { memo, useState } from "react";
+import { TeamModal } from "../../teammodal";
 import {
   SideBarFooter,
   SideBarFooterDiv,
@@ -12,13 +13,30 @@ interface SidebarFooterProps {
 }
 
 function SidebarFooterComponent({ name, project }: SidebarFooterProps) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(project);
+
   return (
-    <SideBarFooter>
-      <SideBarFooterDiv>
-        <SideBarFooterNameSpan>{name}</SideBarFooterNameSpan>
-        <SideBarFooterProjectDiv>{project}</SideBarFooterProjectDiv>
-      </SideBarFooterDiv>
-    </SideBarFooter>
+    <>
+      <SideBarFooter>
+        <SideBarFooterDiv>
+          <SideBarFooterNameSpan>{name}</SideBarFooterNameSpan>
+
+          <SideBarFooterProjectDiv onClick={() => setModalOpen(true)}>
+            {selectedProject}
+          </SideBarFooterProjectDiv>
+        </SideBarFooterDiv>
+      </SideBarFooter>
+
+      {modalOpen && (
+        <TeamModal
+          onSelectTeam={(teamName) => {
+            setSelectedProject(teamName);
+          }}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
+    </>
   );
 }
 
