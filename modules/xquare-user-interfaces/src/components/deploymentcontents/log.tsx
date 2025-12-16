@@ -68,7 +68,6 @@ const LogBox = styled.pre<{ hasBuild: boolean }>`
 
   background-color: #1e1e1e;
   color: #d4d4d4;
-  margin: 5px;
   padding: 18px;
   border-radius: 9px;
 
