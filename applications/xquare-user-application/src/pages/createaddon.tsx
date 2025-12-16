@@ -176,7 +176,6 @@ const InputArea = styled.div`
   padding: 3px 5px;
   width: 100%;
   height: 40px;
-  margin-left: 15px;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
 `;
 
