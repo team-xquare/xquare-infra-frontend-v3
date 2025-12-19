@@ -79,7 +79,7 @@ function Notice({ page }: NoticeProps) {
           subTitle={"xquare infrastructure 의 주요 수정사항 및, 공지사항"}
         ></Subtitle>
         {page !== 3 && (
-          <ClickableText size="5x" weight="medium" onClick={handleViewAllClick}>
+          <ClickableText size="4x" weight="medium" onClick={handleViewAllClick}>
             전체보기 →
           </ClickableText>
         )}

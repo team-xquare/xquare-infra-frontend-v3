@@ -49,13 +49,13 @@ const CreateApplication = () => {
 
   const handleKeyChange = (index: number, value: string) => {
     setRoutes((prev) =>
-      prev.map((route, i) => (i === index ? { ...route, url: value } : route)),
+      prev.map((route, i) => (i === index ? { ...route, url: value } : route))
     );
   };
 
   const handleValueChange = (index: number, value: string) => {
     setRoutes((prev) =>
-      prev.map((route, i) => (i === index ? { ...route, port: value } : route)),
+      prev.map((route, i) => (i === index ? { ...route, port: value } : route))
     );
   };
 
@@ -171,7 +171,7 @@ const CreateApplication = () => {
                     value={path}
                     onChange={(e) =>
                       setTriggerPaths((prev) =>
-                        prev.map((p, idx) => (idx === i ? e.target.value : p)),
+                        prev.map((p, idx) => (idx === i ? e.target.value : p))
                       )
                     }
                     placeholder="ex) src/main/**"
@@ -183,7 +183,7 @@ const CreateApplication = () => {
                     <DeleteBtn
                       onClick={() =>
                         setTriggerPaths((prev) =>
-                          prev.filter((_, idx) => idx !== i),
+                          prev.filter((_, idx) => idx !== i)
                         )
                       }
                     >
@@ -397,7 +397,7 @@ const Contents = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
+  gap: 1rem;
 `;
 
 const ValueBox = styled.div`
@@ -420,7 +420,6 @@ const InputArea = styled.div`
   padding: 3px 5px;
   width: 100%;
   height: 40px;
-  margin-left: 15px;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
 `;
 
@@ -492,7 +491,6 @@ const ButtonGroup = styled.div`
   align-items: center;
   gap: 10px;
   width: 100%;
-  margin-top: 2rem;
 `;
 
 export default CreateApplication;

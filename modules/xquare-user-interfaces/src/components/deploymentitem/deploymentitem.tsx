@@ -96,6 +96,7 @@ const Heading = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
+  width: 360px;
 `;
 
 const Typo = styled.div`

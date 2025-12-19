@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Summary } from "@xquare/user-interfaces";
 
-const MonitorPage = () => {
+const StatusPage = () => {
   return (
     <Container>
       <Summary page={3} />
@@ -19,4 +19,4 @@ const Container = styled.div`
   padding: 10px 40px;
 `;
 
-export default MonitorPage;
+export default StatusPage;

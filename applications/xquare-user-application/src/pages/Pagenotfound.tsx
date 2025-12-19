@@ -33,39 +33,59 @@ export default function NotFound() {
         alignItems: "center",
         flexDirection: "column",
         padding: "0 20px",
-        backgroundColor: "white",
+        backgroundColor: "#0d1117",
         textAlign: "center",
       }}
     >
       <h1
         style={{
-          fontSize: "55px",
+          fontSize: "45px",
+          fontWeight: 800,
+          marginBottom: "17px",
+          color: String(Xquare_colors.white),
+        }}
+      >
+        XQUARE
+      </h1>
+
+      <h1
+        style={{
+          fontSize: "130px",
           fontWeight: 800,
           marginBottom: "18px",
           color: String(Xquare_colors.purple[400]),
         }}
       >
-        404. Page Not Found
+        404
       </h1>
 
       <p
         style={{
-          fontSize: "29px",
-          color: String(Xquare_colors.black),
-          fontWeight: 600,
+          fontSize: "27px",
+          color: String(Xquare_colors.white),
+          fontWeight: 700,
           maxWidth: "520px",
-          lineHeight: "1.6",
+          lineHeight: "1.4",
           whiteSpace: "pre-line",
-          marginBottom: "250px",
         }}
       >
-        {`요청하신 페이지를 찾을 수 없습니다.
-잘못된 경로: "${location.pathname}"`}
+        {`페이지를 찾을 수 없습니다.`}
       </p>
 
       <p
         style={{
-          fontSize: "27px",
+          fontSize: "19px",
+          fontWeight: 500,
+          color: String(Xquare_colors.gray[500]),
+          lineHeight: "1.6",
+        }}
+      >
+        {`요청하신 페이지(${location.pathname})는 존재하지 않는 페이지 입니다.`}
+      </p>
+
+      <p
+        style={{
+          fontSize: "19px",
           fontWeight: 500,
           color: String(Xquare_colors.gray[500]),
           lineHeight: "1.6",

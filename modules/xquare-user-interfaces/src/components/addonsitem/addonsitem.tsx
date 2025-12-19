@@ -53,7 +53,7 @@ function AddonItem({
         <Status>
           <ItemSet>
             <Typography size="4x" weight="semiBold">
-              Traffic
+              Health
             </Typography>
 
             <TrafficWrapper>
@@ -64,7 +64,7 @@ function AddonItem({
           </ItemSet>
           <ItemSet>
             <Typography size="4x" weight="semiBold">
-              {"Traefix"}
+              {"Traffic"}
             </Typography>
             <Typography
               size="3x"

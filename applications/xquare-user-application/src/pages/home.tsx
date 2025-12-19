@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -61,7 +62,7 @@ const HomePage = () => {
     <TabContentWrapper key="deploy">
       <TextGroup>
         <Typography size="5x" weight="semiBold">
-          현재 XQUARE를 통하여 <Highlight>{deployCount}</Highlight>개의 서비스가
+          현재 XQUARE를 통하여<Highlight>{deployCount}</Highlight>개의 서비스가
           배포되었어요.
         </Typography>
         <Typography size="4x" weight="medium">
@@ -75,7 +76,7 @@ const HomePage = () => {
     <TabContentWrapper key="status">
       <TextGroup>
         <Typography size="5x" weight="semiBold">
-          XQUARE를 통하여 시간당 <Highlight>{traffic}</Highlight> 개의 요청을
+          XQUARE를 통하여 시간당<Highlight>{traffic}</Highlight>개의 요청을
           처리하고 있어요.
         </Typography>
         <Typography size="4x" weight="medium">
@@ -87,6 +88,9 @@ const HomePage = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Home</title>
+      </Helmet>
       <ContentsArea>
         <Title
           title={`Welcome, Back ${username}`}
