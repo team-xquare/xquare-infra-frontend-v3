@@ -19,6 +19,8 @@
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react-swc": "^4.2.1",
     "@xquare/eslint-configs": "workspace:*",
+    "@xquare/hooks": "workspace:*",
+    "@xquare/utils": "workspace:*",
     "typescript": "~5.9.3",
     "vite": "^7.2.2"
   }

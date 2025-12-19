@@ -36,8 +36,8 @@ const LoginPage: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="아이디를 입력해주세요"
-              title="error message"
-              titleColor="white"
+              title={""}
+              titleColor={String(Xquare_colors.red[500])}
               type="text"
             />
 
@@ -45,8 +45,8 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력해주세요"
-              title="error message"
-              titleColor="white"
+              title={""}
+              titleColor={String(Xquare_colors.red[500])}
               type="password"
             />
           </Inputs>

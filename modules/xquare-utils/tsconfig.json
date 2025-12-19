@@ -1,0 +1,12 @@
+{
+  "extends": "../xquare-typescript-configs/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "outDir": "dist",
+    "module": "esnext",
+    "target": "esnext",
+    "rootDir": "./"
+  },
+  "include": ["index.ts", "src"]
+}

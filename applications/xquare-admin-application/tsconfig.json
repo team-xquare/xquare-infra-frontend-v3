@@ -1,7 +1,14 @@
 {
+  "extends": "./modules/xquare-typescript-configs/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
   "files": [],
   "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "./applications/xquare-admin-application" },
+    { "path": "./applications/xquare-user-application" },
+    { "path": "./modules/xquare-hooks" },
+    { "path": "./modules/xquare-utils" },
+    { "path": "./modules/xquare-user-interfaces" }
   ]
 }
