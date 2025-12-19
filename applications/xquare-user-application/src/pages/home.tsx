@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -46,6 +47,9 @@ const HomePage = () => {
 
   const tabContents = [
     <TabContentWrapper key="notice">
+      <Helmet>
+        <title>XQUARE | Home</title>
+      </Helmet>
       <TextGroup>
         <Typography size="5x" weight="semiBold">
           대덕소프트웨어마이스터고등학교 배포 플랫폼

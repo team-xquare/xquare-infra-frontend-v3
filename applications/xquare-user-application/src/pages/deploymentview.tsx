@@ -74,7 +74,7 @@ const DeploymentView = () => {
                 onClick={() => handleTabClick(index)}
                 active={activeTab === index}
               />
-            ),
+            )
           )}
         </NavBar>
         <Button_round

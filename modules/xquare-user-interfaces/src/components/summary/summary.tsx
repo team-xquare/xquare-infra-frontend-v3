@@ -1,11 +1,9 @@
-import { useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { SummaryItem } from "./summaryitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
-import { SearchBox } from "../input";
 
 interface SummaryProps {
   page?: number;
@@ -68,27 +66,14 @@ function Summary({ page }: SummaryProps) {
     navigate("/monitor");
   }
 
-  const [searchValue, setSearchValue] = useState("");
-
   return (
     <Summarycontainer page={page}>
       <TileArea>
         <Subtitle title={`Summary`} subTitle={"service status"} />
         {page !== 3 && (
-          <ClickableText size="5x" weight="medium" onClick={handleViewAllClick}>
+          <ClickableText size="4x" weight="medium" onClick={handleViewAllClick}>
             전체보기 →
           </ClickableText>
-        )}
-        {page === 3 && (
-          <SearchBox
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="검색어를 입력하세요"
-            disabled={false}
-            type="text"
-            width="300px"
-            height="20px"
-          />
         )}
       </TileArea>
       <div>

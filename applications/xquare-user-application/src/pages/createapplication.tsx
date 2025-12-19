@@ -49,13 +49,13 @@ const CreateApplication = () => {
 
   const handleKeyChange = (index: number, value: string) => {
     setRoutes((prev) =>
-      prev.map((route, i) => (i === index ? { ...route, url: value } : route)),
+      prev.map((route, i) => (i === index ? { ...route, url: value } : route))
     );
   };
 
   const handleValueChange = (index: number, value: string) => {
     setRoutes((prev) =>
-      prev.map((route, i) => (i === index ? { ...route, port: value } : route)),
+      prev.map((route, i) => (i === index ? { ...route, port: value } : route))
     );
   };
 
@@ -171,7 +171,7 @@ const CreateApplication = () => {
                     value={path}
                     onChange={(e) =>
                       setTriggerPaths((prev) =>
-                        prev.map((p, idx) => (idx === i ? e.target.value : p)),
+                        prev.map((p, idx) => (idx === i ? e.target.value : p))
                       )
                     }
                     placeholder="ex) src/main/**"
@@ -183,7 +183,7 @@ const CreateApplication = () => {
                     <DeleteBtn
                       onClick={() =>
                         setTriggerPaths((prev) =>
-                          prev.filter((_, idx) => idx !== i),
+                          prev.filter((_, idx) => idx !== i)
                         )
                       }
                     >

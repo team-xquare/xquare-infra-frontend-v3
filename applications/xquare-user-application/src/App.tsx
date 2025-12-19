@@ -8,7 +8,7 @@ import SignupPage from "./pages/signup";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 import FeedPage from "./pages/feedpage";
-import MonitorPage from "./pages/monitor";
+import StatusPage from "./pages/status";
 import NoticeView from "./pages/noticeview";
 import FeedView from "./pages/feedview";
 import AddonPage from "./pages/addonpage";
@@ -94,10 +94,10 @@ function App() {
         />
 
         <Route
-          path="/monitor"
+          path="/status"
           element={
             <Layout>
-              <MonitorPage />
+              <StatusPage />
             </Layout>
           }
         />
