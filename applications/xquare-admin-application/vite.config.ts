@@ -9,12 +9,17 @@ export default defineConfig({
     alias: {
       "@xquare/user-interfaces": path.resolve(
         __dirname,
-        "../../modules/xquare-user-interfaces/index.ts",
+        "../../modules/xquare-user-interfaces/index.ts"
       ),
       "@xquare/user-interfaces/": path.resolve(
         __dirname,
-        "../../modules/xquare-user-interfaces/",
+        "../../modules/xquare-user-interfaces/"
       ),
+      "@xquare/utils": path.resolve(
+        __dirname,
+        "../../modules/xquare-utils/index.ts"
+      ),
+      "@xquare/utils/": path.resolve(__dirname, "../../modules/xquare-utils/"),
     },
   },
 });

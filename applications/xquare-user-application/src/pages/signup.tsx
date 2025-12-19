@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRegister } from "@xquare/hooks"; // 훅 import
+import type { RegisterRequest } from "@xquare/utils"; // 타입 import
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -10,6 +13,9 @@ import {
 } from "@xquare/user-interfaces";
 
 const SignupPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  // 현재 단계 상태
   const [step, setStep] = useState(1);
 
   // 상태
@@ -20,23 +26,31 @@ const SignupPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
 
+  // 회원가입 훅 연결
+  const { register, loading, error } = useRegister();
+
   const isValidEmail = (value: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step !== 3) return;
 
-    // TODO: 로직 연결
-
-    e.preventDefault();
-    console.log({
-      studentId,
-      name,
+    const payload: RegisterRequest = {
       username,
-      email,
       password,
-    });
+      studentNumber: Number(studentId),
+      name,
+      email,
+    };
+
+    const res = await register(payload);
+    if (res) {
+      console.log("[Auth-register] Sign up successful", res);
+      navigate("/login");
+    } else {
+      console.error("[Auth-register] Sign up failed", error);
+    }
   };
 
   const [isFading, setIsFading] = useState(false);
@@ -46,15 +60,17 @@ const SignupPage: React.FC = () => {
     setTimeout(() => {
       setStep(nextStep);
       setIsFading(false);
-    }, 180); // fade-out 시간
+    }, 180);
   };
 
   const handleNext = () => {
     if (step < 3) changeStepSmooth(step + 1);
+    console.log("[SignupPage] handleNext, 현재 step:", step + 1);
   };
 
   const handlePrev = () => {
     if (step > 1) changeStepSmooth(step - 1);
+    console.log("[SignupPage] handlePrev, step:", step - 1);
   };
 
   return (
@@ -69,7 +85,6 @@ const SignupPage: React.FC = () => {
             XQUARE SIGNUP
           </Typography>
 
-          {/* ------------------ PAGE NATION ------------------ */}
           <Inputs className={isFading ? "fade-out" : "fade-in"}>
             {step === 1 && (
               <>
@@ -80,21 +95,17 @@ const SignupPage: React.FC = () => {
                   title={
                     email && !isValidEmail(email)
                       ? "이메일이 유효하지 않습니다."
-                      : "error message"
+                      : ""
                   }
-                  titleColor={
-                    email && !isValidEmail(email)
-                      ? String(Xquare_colors.red[500])
-                      : "white"
-                  }
+                  titleColor={String(Xquare_colors.red[500])}
                   type="email"
                 />
                 <Input_text
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="사용할 아이디를 입력해주세요"
-                  title="error message"
-                  titleColor="white"
+                  title={""}
+                  titleColor={String(Xquare_colors.red[500])}
                   type="text"
                 />
               </>
@@ -106,8 +117,8 @@ const SignupPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="비밀번호를 입력해주세요"
-                  title="error message"
-                  titleColor="white"
+                  title={""}
+                  titleColor={String(Xquare_colors.red[500])}
                   type="password"
                 />
                 <Input_text
@@ -117,13 +128,9 @@ const SignupPage: React.FC = () => {
                   title={
                     password && passwordCheck && password !== passwordCheck
                       ? "비밀번호가 일치하지 않습니다."
-                      : "error message"
+                      : ""
                   }
-                  titleColor={
-                    password && passwordCheck && password !== passwordCheck
-                      ? String(Xquare_colors.red[500])
-                      : "white"
-                  }
+                  titleColor={String(Xquare_colors.red[500])}
                   type="password"
                 />
               </>
@@ -135,23 +142,22 @@ const SignupPage: React.FC = () => {
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value)}
                   placeholder="학번을 입력해주세요"
-                  title="error message"
-                  titleColor="white"
+                  title={""}
+                  titleColor={String(Xquare_colors.red[500])}
                   type="text"
                 />
                 <Input_text
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="이름을 입력해주세요"
-                  title="error message"
-                  titleColor="white"
+                  title={""}
+                  titleColor={String(Xquare_colors.red[500])}
                   type="text"
                 />
               </>
             )}
           </Inputs>
 
-          {/* ------------------ ACTIONS ------------------ */}
           <FormActions>
             {step < 3 ? (
               <Button_square
@@ -167,9 +173,18 @@ const SignupPage: React.FC = () => {
                 다음으로
               </Button_square>
             ) : (
-              <Button_square type="submit" disabled={!studentId || !name}>
-                회원가입 완료
+              <Button_square
+                type="submit"
+                disabled={loading || !studentId || !name}
+              >
+                {loading ? "가입 중..." : "회원가입 완료"}
               </Button_square>
+            )}
+
+            {error && (
+              <Typography size="2x" weight="regular" color="red">
+                {error}
+              </Typography>
             )}
 
             {step > 1 && (

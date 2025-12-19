@@ -65,6 +65,13 @@ const StyledInput = styled.input<InputProps>`
   }
 `;
 
+const Box = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 1rem;
+`;
+
 const Title = styled.span<TitleProps>`
   font-size: 0.9rem;
   font-weight: 500;
@@ -94,7 +101,7 @@ export const Input_text: React.FC<InputProps> = ({
         disabled={disabled}
         type={type}
       />
-      {title && <Title titleColor={titleColor}>{title}</Title>}
+      <Box>{title && <Title titleColor={titleColor}>{title}</Title>}</Box>
     </Wraper>
   );
 };
