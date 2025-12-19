@@ -65,12 +65,12 @@ const SignupPage: React.FC = () => {
 
   const handleNext = () => {
     if (step < 3) changeStepSmooth(step + 1);
-    console.log("[SignupPage] handleNext, 현재 step:", step+1);
+    console.log("[SignupPage] handleNext, 현재 step:", step + 1);
   };
 
   const handlePrev = () => {
     if (step > 1) changeStepSmooth(step - 1);
-    console.log("[SignupPage] handlePrev, step:", step-1);
+    console.log("[SignupPage] handlePrev, step:", step - 1);
   };
 
   return (
@@ -179,6 +179,12 @@ const SignupPage: React.FC = () => {
               >
                 {loading ? "가입 중..." : "회원가입 완료"}
               </Button_square>
+            )}
+
+            {error && (
+              <Typography size="2x" weight="regular" color="red">
+                {error}
+              </Typography>
             )}
 
             {step > 1 && (
