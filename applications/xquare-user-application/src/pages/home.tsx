@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
+import { useAuthGuard } from "@xquare/hooks";
 import {
   HomeImg,
   Typography,
@@ -12,6 +13,7 @@ import {
 } from "@xquare/user-interfaces";
 
 const HomePage = () => {
+  useAuthGuard();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
   const [deployCount, setDeployCount] = useState<number>(0);

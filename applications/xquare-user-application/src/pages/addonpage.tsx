@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
+import { useAuthGuard } from "@xquare/hooks";
 import {
   Title,
   Xquare_colors,
@@ -8,6 +9,7 @@ import {
 } from "@xquare/user-interfaces";
 
 function AddonPage() {
+  useAuthGuard();
   const navigate = useNavigate();
   const handleAddAddonClick = () => {
     navigate("/addons/createaddon");

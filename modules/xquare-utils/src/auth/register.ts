@@ -35,12 +35,15 @@ export async function registerUser(
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || "회원가입 실패");
+      const errorMessage = errorData.message || "회원가입 실패";
+      console.error("[Auth-register] 실패:", errorMessage, "(Status:", res.status, ")");
+      throw new Error(errorMessage);
     }
     const data = await res.json();
 
     // 응답 구조 검증
     if (typeof data.success !== "boolean") {
+      console.error("[Auth-register] 잘못된 응답 형식");
       throw new Error("잘못된 응답 형식");
     }
 
@@ -48,8 +51,10 @@ export async function registerUser(
   } catch (error) {
     // 네트워크 오류 또는 기타 오류 처리
     if (error instanceof Error) {
+      console.error("[Auth-register] 에러:", error.message);
       throw error;
     }
+    console.error("[Auth-register] 알 수 없는 에러");
     throw new Error("네트워크 오류가 발생했습니다.");
   }
 }
