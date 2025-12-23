@@ -1,3 +1,5 @@
+import { validateAuthResponse } from "./validation";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 if (!BASE_URL) {
@@ -25,7 +27,6 @@ export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      credentials: "include", // 쿠키 포함
     });
 
     if (!res.ok) {
@@ -35,9 +36,7 @@ export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
     const data = await res.json();
 
     // 응답 구조 검증
-    if (typeof data.success !== "boolean") {
-      throw new Error("잘못된 응답 형식");
-    }
+  validateAuthResponse(data, "login");
 
     return data as LoginResponse;
   } catch (error) {

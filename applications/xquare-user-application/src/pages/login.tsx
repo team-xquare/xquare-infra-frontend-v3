@@ -63,6 +63,8 @@ const LoginPage: React.FC = () => {
         // 토큰 자동 재발급 시작
         startTokenAutoReissue();
         navigate("/");
+      } else {
+        console.error("[Auth-login] 토큰 가져오기 실패", error);
       }
     } else {
       console.error("[Auth-login] 로그인 실패", error);

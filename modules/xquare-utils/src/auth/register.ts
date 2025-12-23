@@ -1,3 +1,5 @@
+import { validateAuthResponse } from "./validation";
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 if (!BASE_URL) {
@@ -30,22 +32,25 @@ export async function registerUser(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-      credentials: "include", // 쿠키 포함
     });
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       const errorMessage = errorData.message || "회원가입 실패";
-      console.error("[Auth-register] 실패:", errorMessage, "(Status:", res.status, ")");
+      console.error(
+        "[Auth-register] 실패:",
+        errorMessage,
+        "(Status:",
+        res.status,
+        ")"
+      );
       throw new Error(errorMessage);
     }
     const data = await res.json();
 
     // 응답 구조 검증
-    if (typeof data.success !== "boolean") {
-      console.error("[Auth-register] 잘못된 응답 형식");
-      throw new Error("잘못된 응답 형식");
-    }
+    // 검증 통과한 토큰 저장
+  validateAuthResponse(data, "register");
 
     return data as RegisterResponse;
   } catch (error) {

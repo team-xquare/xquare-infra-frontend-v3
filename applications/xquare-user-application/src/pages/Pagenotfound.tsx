@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Xquare_colors } from "@xquare/user-interfaces";
-import { useAuthGuard } from "@xquare/hooks";
 
 export default function NotFound() {
-  useAuthGuard();
   const navigate = useNavigate();
   const location = useLocation();
 
