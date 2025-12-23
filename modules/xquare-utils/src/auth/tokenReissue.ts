@@ -25,10 +25,10 @@ const ACCESS_TOKEN_KEY = "accessToken";
 let isReissuing = false;
 
 /* Interval ID */
-let intervalId: NodeJS.Timeout | null = null;
+let intervalId: number | null = null;
 
 /* 초기 타임아웃 ID */
-let initialTimeoutId: NodeJS.Timeout | null = null;
+let initialTimeoutId: number | null = null;
 
 /* 스토리지 이벤트 핸들러 */
 let storageHandler: ((event: StorageEvent) => void) | null = null;
@@ -133,10 +133,10 @@ export function startTokenAutoReissue(): void {
   );
 
   /* 초기 재발급 */
-  initialTimeoutId = setTimeout(() => {
+  initialTimeoutId = window.setTimeout(() => {
     reissueAccessToken();
 
-    intervalId = setInterval(reissueAccessToken, REISSUE_INTERVAL);
+    intervalId = window.setInterval(reissueAccessToken, REISSUE_INTERVAL);
     console.log(
       `[Auth-reissue] 주기 설정: ${Math.round(REISSUE_INTERVAL / 60000)}분 간격`
     );
