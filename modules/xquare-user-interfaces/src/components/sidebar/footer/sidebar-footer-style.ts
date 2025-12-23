@@ -32,6 +32,11 @@ export const SideBarFooterNameSpan = styled.span`
   font-weight: ${NAME_FONT_WEIGHT};
   line-height: normal;
   text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const SideBarFooterProjectDiv = styled.div`

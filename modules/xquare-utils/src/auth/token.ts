@@ -109,6 +109,8 @@ export const getRefreshToken = (): string | null => {
 export const clearAllTokens = (): void => {
   tokenCache = { accessToken: null, refreshToken: null };
   saveToStorage(tokenCache);
+  console.log("[Token] 모든 토큰이 삭제되었습니다.");
+  console.log("[Token] 인증 상태 : 토큰 없음");
 };
 
 /* 액세스 토큰 존재 여부 확인 */

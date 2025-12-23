@@ -1,4 +1,6 @@
-import { memo, useState } from "react";
+import { clearAllTokens } from "@xquare/utils";
+import { useNavigate } from "react-router-dom";
+import { memo, useCallback, useState } from "react";
 import { TeamModal } from "../../teammodal";
 import {
   SideBarFooter,
@@ -13,14 +15,23 @@ interface SidebarFooterProps {
 }
 
 function SidebarFooterComponent({ name, project }: SidebarFooterProps) {
+  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(project);
+
+  const handleLogout = useCallback(() => {
+    if (!window.confirm("로그아웃하시겠습니까?")) return;
+    clearAllTokens();
+    navigate("/login");
+  }, [navigate]);
 
   return (
     <>
       <SideBarFooter>
         <SideBarFooterDiv>
-          <SideBarFooterNameSpan>{name}</SideBarFooterNameSpan>
+          <SideBarFooterNameSpan onClick={handleLogout}>
+            {name}
+          </SideBarFooterNameSpan>
 
           <SideBarFooterProjectDiv onClick={() => setModalOpen(true)}>
             {selectedProject}
