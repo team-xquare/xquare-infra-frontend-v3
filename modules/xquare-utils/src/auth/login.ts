@@ -36,7 +36,7 @@ export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
     const data = await res.json();
 
     // 응답 구조 검증
-  validateAuthResponse(data, "login");
+    validateAuthResponse(data, "login");
 
     return data as LoginResponse;
   } catch (error) {
