@@ -9,8 +9,10 @@ import {
   Button_round,
   DeploymentItem,
 } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const DeploymentHome = () => {
+  useAuthGuard();
   const navigate = useNavigate();
 
   const handleAddApplicationClick = () => {

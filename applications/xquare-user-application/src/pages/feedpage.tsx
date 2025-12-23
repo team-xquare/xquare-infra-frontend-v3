@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { Feed } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const FeedPage = () => {
+  useAuthGuard();
   return (
     <Container>
       <Feed page={3} />

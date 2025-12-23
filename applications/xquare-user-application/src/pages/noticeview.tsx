@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { Typography, Xquare_colors } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const NoticeView = () => {
+  useAuthGuard();
   const title = "공지사항 제목";
   const date = "2024-06-10";
   const content = `공지사항 내용이 여기에 표시됩니다. 공지사항 내용이 여기에 표시됩니다. 공지사항 내용이 여기에 표시됩니다.`;

@@ -9,11 +9,13 @@ import {
   Input_record,
   Button_square,
 } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const CreateApplication = () => {
+  useAuthGuard();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
-  const [tier, setTier] = useState("nano"); // 기본값 nano
+  const [tier, setTier] = useState("nano");
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
   // const [installationId, setInstallationId] = useState("");

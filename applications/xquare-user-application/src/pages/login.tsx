@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
+import { useLogin } from "@xquare/hooks";
+import type { LoginRequest } from "@xquare/utils";
+import { setTokens, startTokenAutoReissue } from "@xquare/utils";
 import {
   Logo,
   Input_text,
@@ -10,13 +14,61 @@ import {
 } from "@xquare/user-interfaces";
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { login, loading, error } = useLogin();
+
+  const getErrorType = (errorMsg: string | null) => {
+    if (!errorMsg) return { type: "none", message: "" };
+
+    const lowerError = errorMsg.toLowerCase();
+
+    if (
+      lowerError.includes("username") ||
+      lowerError.includes("아이디") ||
+      lowerError.includes("user not found")
+    ) {
+      return { type: "username", message: errorMsg };
+    }
+
+    if (
+      lowerError.includes("password") ||
+      lowerError.includes("비밀번호") ||
+      lowerError.includes("invalid password")
+    ) {
+      return { type: "password", message: errorMsg };
+    }
+
+    return { type: "general", message: errorMsg };
+  };
+
+  const errorType = getErrorType(error);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 인증 로직 연결
-    console.log("submit", { username, password });
+
+    const payload: LoginRequest = {
+      username,
+      password,
+    };
+
+    const res = await login(payload);
+    if (res) {
+      console.log("[Auth-login] 로그인 성공", res);
+
+      if (res.data?.accessToken && res.data?.refreshToken) {
+        setTokens(res.data.accessToken, res.data.refreshToken);
+        // 토큰 자동 재발급 시작
+        startTokenAutoReissue();
+        navigate("/");
+      } else {
+        console.error("[Auth-login] 토큰 가져오기 실패", error);
+      }
+    } else {
+      console.error("[Auth-login] 로그인 실패", error);
+    }
   };
 
   return (
@@ -36,7 +88,7 @@ const LoginPage: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="아이디를 입력해주세요"
-              title={""}
+              title={errorType.type === "username" ? errorType.message : ""}
               titleColor={String(Xquare_colors.red[500])}
               type="text"
             />
@@ -45,16 +97,25 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력해주세요"
-              title={""}
+              title={errorType.type === "password" ? errorType.message : ""}
               titleColor={String(Xquare_colors.red[500])}
               type="password"
             />
           </Inputs>
 
           <FormActions>
-            <Button_square type="submit" disabled={!username || !password}>
-              로그인
+            <Button_square
+              type="submit"
+              disabled={!username || !password || loading}
+            >
+              {loading ? "로그인 중..." : "로그인"}
             </Button_square>
+
+            {errorType.type === "general" && error && (
+              <Typography size="2x" weight="regular" color="red">
+                {error}
+              </Typography>
+            )}
 
             <LinkRow>
               <Typography size="2x" weight="regular" align="center">
@@ -152,6 +213,13 @@ const LinkRow = styled.div`
   display: flex;
   gap: 0.6rem;
   align-items: center;
+
+  a {
+    display: flex;
+    height: 1.8rem;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export default LoginPage;

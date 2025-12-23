@@ -12,8 +12,10 @@ import {
   RoutesContents,
   LogContents,
 } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const DeploymentView = () => {
+  useAuthGuard();
   const [activeTab, setActiveTab] = useState(0);
   const [editable, setEditable] = useState(false);
   const id = 0;

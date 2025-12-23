@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { Notice } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const NoticePage = () => {
+  useAuthGuard();
   return (
     <Container>
       <Notice page={3} />

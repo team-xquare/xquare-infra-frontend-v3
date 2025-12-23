@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRegister } from "@xquare/hooks"; // 훅 import
 import type { RegisterRequest } from "@xquare/utils"; // 타입 import
+import { setTokens, startTokenAutoReissue } from "@xquare/utils"; // 토큰 저장 유틸
 import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -47,7 +48,15 @@ const SignupPage: React.FC = () => {
     const res = await register(payload);
     if (res) {
       console.log("[Auth-register] Sign up successful", res);
-      navigate("/login");
+
+      if (res.data?.accessToken && res.data?.refreshToken) {
+        setTokens(res.data.accessToken, res.data.refreshToken);
+        // 토큰 자동 재발급 시작
+        startTokenAutoReissue();
+        navigate("/");
+      }else {
+        console.error("[Auth-register] 토큰 가져오기 실패", error);
+      }
     } else {
       console.error("[Auth-register] Sign up failed", error);
     }
@@ -319,6 +328,13 @@ const LinkRow = styled.div`
   display: flex;
   gap: 0.6rem;
   align-items: center;
+
+  a {
+    display: flex;
+    height: 1.8rem;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 export default SignupPage;

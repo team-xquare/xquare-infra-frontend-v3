@@ -6,6 +6,11 @@ export default function NotFound() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  console.warn(
+    `[Pagenotfound] 존재하지 않는 페이지 접근: ${location.pathname}`
+  );
+  console.log(location);
+
   // 이동까지 남은 시간 (초)
   const [count, setCount] = useState(2); // 2초 → 0되면 이동
 

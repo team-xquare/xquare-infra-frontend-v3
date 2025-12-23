@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { Summary } from "@xquare/user-interfaces";
+import { useAuthGuard } from "@xquare/hooks";
 
 const StatusPage = () => {
+  useAuthGuard();
   return (
     <Container>
       <Summary page={3} />

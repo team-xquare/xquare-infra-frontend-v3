@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthGuard } from "@xquare/hooks";
 import {
   Title,
   Xquare_colors,
@@ -10,6 +11,7 @@ import {
 } from "@xquare/user-interfaces";
 
 const CreateAddon = () => {
+  useAuthGuard();
   const navigate = useNavigate();
 
   const [teamId, setTeamId] = useState("");
