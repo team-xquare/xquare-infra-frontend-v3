@@ -18,14 +18,17 @@ function Layout({
   const navigate = useNavigate();
   const { userName, loading } = useUserName();
 
-  const navItems = [
-    { id: "home", label: "HOME", path: "/" },
-    { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
-    { id: "addons", label: "ADDONS", path: "/addons" },
-    { id: "status", label: "STATUS", path: "/status" },
-    { id: "notice", label: "NOTICE", path: "/notice" },
-    // { id: "feed", label: "FEED", path: "/feed" },
-  ];
+  const navItems = React.useMemo(
+    () => [
+      { id: "home", label: "HOME", path: "/" },
+      { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
+      { id: "addons", label: "ADDONS", path: "/addons" },
+      { id: "status", label: "STATUS", path: "/status" },
+      { id: "notice", label: "NOTICE", path: "/notice" },
+      // { id: "feed", label: "FEED", path: "/feed" },
+    ],
+    []
+  );
 
   const handleNavItemClick = (itemId: string) => {
     const routeMap: Record<string, string> = {

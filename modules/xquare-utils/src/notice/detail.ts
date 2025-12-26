@@ -43,7 +43,7 @@ export const getNoticeDetail = async (
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        Accept: "*/*",
+        Accept: "application/json",
       },
     });
 

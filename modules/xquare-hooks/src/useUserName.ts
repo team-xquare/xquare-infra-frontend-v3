@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { CheckUser, getCachedUserName, isAuthenticated } from "@xquare/utils";
-
-const USERNAME_CACHE_KEY = "xquare:username";
+import {
+  USERNAME_CACHE_KEY,
+  checkUser,
+  getCachedUserName,
+  isAuthenticated,
+} from "@xquare/utils";
 
 export const useUserName = (): {
   userName: string | null;
@@ -27,7 +30,7 @@ export const useUserName = (): {
       setLoading(true);
 
       try {
-        const me = await CheckUser();
+        const me = await checkUser();
         if (mounted) {
           setUserName(me.username);
         }

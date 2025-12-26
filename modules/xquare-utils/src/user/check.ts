@@ -23,7 +23,7 @@ interface MeApiResponse {
  * ====================== */
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const USERNAME_CACHE_KEY = "xquare:username";
+export const USERNAME_CACHE_KEY = "xquare:username";
 
 const canUseStorage = () =>
   typeof window !== "undefined" && !!window.localStorage;
@@ -38,11 +38,11 @@ const writeCachedUserName = (username: string) => {
   try {
     window.localStorage.setItem(USERNAME_CACHE_KEY, username);
   } catch (error) {
-    console.warn("[CheckUser] 사용자명 캐시 저장 실패", error);
+    console.warn("[checkUser] 사용자명 캐시 저장 실패", error);
   }
 };
 
-export const CheckUser = async (): Promise<Me> => {
+export const checkUser = async (): Promise<Me> => {
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");
   }
@@ -52,22 +52,34 @@ export const CheckUser = async (): Promise<Me> => {
     throw new Error("AccessToken이 없습니다.");
   }
 
-  const response = await fetch(`${API_BASE_URL}/users/me`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "*/*",
-    },
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}/users/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "*/*",
+      },
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "알 수 없는 네트워크 오류가 발생했습니다.";
+    throw new Error(`[checkUser] 네트워크 오류: ${message}`);
+  }
 
   if (!response.ok) {
-    throw new Error(`유저 조회 실패 (HTTP ${response.status})`);
+    throw new Error(
+      `유저 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+    );
   }
 
   const result = (await response.json()) as MeApiResponse;
 
-  if (!result.success) {
-    throw new Error("유저 조회 실패");
+  if (!result.success || !result.data || !result.data.username) {
+    throw new Error("유저 조회 실패: 응답 데이터가 올바르지 않습니다.");
   }
 
   writeCachedUserName(result.data.username);

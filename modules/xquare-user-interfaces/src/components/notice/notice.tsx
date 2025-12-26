@@ -5,6 +5,7 @@ import { NoticeItem } from "./noticeitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import { SearchBox } from "../input/index";
+import { formatDate } from "@xquare/utils";
 import Xquare_colors from "../../styles";
 import { listNotices } from "@xquare/utils";
 import type { NoticeSummary } from "@xquare/utils";
@@ -24,13 +25,16 @@ function Notice({ page }: NoticeProps) {
   const [searchValue, setSearchValue] = useState("");
   const [pagination, setPagination] = useState({ pageKey: page, index: 0 });
 
+  const currentPage = useMemo(
+    () => (pagination.pageKey === page ? pagination.index : 0),
+    [pagination.pageKey, pagination.index, page]
+  );
+
   const isFullList = page === 3;
   const fetchLimit = useMemo(() => (page === 1 ? 4 : 15), [page]);
 
   useEffect(() => {
     let cancelled = false;
-
-    const currentPage = pagination.pageKey === page ? pagination.index : 0;
 
     const load = async () => {
       try {
@@ -49,10 +53,9 @@ function Notice({ page }: NoticeProps) {
     return () => {
       cancelled = true;
     };
-  }, [page, fetchLimit, pagination, isFullList]);
+  }, [page, fetchLimit, currentPage, isFullList]);
 
   const { displayItems, hasNext } = useMemo(() => {
-    const currentPage = pagination.pageKey === page ? pagination.index : 0;
     const filtered = items.filter((n) =>
       n.title.toLowerCase().includes(searchValue.trim().toLowerCase())
     );
@@ -79,7 +82,7 @@ function Notice({ page }: NoticeProps) {
     const moreFromSlice = end < filtered.length;
 
     return { displayItems: sliced, hasNext: moreFromSlice };
-  }, [items, searchValue, fetchLimit, isFullList, pagination, page]);
+  }, [items, searchValue, fetchLimit, isFullList, currentPage]);
 
   return (
     <Noticecontainer page={page}>
@@ -110,41 +113,33 @@ function Notice({ page }: NoticeProps) {
             type="notice"
             id={item.id}
             NoticeValue={item.title}
-            date={new Date(item.createdAt)
-              .toISOString()
-              .slice(0, 10)
-              .replaceAll("-", ".")}
+            date={formatDate(item.createdAt)}
           />
         ))}
       </div>
       {isFullList && (
         <PaginationArea>
           <PageButton
-            disabled={
-              (pagination.pageKey === page ? pagination.index : 0) === 0
-            }
+            disabled={currentPage === 0}
             onClick={() =>
-              setPagination((prev) => ({
+              setPagination({
                 pageKey: page,
-                index: Math.max(
-                  0,
-                  (prev.pageKey === page ? prev.index : 0) - 1
-                ),
-              }))
+                index: Math.max(0, currentPage - 1),
+              })
             }
           >
             이전
           </PageButton>
           <Typography size="3x" weight="medium">
-            Page {(pagination.pageKey === page ? pagination.index : 0) + 1}
+            Page {currentPage + 1}
           </Typography>
           <PageButton
             disabled={!hasNext}
             onClick={() =>
-              setPagination((prev) => ({
+              setPagination({
                 pageKey: page,
-                index: (prev.pageKey === page ? prev.index : 0) + 1,
-              }))
+                index: currentPage + 1,
+              })
             }
           >
             다음

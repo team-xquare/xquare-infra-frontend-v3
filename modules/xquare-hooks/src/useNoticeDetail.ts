@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getNoticeDetail } from "@xquare/utils";
 import type { NoticeDetail } from "@xquare/utils";
 
@@ -6,14 +6,21 @@ export function useNoticeDetail(noticeId?: number) {
   const [data, setData] = useState<NoticeDetail | null>(null);
   const [error, setError] = useState<Error | null>(null);
 
-  const isValidId = typeof noticeId === "number" && !Number.isNaN(noticeId);
+  const isValidId = useMemo(
+    () => typeof noticeId === "number" && !Number.isNaN(noticeId),
+    [noticeId]
+  );
 
   useEffect(() => {
-    if (!isValidId) {
-      return;
-    }
-
     let cancelled = false;
+
+    if (!isValidId) {
+      setError(new Error("유효한 공지 ID가 필요합니다."));
+      setData(null);
+      return () => {
+        cancelled = true;
+      };
+    }
 
     getNoticeDetail(noticeId!)
       .then((res) => {
@@ -33,7 +40,7 @@ export function useNoticeDetail(noticeId?: number) {
     return () => {
       cancelled = true;
     };
-  }, [noticeId, isValidId]);
+  }, [noticeId]);
 
   const computedError = !isValidId
     ? new Error("유효한 공지 ID가 필요합니다.")
