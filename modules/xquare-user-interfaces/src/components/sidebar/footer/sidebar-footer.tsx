@@ -2,6 +2,7 @@ import { clearAllTokens, getSelectedTeam, type Team } from "@xquare/utils";
 import { useNavigate } from "react-router-dom";
 import { memo, useCallback, useState } from "react";
 import { TeamModal } from "../../teammodal";
+import { CreateTeamModal } from "./create-team-modal";
 import {
   SideBarFooter,
   SideBarFooterDiv,
@@ -15,6 +16,7 @@ interface SidebarFooterProps {
   teams?: Team[];
   teamsLoading?: boolean;
   teamsError?: Error | null;
+  onTeamCreated?: () => void;
 }
 
 function SidebarFooterComponent({
@@ -23,9 +25,11 @@ function SidebarFooterComponent({
   teams,
   teamsLoading,
   teamsError,
+  onTeamCreated,
 }: SidebarFooterProps) {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   // Initialize selected project from localStorage or fallback to prop
   const [selectedProject, setSelectedProject] = useState(() => {
@@ -38,6 +42,18 @@ function SidebarFooterComponent({
     clearAllTokens();
     navigate("/login");
   }, [navigate]);
+
+  const handleOpenCreateModal = useCallback(() => {
+    setModalOpen(false);
+    setCreateModalOpen(true);
+  }, []);
+
+  const handleTeamCreated = useCallback(() => {
+    setCreateModalOpen(false);
+    if (onTeamCreated) {
+      onTeamCreated();
+    }
+  }, [onTeamCreated]);
 
   return (
     <>
@@ -62,6 +78,14 @@ function SidebarFooterComponent({
             setSelectedProject(teamName);
           }}
           onClose={() => setModalOpen(false)}
+          onCreateTeam={handleOpenCreateModal}
+        />
+      )}
+
+      {createModalOpen && (
+        <CreateTeamModal
+          onClose={() => setCreateModalOpen(false)}
+          onSuccess={handleTeamCreated}
         />
       )}
     </>

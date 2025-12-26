@@ -10,6 +10,7 @@ interface TeamModalProps {
   error?: Error | null;
   onSelectTeam: (teamName: string, teamId: number) => void;
   onClose: () => void;
+  onCreateTeam?: () => void;
 }
 
 export const TeamModal = ({
@@ -18,6 +19,7 @@ export const TeamModal = ({
   error,
   onSelectTeam,
   onClose,
+  onCreateTeam,
 }: TeamModalProps) => {
   const handleBackgroundClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -45,7 +47,11 @@ export const TeamModal = ({
                   name: team.name,
                   type: team.type,
                 });
-                console.log("[TeamModal] onSelectTeam 콜백 호출:", team.name, team.id);
+                console.log(
+                  "[TeamModal] onSelectTeam 콜백 호출:",
+                  team.name,
+                  team.id
+                );
                 onSelectTeam(team.name, team.id);
                 onClose();
               }}
@@ -54,6 +60,13 @@ export const TeamModal = ({
               <TeamType>{team.type}</TeamType>
             </TeamItem>
           ))}
+
+          {onCreateTeam && (
+            <CreateTeamItem onClick={onCreateTeam}>
+              <PlusIcon>+</PlusIcon>
+              <CreateTeamText>새 팀 만들기</CreateTeamText>
+            </CreateTeamItem>
+          )}
         </TeamList>
 
         <CloseButton onClick={onClose}>닫기</CloseButton>
@@ -153,6 +166,40 @@ const LoadingText = styled.p`
   color: ${Xquare_colors.gray[500]};
   font-size: 14px;
   margin: 0;
+`;
+
+const CreateTeamItem = styled.li`
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1.5px dashed ${Xquare_colors.purple[300]};
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.18s;
+  color: ${Xquare_colors.purple[400]};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  &:hover {
+    background: #f8f5ff;
+    border-color: ${Xquare_colors.purple[400]};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+`;
+
+const PlusIcon = styled.span`
+  font-size: 20px;
+  font-weight: bold;
+`;
+
+const CreateTeamText = styled.span`
+  font-weight: 600;
 `;
 
 const ErrorText = styled.p`

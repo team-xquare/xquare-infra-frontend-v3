@@ -30,6 +30,7 @@ interface SidebarProps {
   teamsError?: Error | null;
   onNavItemClick: (itemId: string) => void;
   onSearch?: (value: string) => void;
+  onTeamCreated?: () => void;
 }
 
 function Sidebar({
@@ -42,6 +43,7 @@ function Sidebar({
   teamsError,
   onNavItemClick,
   onSearch,
+  onTeamCreated,
 }: SidebarProps) {
   const location = useLocation();
 
@@ -98,6 +100,7 @@ function Sidebar({
         teams={teams}
         teamsLoading={teamsLoading}
         teamsError={teamsError}
+        onTeamCreated={onTeamCreated}
       />
     </SidebarContainer>
   );

@@ -17,7 +17,12 @@ function Layout({
 }: LayoutProps) {
   const navigate = useNavigate();
   const { userName, loading } = useUserName();
-  const { data: teams, loading: teamsLoading, error: teamsError } = useTeams();
+  const {
+    data: teams,
+    loading: teamsLoading,
+    error: teamsError,
+    refetch: refetchTeams,
+  } = useTeams();
 
   const navItems = React.useMemo(
     () => [
@@ -58,6 +63,7 @@ function Layout({
         teamsError={teamsError}
         onNavItemClick={handleNavItemClick}
         onSearch={onSearch}
+        onTeamCreated={refetchTeams}
       />
       <Page>{children}</Page>
     </Container>

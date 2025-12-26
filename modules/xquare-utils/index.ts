@@ -46,8 +46,20 @@ export type { NoticeDetail } from "./src/notice/detail";
 export { getTeamAddons } from "./src/teams/addons";
 export type { TeamAddon } from "./src/teams/addons";
 
+export { getTeamApplications } from "./src/teams/applications";
+export type {
+  TeamApplication,
+  ApplicationConfiguration,
+  ApplicationGitHub,
+  ApplicationBuild,
+  ApplicationEndpoint,
+} from "./src/teams/applications";
+
 export { getTeams } from "./src/teams/list";
 export type { Team, TeamMember } from "./src/teams/list";
+
+export { createTeam } from "./src/teams/create";
+export type { CreateTeamRequest, CreateTeamMember } from "./src/teams/create";
 
 export {
   saveSelectedTeam,

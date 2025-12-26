@@ -10,7 +10,7 @@ export interface TeamMember {
 export interface Team {
   id: number;
   name: string;
-  type: "club" | "project" | string;
+  type: "club" | "team" | "individual" | string;
   members: TeamMember[];
 }
 
