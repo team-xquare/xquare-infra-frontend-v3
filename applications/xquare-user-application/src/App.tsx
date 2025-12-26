@@ -1,16 +1,19 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Global } from "@emotion/react";
 import globalStyles from "./styles/global";
+
+import { isAuthenticated, startTokenAutoReissue } from "@xquare/utils";
 
 import Layout from "./layout";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
-import FeedPage from "./pages/feedpage";
+// import FeedPage from "./pages/feedpage";
 import StatusPage from "./pages/status";
 import NoticeView from "./pages/noticeview";
-import FeedView from "./pages/feedview";
+// import FeedView from "./pages/feedview";
 import AddonPage from "./pages/addonpage";
 import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
@@ -31,6 +34,12 @@ const art = `
 `;
 
 function App() {
+  useEffect(() => {
+    if (isAuthenticated()) {
+      startTokenAutoReissue();
+    }
+  }, []);
+
   console.log(art);
   return (
     <>
@@ -111,14 +120,14 @@ function App() {
           }
         />
 
-        <Route
+        {/* <Route
           path="/feed"
           element={
             <Layout>
               <FeedPage />
             </Layout>
           }
-        />
+        /> */}
 
         <Route
           path="/notice/view/:id"
@@ -129,14 +138,14 @@ function App() {
           }
         />
 
-        <Route
+        {/* <Route
           path="/feed/view/:id"
           element={
             <Layout>
               <FeedView />
             </Layout>
           }
-        />
+        /> */}
 
         <Route path="*" element={<NotFound />} />
       </Routes>

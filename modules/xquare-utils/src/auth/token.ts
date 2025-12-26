@@ -108,8 +108,22 @@ export const getRefreshToken = (): string | null => {
 /* 모든 토큰 삭제 (로그아웃 시 호출) */
 export const clearAllTokens = (): void => {
   tokenCache = { accessToken: null, refreshToken: null };
+
   saveToStorage(tokenCache);
-  console.log("[Token] 모든 토큰이 삭제되었습니다.");
+
+  try {
+    localStorage.clear();
+  } catch (e) {
+    console.warn("[Token] localStorage 전체 삭제 실패", e);
+  }
+
+  try {
+    sessionStorage.clear();
+  } catch (e) {
+    console.warn("[Token] sessionStorage 전체 삭제 실패", e);
+  }
+
+  console.log("[Token] 모든 저장소가 삭제되었습니다.");
   console.log("[Token] 인증 상태 : 토큰 없음");
 };
 

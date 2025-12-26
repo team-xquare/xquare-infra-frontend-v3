@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useUserName } from "@xquare/hooks";
 import {
   HomeImg,
   Typography,
@@ -18,7 +18,7 @@ const HomePage = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [deployCount, setDeployCount] = useState<number>(0);
   const [traffic, setTraffic] = useState<number>(0);
-  const [username, setUsername] = useState<string>("UserName");
+  const { userName, loading } = useUserName();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -28,7 +28,6 @@ const HomePage = () => {
         deployCount: 42,
         traffic: 1280,
       };
-      setUsername(userData.username);
       setDeployCount(userData.deployCount);
       setTraffic(userData.traffic);
     };
@@ -95,7 +94,7 @@ const HomePage = () => {
       </Helmet>
       <ContentsArea>
         <Title
-          title={`Welcome, Back ${username}`}
+          title={`Welcome, Back ${userName ?? (loading ? "Loading..." : "")}`}
           subTitle={"Deploy your service via xquare infra"}
         ></Title>
       </ContentsArea>

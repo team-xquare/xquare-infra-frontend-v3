@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Sidebar } from "@xquare/user-interfaces";
+import { useUserName } from "@xquare/hooks";
 import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
@@ -15,6 +16,7 @@ function Layout({
   onSearch,
 }: LayoutProps) {
   const navigate = useNavigate();
+  const { userName, loading } = useUserName();
 
   const navItems = [
     { id: "home", label: "HOME", path: "/" },
@@ -22,7 +24,7 @@ function Layout({
     { id: "addons", label: "ADDONS", path: "/addons" },
     { id: "status", label: "STATUS", path: "/status" },
     { id: "notice", label: "NOTICE", path: "/notice" },
-    { id: "feed", label: "FEED", path: "/feed" },
+    // { id: "feed", label: "FEED", path: "/feed" },
   ];
 
   const handleNavItemClick = (itemId: string) => {
@@ -32,7 +34,7 @@ function Layout({
       addons: "/addons",
       status: "/status",
       notice: "/notice",
-      feed: "/feed",
+      // feed: "/feed",
     };
 
     const path = routeMap[itemId];
@@ -44,7 +46,7 @@ function Layout({
     <Container>
       <Sidebar
         navItems={navItems}
-        userName="111"
+        userName={userName ?? (loading ? "Loading..." : "")}
         projectName=""
         searchPlaceholder={searchPlaceholder}
         onNavItemClick={handleNavItemClick}

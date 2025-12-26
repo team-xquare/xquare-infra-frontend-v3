@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import { NoticeItem } from "./noticeitem/index";
@@ -6,6 +6,8 @@ import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import { SearchBox } from "../input/index";
 import Xquare_colors from "../../styles";
+import { listNotices } from "@xquare/utils";
+import type { NoticeSummary } from "@xquare/utils";
 
 interface NoticeProps {
   page: number;
@@ -18,58 +20,66 @@ function Notice({ page }: NoticeProps) {
     navigate("/notice");
   }
 
-  const items = [
-    {
-      id: 1,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 2,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 3,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 1,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 2,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 3,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 1,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 2,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-    {
-      id: 3,
-      NoticeValue: "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-      date: "2024.06.01",
-    },
-  ];
-
-  const displayItems =
-    page === 1 ? items.slice(0, 4) : page === 2 ? items.slice(0, 7) : items;
-
+  const [items, setItems] = useState<NoticeSummary[]>([]);
   const [searchValue, setSearchValue] = useState("");
+  const [pagination, setPagination] = useState({ pageKey: page, index: 0 });
+
+  const isFullList = page === 3;
+  const fetchLimit = useMemo(() => (page === 1 ? 4 : 15), [page]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const currentPage = pagination.pageKey === page ? pagination.index : 0;
+
+    const load = async () => {
+      try {
+        const serverPage = isFullList ? currentPage + 1 : 1;
+        const notices = await listNotices({
+          page: serverPage,
+          limit: fetchLimit,
+        });
+        if (!cancelled) setItems(notices);
+      } catch (e) {
+        console.error("[Notice] 공지 목록 조회 실패", e);
+        if (!cancelled) setItems([]);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [page, fetchLimit, pagination, isFullList]);
+
+  const { displayItems, hasNext } = useMemo(() => {
+    const currentPage = pagination.pageKey === page ? pagination.index : 0;
+    const filtered = items.filter((n) =>
+      n.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+    );
+
+    if (!isFullList) {
+      return {
+        displayItems: filtered.slice(0, fetchLimit),
+        hasNext: false,
+      };
+    }
+
+    const serverPaged = filtered.length <= fetchLimit;
+
+    if (serverPaged) {
+      return {
+        displayItems: filtered,
+        hasNext: filtered.length === fetchLimit,
+      };
+    }
+
+    const start = currentPage * fetchLimit;
+    const end = start + fetchLimit;
+    const sliced = filtered.slice(start, end);
+    const moreFromSlice = end < filtered.length;
+
+    return { displayItems: sliced, hasNext: moreFromSlice };
+  }, [items, searchValue, fetchLimit, isFullList, pagination, page]);
 
   return (
     <Noticecontainer page={page}>
@@ -96,13 +106,51 @@ function Notice({ page }: NoticeProps) {
       <div>
         {displayItems.map((item) => (
           <NoticeItem
+            key={item.id}
             type="notice"
             id={item.id}
-            NoticeValue={item.NoticeValue}
-            date={item.date}
+            NoticeValue={item.title}
+            date={new Date(item.createdAt)
+              .toISOString()
+              .slice(0, 10)
+              .replaceAll("-", ".")}
           />
         ))}
       </div>
+      {isFullList && (
+        <PaginationArea>
+          <PageButton
+            disabled={
+              (pagination.pageKey === page ? pagination.index : 0) === 0
+            }
+            onClick={() =>
+              setPagination((prev) => ({
+                pageKey: page,
+                index: Math.max(
+                  0,
+                  (prev.pageKey === page ? prev.index : 0) - 1
+                ),
+              }))
+            }
+          >
+            이전
+          </PageButton>
+          <Typography size="3x" weight="medium">
+            Page {(pagination.pageKey === page ? pagination.index : 0) + 1}
+          </Typography>
+          <PageButton
+            disabled={!hasNext}
+            onClick={() =>
+              setPagination((prev) => ({
+                pageKey: page,
+                index: (prev.pageKey === page ? prev.index : 0) + 1,
+              }))
+            }
+          >
+            다음
+          </PageButton>
+        </PaginationArea>
+      )}
     </Noticecontainer>
   );
 }
@@ -128,6 +176,23 @@ const ClickableText = styled(Typography)`
   justify-content: center;
   cursor: pointer;
   color: ${Xquare_colors.gray[500]};
+`;
+
+const PaginationArea = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const PageButton = styled.button<{ disabled?: boolean }>`
+  padding: 6px 12px;
+  border: 1px solid ${Xquare_colors.gray[300]};
+  background: ${({ disabled }) =>
+    disabled ? Xquare_colors.gray[200] : Xquare_colors.white};
+  color: ${Xquare_colors.black};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  border-radius: 6px;
 `;
 
 export { Notice };
