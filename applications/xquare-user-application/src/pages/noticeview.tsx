@@ -1,51 +1,43 @@
 import styled from "@emotion/styled";
 import { Typography, Xquare_colors } from "@xquare/user-interfaces";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useNoticeDetail } from "@xquare/hooks";
+import { useParams } from "react-router-dom";
 
 const NoticeView = () => {
   useAuthGuard();
-  const title = "공지사항 제목";
-  const date = "2024-06-10";
-  const content = `공지사항 내용이 여기에 표시됩니다. 공지사항 내용이 여기에 표시됩니다. 공지사항 내용이 여기에 표시됩니다.`;
+  const { id } = useParams();
+  const noticeId = Number(id);
+  const { data, loading, error } = useNoticeDetail(
+    Number.isNaN(noticeId) ? undefined : noticeId
+  );
 
-  const files = [
-    { name: "공지사항_첨부파일.pdf", url: "/files/공지사항_첨부파일.pdf" },
-    { name: "공지사항_첨부파일2.pdf", url: "/files/공지사항_첨부파일2.pdf" },
-  ];
+  const title = data?.title ?? "공지사항";
+  const date = data?.createdAt
+    ? new Date(data.createdAt).toLocaleDateString()
+    : "";
+  const content = data?.content ?? "";
 
   return (
     <Container>
       <ContentsArea>
         <Typography size="8x" weight="semiBold">
-          {title}
+          {loading ? "loading..." : title}
         </Typography>
-        <Typography size="4x" weight="regular">
-          {date}
-        </Typography>
+        {!loading && (
+          <Typography size="4x" weight="regular">
+            {date}
+          </Typography>
+        )}
       </ContentsArea>
 
-      <Content>{content}</Content>
+      {error ? (
+        <ErrorText>공지 상세 조회 실패: {error.message}</ErrorText>
+      ) : (
+        <Content>{loading ? "" : content}</Content>
+      )}
 
       <FileArea>
-        {files.length === 0 ? (
-          <NoFileText>첨부된 파일이 없습니다.</NoFileText>
-        ) : (
-          files.map((file) => (
-            <File key={file.name}>
-              <Typography size="4x" weight="semiBold">
-                첨부파일
-              </Typography>
-              <Typography size="4x" weight="semiBold">
-                |
-              </Typography>
-              <Typography size="4x" weight="regular">
-                <FileLink href={file.url} download={file.name}>
-                  {file.name}
-                </FileLink>
-              </Typography>
-            </File>
-          ))
-        )}
+        <NoFileText>첨부된 파일이 없습니다.</NoFileText>
       </FileArea>
     </Container>
   );
@@ -90,11 +82,11 @@ const FileArea = styled.div`
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
 `;
 
-const File = styled.div`
-  flex-direction: row;
-  display: flex;
-  gap: 10px;
-`;
+// const File = styled.div`
+//   flex-direction: row;
+//   display: flex;
+//   gap: 10px;
+// `;
 
 const NoFileText = styled.div`
   font-size: 15px;
@@ -102,14 +94,24 @@ const NoFileText = styled.div`
   color: ${Xquare_colors.gray[500]};
 `;
 
-const FileLink = styled.a`
-  text-decoration: underline;
-  color: ${Xquare_colors.black};
-  font-weight: 500;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.7;
-  }
+// const FileLink = styled.a`
+//   text-decoration: underline;
+//   color: ${Xquare_colors.black};
+//   font-weight: 500;
+//   cursor: pointer;
+//   &:hover {
+//     opacity: 0.7;
+//   }
+// `;
+
+const ErrorText = styled.div`
+  font-size: 15px;
+  font-weight: 600;
+  color: ${Xquare_colors.red[500]};
+  font-family: "Pretendard";
+  width: 100%;
+  text-align: center;
+  height: 480px;
 `;
 
 export default NoticeView;

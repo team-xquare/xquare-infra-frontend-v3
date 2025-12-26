@@ -1,0 +1,53 @@
+import { useEffect, useMemo, useState } from "react";
+import { getNoticeDetail } from "@xquare/utils";
+import type { NoticeDetail } from "@xquare/utils";
+
+export function useNoticeDetail(noticeId?: number) {
+  const [data, setData] = useState<NoticeDetail | null>(null);
+  const [error, setError] = useState<Error | null>(null);
+
+  const isValidId = useMemo(
+    () => typeof noticeId === "number" && !Number.isNaN(noticeId),
+    [noticeId]
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!isValidId) {
+      setError(new Error("유효한 공지 ID가 필요합니다."));
+      setData(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    getNoticeDetail(noticeId!)
+      .then((res) => {
+        if (!cancelled) {
+          setData(res);
+          setError(null);
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(
+            err instanceof Error ? err : new Error("공지 상세 조회 실패")
+          );
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [noticeId]);
+
+  const computedError = !isValidId
+    ? new Error("유효한 공지 ID가 필요합니다.")
+    : error;
+
+  const isCurrentData = data && isValidId ? data.id === noticeId : false;
+  const loading = isValidId && !isCurrentData && !computedError;
+
+  return { data: isCurrentData ? data : null, loading, error: computedError };
+}

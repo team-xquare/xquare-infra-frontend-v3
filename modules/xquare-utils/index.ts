@@ -27,4 +27,18 @@ export {
   AUTH_RELOGIN_EVENT,
 } from "./src/auth/tokenReissue";
 
+export {
+  checkUser,
+  getCachedUserName,
+  USERNAME_CACHE_KEY,
+} from "./src/user/check";
+
+export { formatDate } from "./src/formatDate";
+
 export type { TokenReissuerOptions } from "./src/auth/tokenReissue";
+
+export { listNotices } from "./src/notice/list";
+export type { NoticeSummary, ListNoticesParams } from "./src/notice/list";
+
+export { getNoticeDetail } from "./src/notice/detail";
+export type { NoticeDetail } from "./src/notice/detail";
