@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getNoticeDetail, NoticeDetail } from "@xquare/utils";
+import { getNoticeDetail } from "@xquare/utils";
+import type { NoticeDetail } from "@xquare/utils";
 
 export function useNoticeDetail(noticeId?: number) {
   const [data, setData] = useState<NoticeDetail | null>(null);
