@@ -1,4 +1,4 @@
-import { clearAllTokens } from "@xquare/utils";
+import { clearAllTokens, getSelectedTeam, type Team } from "@xquare/utils";
 import { useNavigate } from "react-router-dom";
 import { memo, useCallback, useState } from "react";
 import { TeamModal } from "../../teammodal";
@@ -12,12 +12,26 @@ import {
 interface SidebarFooterProps {
   name: string;
   project: string;
+  teams?: Team[];
+  teamsLoading?: boolean;
+  teamsError?: Error | null;
 }
 
-function SidebarFooterComponent({ name, project }: SidebarFooterProps) {
+function SidebarFooterComponent({
+  name,
+  project,
+  teams,
+  teamsLoading,
+  teamsError,
+}: SidebarFooterProps) {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState(project);
+
+  // Initialize selected project from localStorage or fallback to prop
+  const [selectedProject, setSelectedProject] = useState(() => {
+    const savedTeam = getSelectedTeam();
+    return savedTeam?.name ?? project;
+  });
 
   const handleLogout = useCallback(() => {
     if (!window.confirm("로그아웃하시겠습니까?")) return;
@@ -41,6 +55,9 @@ function SidebarFooterComponent({ name, project }: SidebarFooterProps) {
 
       {modalOpen && (
         <TeamModal
+          teams={teams ?? []}
+          loading={teamsLoading}
+          error={teamsError}
           onSelectTeam={(teamName) => {
             setSelectedProject(teamName);
           }}

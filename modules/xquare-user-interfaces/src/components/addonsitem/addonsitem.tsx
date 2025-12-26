@@ -124,10 +124,11 @@ const Container = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   flex-direction: column;
-  height: 190px;
-  width: 385px;
+  width: 100%;
+  min-height: 190px;
   padding: 10px;
   border-radius: 8px;
+  box-sizing: border-box;
 
   &:hover {
     background-color: ${Xquare_colors.gray[300]};
@@ -138,6 +139,7 @@ const Container = styled.div`
 const Contents = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 
 const Heading = styled.div`
@@ -146,12 +148,20 @@ const Heading = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
+  width: 100%;
 `;
 
 const Typo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-width: 0; /* allow text to wrap within available space */
+
+  & > * {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
 `;
 
 const Icons = styled.div`
@@ -159,15 +169,22 @@ const Icons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+
+  img {
+    width: 44px;
+    height: 44px;
+  }
 `;
 
 const Status = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   margin-top: 6px;
   gap: 25px;
+  width: 100%;
 `;
 
 const ItemSet = styled.div`

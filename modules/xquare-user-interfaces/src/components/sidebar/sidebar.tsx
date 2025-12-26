@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useLocation } from "react-router-dom";
+import type { Team } from "@xquare/utils";
 import { SidebarHeader } from "./header/sidebar-header";
 import { SidebarSearch } from "./search/sidebar-search";
 import { SidebarItem } from "./item/sidebar-item";
@@ -24,6 +25,9 @@ interface SidebarProps {
   projectName: string;
   searchPlaceholder: string;
   userName: string;
+  teams?: Team[];
+  teamsLoading?: boolean;
+  teamsError?: Error | null;
   onNavItemClick: (itemId: string) => void;
   onSearch?: (value: string) => void;
 }
@@ -33,6 +37,9 @@ function Sidebar({
   userName,
   projectName,
   searchPlaceholder,
+  teams,
+  teamsLoading,
+  teamsError,
   onNavItemClick,
   onSearch,
 }: SidebarProps) {
@@ -45,7 +52,7 @@ function Sidebar({
 
   const activeItemId =
     navItems.find(
-      (i) => isMatch(i.path) || i.subItems?.some((s) => isMatch(s.path)),
+      (i) => isMatch(i.path) || i.subItems?.some((s) => isMatch(s.path))
     )?.id ??
     navItems[0]?.id ??
     "";
@@ -56,14 +63,14 @@ function Sidebar({
       navItems
         .find((i) => i.id === itemId)
         ?.subItems?.some((sub) => sub.id === activeItemId),
-    [activeItemId, navItems],
+    [activeItemId, navItems]
   );
 
   const handleMainItemClick = useCallback(
     (itemId: string) => {
       onNavItemClick(itemId);
     },
-    [onNavItemClick],
+    [onNavItemClick]
   );
 
   return (
@@ -85,7 +92,13 @@ function Sidebar({
           </SidebarNavContainer>
         </SidebarNavContent>
       </SidebarContent>
-      <SidebarFooter name={userName} project={projectName} />
+      <SidebarFooter
+        name={userName}
+        project={projectName}
+        teams={teams}
+        teamsLoading={teamsLoading}
+        teamsError={teamsError}
+      />
     </SidebarContainer>
   );
 }

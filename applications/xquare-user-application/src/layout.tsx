@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Sidebar } from "@xquare/user-interfaces";
-import { useUserName } from "@xquare/hooks";
+import { useUserName, useTeams } from "@xquare/hooks";
 import { useNavigate } from "react-router-dom";
 
 interface LayoutProps {
@@ -17,6 +17,7 @@ function Layout({
 }: LayoutProps) {
   const navigate = useNavigate();
   const { userName, loading } = useUserName();
+  const { data: teams, loading: teamsLoading, error: teamsError } = useTeams();
 
   const navItems = React.useMemo(
     () => [
@@ -52,6 +53,9 @@ function Layout({
         userName={userName ?? (loading ? "Loading..." : "")}
         projectName=""
         searchPlaceholder={searchPlaceholder}
+        teams={teams ?? []}
+        teamsLoading={teamsLoading}
+        teamsError={teamsError}
         onNavItemClick={handleNavItemClick}
         onSearch={onSearch}
       />

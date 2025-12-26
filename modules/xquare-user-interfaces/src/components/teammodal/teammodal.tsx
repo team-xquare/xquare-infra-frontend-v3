@@ -2,25 +2,28 @@ import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
 import { useCallback } from "react";
 import Xquare_colors from "../../styles";
+import { saveSelectedTeam, type Team } from "@xquare/utils";
 
 interface TeamModalProps {
+  teams?: Team[];
+  loading?: boolean;
+  error?: Error | null;
   onSelectTeam: (teamName: string, teamId: number) => void;
   onClose: () => void;
 }
 
-export const TeamModal = ({ onSelectTeam, onClose }: TeamModalProps) => {
-  // 더미 데이터
-  const teams = [
-    { id: 0, name: "XQUARE", type: "club" },
-    { id: 1, name: "DMS", type: "club" },
-    { id: 2, name: "PICK", type: "club" },
-  ];
-
+export const TeamModal = ({
+  teams,
+  loading,
+  error,
+  onSelectTeam,
+  onClose,
+}: TeamModalProps) => {
   const handleBackgroundClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (e.target === e.currentTarget) onClose();
     },
-    [onClose],
+    [onClose]
   );
 
   return createPortal(
@@ -28,17 +31,27 @@ export const TeamModal = ({ onSelectTeam, onClose }: TeamModalProps) => {
       <ModalContent>
         <Title>프로젝트 선택</Title>
 
+        {loading && <LoadingText>팀 목록을 불러오는 중...</LoadingText>}
+        {error && <ErrorText>팀 목록을 불러올 수 없습니다.</ErrorText>}
+
         <TeamList>
-          {teams.map((team) => (
+          {teams?.map((team: Team) => (
             <TeamItem
               key={team.id}
               onClick={() => {
-                localStorage.setItem("selectedTeamId", String(team.id));
+                console.log("[TeamModal] 팀 선택됨:", team);
+                saveSelectedTeam({
+                  id: team.id,
+                  name: team.name,
+                  type: team.type,
+                });
+                console.log("[TeamModal] onSelectTeam 콜백 호출:", team.name, team.id);
                 onSelectTeam(team.name, team.id);
                 onClose();
               }}
             >
-              {team.name}
+              <TeamName>{team.name}</TeamName>
+              <TeamType>{team.type}</TeamType>
             </TeamItem>
           ))}
         </TeamList>
@@ -46,7 +59,7 @@ export const TeamModal = ({ onSelectTeam, onClose }: TeamModalProps) => {
         <CloseButton onClick={onClose}>닫기</CloseButton>
       </ModalContent>
     </ModalBackground>,
-    document.body,
+    document.body
   );
 };
 
@@ -110,6 +123,9 @@ const TeamItem = styled.li`
   font-size: 15px;
   transition: 0.18s;
   color: #4a3d66;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   &:hover {
     background: #efe7ff;
@@ -120,6 +136,30 @@ const TeamItem = styled.li`
   &:active {
     transform: scale(0.98);
   }
+`;
+
+const TeamName = styled.span`
+  font-weight: 600;
+`;
+
+const TeamType = styled.span`
+  font-size: 12px;
+  color: ${Xquare_colors.gray[500]};
+  text-transform: uppercase;
+`;
+
+const LoadingText = styled.p`
+  text-align: center;
+  color: ${Xquare_colors.gray[500]};
+  font-size: 14px;
+  margin: 0;
+`;
+
+const ErrorText = styled.p`
+  text-align: center;
+  color: ${Xquare_colors.red[500]};
+  font-size: 14px;
+  margin: 0;
 `;
 
 const CloseButton = styled.button`
