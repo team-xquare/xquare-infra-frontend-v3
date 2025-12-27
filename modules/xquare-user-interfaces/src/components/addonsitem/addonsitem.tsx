@@ -9,8 +9,8 @@ interface AddonItemProps {
   domain: string;
   type: string;
   description: string;
-  traffic?: number | string;
-  health?: number | string;
+  traffic: number | string; // "N/A" 허용
+  health: number | string; // "N/A" 허용
   lastdeploy?: string | null;
   lastbuild?: string | null;
   charge?: string | null;
