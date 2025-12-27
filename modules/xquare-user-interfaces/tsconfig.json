@@ -8,5 +8,5 @@
     "target": "esnext"
   },
   "include": ["index.ts", "src"],
-  "references": [{ "path": "../xquare-utils" }]
+  "references": [{ "path": "../xquare-utils" }, { "path": "../xquare-hooks" }]
 }

@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useTeamAddons } from "@xquare/hooks";
+import { getSelectedTeamId } from "@xquare/utils";
 import {
   Title,
   Xquare_colors,
@@ -11,44 +13,33 @@ import {
 function AddonPage() {
   useAuthGuard();
   const navigate = useNavigate();
+  const [teamId, setTeamId] = useState<number | undefined>(
+    () => getSelectedTeamId() ?? undefined
+  );
+
+  useEffect(() => {
+    const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
+
+    syncTeam();
+    window.addEventListener("storage", syncTeam);
+
+    return () => {
+      window.removeEventListener("storage", syncTeam);
+    };
+  }, []);
+  console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);
+  const { data: addons, loading, error } = useTeamAddons(teamId);
+  console.log(
+    "[AddonPage] 애드온 상태 - loading:",
+    loading,
+    ", addons:",
+    addons?.length ?? 0,
+    "개, error:",
+    error
+  );
   const handleAddAddonClick = () => {
     navigate("/addons/createaddon");
   };
-  const displayItems = [
-    {
-      title: "Redis Addon",
-      domain: "redis.xquare.dev",
-      type: "pod",
-      description: "Redis service for caching and management.",
-      traffic: 10,
-      health: 3,
-      lastdeploy: "2024.06.01",
-      lastbuild: "2024.06.01",
-      charge: "Test User",
-    },
-    {
-      title: "Redis Addon",
-      domain: "redis.xquare.dev",
-      type: "pod",
-      description: "Redis service for caching and management.",
-      traffic: 10,
-      health: 1,
-      lastdeploy: "2024.06.01",
-      lastbuild: "2024.06.01",
-      charge: "Test User",
-    },
-    {
-      title: "Redis Addon",
-      domain: "redis.xquare.dev",
-      type: "pod",
-      description: "Redis service for caching and management.",
-      traffic: 10,
-      health: 2,
-      lastdeploy: "2024.06.01",
-      lastbuild: "2024.06.01",
-      charge: "Test User",
-    },
-  ];
   return (
     <Container>
       <ContentsArea>
@@ -60,21 +51,56 @@ function AddonPage() {
           Addon 추가하기
         </Button_round>
       </ContentsArea>
+      {!teamId && (
+        <div style={{ marginBottom: "12px" }}>
+          팀을 선택해주세요. (사이드바 하단에서 팀 선택)
+        </div>
+      )}
+      {loading && <div>불러오는 중...</div>}
+      {error && (
+        <div style={{ color: "red" }}>애드온 조회 실패: {error.message}</div>
+      )}
       <Addons>
-        {displayItems.map((item, index) => (
-          <AddonItem
-            key={`addon-${index}`}
-            title={item.title}
-            domain={item.domain}
-            type={item.type}
-            description={item.description}
-            traffic={Number(item.traffic)}
-            health={Number(item.health)}
-            lastdeploy={item.lastdeploy}
-            lastbuild={item.lastbuild}
-            charge={item.charge}
-          />
-        ))}
+        {(addons ?? []).map((addon) => {
+          type AddonWithMeta = typeof addon & {
+            traffic?: number;
+            health?: number;
+            lastDeploy?: string;
+            lastdeploy?: string;
+            lastBuild?: string;
+            lastbuild?: string;
+            charge?: string;
+          };
+
+          const addonWithMeta = addon as AddonWithMeta;
+
+          return (
+            <AddonItem
+              key={`addon-${addon.id}`}
+              title={addon.name}
+              domain={""}
+              type={addon.type === "pod" ? "pod" : "database"}
+              description={`Tier: ${addon.tier} / Storage: ${addon.storageGi}Gi`}
+              traffic={
+                typeof addonWithMeta.traffic === "number"
+                  ? addonWithMeta.traffic
+                  : "N/A"
+              }
+              health={
+                typeof addonWithMeta.health === "number"
+                  ? addonWithMeta.health
+                  : "N/A"
+              }
+              lastdeploy={
+                addonWithMeta.lastDeploy ?? addonWithMeta.lastdeploy ?? "N/A"
+              }
+              lastbuild={
+                addonWithMeta.lastBuild ?? addonWithMeta.lastbuild ?? "N/A"
+              }
+              charge={addonWithMeta.charge ?? "N/A"}
+            />
+          );
+        })}
       </Addons>
     </Container>
   );

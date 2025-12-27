@@ -15,7 +15,6 @@ const CreateApplication = () => {
   useAuthGuard();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
-  const [tier, setTier] = useState("nano");
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
   // const [installationId, setInstallationId] = useState("");
@@ -34,7 +33,6 @@ const CreateApplication = () => {
 
   const isValid =
     projectName.trim() !== "" &&
-    tier.trim() !== "" &&
     repoName.trim() !== "" &&
     repoOwner.trim() !== "" &&
     // installationId.trim() !== "" &&
@@ -91,19 +89,6 @@ const CreateApplication = () => {
               width="950px"
               height="35px"
             />
-          </InputArea>
-
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Tier
-            </Typography>
-
-            <SelectBox value={tier} onChange={(e) => setTier(e.target.value)}>
-              <option value="nano">nano</option>
-              <option value="micro">micro</option>
-              <option value="small">small</option>
-              <option value="medium">medium</option>
-            </SelectBox>
           </InputArea>
         </ValueBox>
         <ValueBox>
@@ -468,23 +453,6 @@ const DeleteBtn = styled.button`
   &:hover {
     opacity: 0.6;
   }
-`;
-
-const SelectBox = styled.select`
-  width: 300px;
-  height: 35px;
-  padding: 0 10px;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background-color: white;
-  outline: none;
-  border: none;
-
-  font-family: "Pretendard";
-  font-weight: 500;
-  font-size: 17px;
-  text-align: right;
-  color: ${Xquare_colors.gray[500]};
 `;
 
 const ButtonGroup = styled.div`

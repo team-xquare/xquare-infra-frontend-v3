@@ -9,11 +9,23 @@ import {
   Button_round,
   DeploymentItem,
 } from "@xquare/user-interfaces";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useTeamApplications } from "@xquare/hooks";
+import { getSelectedTeamId } from "@xquare/utils";
 
 const DeploymentHome = () => {
   useAuthGuard();
   const navigate = useNavigate();
+  const teamId = getSelectedTeamId() ?? undefined;
+  console.log("[DeploymentHome] 현재 선택된 팀 ID:", teamId);
+  const { data: applications, loading, error } = useTeamApplications(teamId);
+  console.log(
+    "[DeploymentHome] 애플리케이션 상태 - loading:",
+    loading,
+    ", applications:",
+    applications?.length ?? 0,
+    "개, error:",
+    error
+  );
 
   const handleAddApplicationClick = () => {
     navigate("/deployment/createapplication");
@@ -23,29 +35,6 @@ const DeploymentHome = () => {
     navigate("/addons/createaddon");
   };
 
-  const displayItems = [
-    {
-      title: "My First Deployment",
-      domain: "https://first-deployment.dsmhs.kr",
-      type: "pod",
-      description: "This is the first deployment of my service.",
-      charge: "Alice Johnson",
-    },
-    {
-      title: "Database Service",
-      domain: "https://db-service.dsmhs.kr",
-      type: "database",
-      description: "Managed database service for applications.",
-      charge: "Bob Smith",
-    },
-    {
-      title: "Analytics Pod",
-      domain: "https://analytics-pod.dsmhs.kr",
-      type: "pod",
-      description: "Pod for handling analytics data processing.",
-      charge: "Charlie Brown",
-    },
-  ];
   return (
     <Container>
       <ContentsArea>
@@ -75,16 +64,32 @@ const DeploymentHome = () => {
           </Typography>
         </ImgText>
       </HeroSection>
+      {!teamId && (
+        <div style={{ marginBottom: "12px" }}>
+          팀을 선택해주세요. (사이드바 하단에서 팀 선택)
+        </div>
+      )}
+      {loading && <div>애플리케이션을 불러오는 중...</div>}
+      {error && (
+        <div style={{ color: "red" }}>
+          애플리케이션 조회 실패: {error.message}
+        </div>
+      )}
       <DploymentSell>
-        {displayItems.map((item, index) => (
+        {(applications ?? []).map((app) => (
           <DeploymentItem
-            id={`addon-${index}`}
-            key={`addon-${index}`}
-            title={item.title}
-            domain={item.domain}
-            type={item.type}
-            description={item.description}
-            charge={item.charge}
+            id={`app-${app.id}`}
+            key={`app-${app.id}`}
+            title={app.name}
+            domain={`${app.configuration.github.owner}/${app.configuration.github.repo}`}
+            type={
+              app.configuration.build.type === "gradle" ||
+              app.configuration.build.type === "maven"
+                ? "pod"
+                : "pod"
+            }
+            description={`Status: ${app.status} | Tier: ${app.configuration.tier}`}
+            charge={"-"}
           />
         ))}
       </DploymentSell>

@@ -52,14 +52,13 @@ function LogContents() {
 
 const Container = styled.div`
   width: 100%;
-  min-height: 100%;
-  height: auto;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 3px;
 `;
 
 const LogBox = styled.pre<{ hasBuild: boolean }>`
@@ -101,7 +100,7 @@ const LogBox = styled.pre<{ hasBuild: boolean }>`
 
 const LogType = styled.div`
   position: absolute;
-  top: 15px;
+  top: 25px;
   right: 20px;
 
   padding: 4px 8px;

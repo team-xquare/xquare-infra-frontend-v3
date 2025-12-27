@@ -177,7 +177,9 @@ const PaginationArea = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+  justify-content: flex-end;
   margin-top: 10px;
+  margin-right: 20px;
 `;
 
 const PageButton = styled.button<{ disabled?: boolean }>`
