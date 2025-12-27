@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useTeamAddons } from "@xquare/hooks";
 import { getSelectedTeamId } from "@xquare/utils";
@@ -13,7 +13,20 @@ import {
 function AddonPage() {
   useAuthGuard();
   const navigate = useNavigate();
-  const teamId = useMemo(() => getSelectedTeamId() ?? undefined, []);
+  const [teamId, setTeamId] = useState<number | undefined>(
+    () => getSelectedTeamId() ?? undefined
+  );
+
+  useEffect(() => {
+    const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
+
+    syncTeam();
+    window.addEventListener("storage", syncTeam);
+
+    return () => {
+      window.removeEventListener("storage", syncTeam);
+    };
+  }, []);
   console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);
   const { data: addons, loading, error } = useTeamAddons(teamId);
   console.log(
