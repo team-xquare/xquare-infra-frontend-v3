@@ -31,6 +31,10 @@ export const getTeamAddons = async (teamId: number): Promise<TeamAddon[]> => {
     throw new Error("유효한 팀 ID가 필요합니다.");
   }
 
+  if (!API_BASE_URL) {
+    throw new Error("API_BASE_URL이 설정되어 있지 않습니다.");
+  }
+
   const accessToken = getAccessToken();
   if (!accessToken) {
     throw new Error("AccessToken이 없습니다.");
@@ -39,7 +43,8 @@ export const getTeamAddons = async (teamId: number): Promise<TeamAddon[]> => {
   let response: Response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/teams/${teamId}/addons`, {
+    const url = new URL(`/teams/${teamId}/addons`, API_BASE_URL).href;
+    response = await fetch(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

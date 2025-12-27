@@ -111,7 +111,27 @@ export const getTeamApplications = async (
     );
   }
 
-  const result = (await response.json()) as TeamApplicationsApiResponse;
+  let result: TeamApplicationsApiResponse;
+
+  try {
+    result = (await response.json()) as TeamApplicationsApiResponse;
+  } catch (err) {
+    const parseMessage =
+      err instanceof Error ? err.message : "JSON 파싱에 실패했습니다.";
+    console.error("[getTeamApplications] JSON 파싱 실패:", parseMessage);
+
+    let rawBody = "";
+    try {
+      rawBody = await response.clone().text();
+    } catch (readErr) {
+      rawBody = "본문을 읽을 수 없습니다";
+      console.error("[getTeamApplications] 응답 본문 읽기 실패:", readErr);
+    }
+
+    throw new Error(
+      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`
+    );
+  }
 
   if (
     !result.success ||

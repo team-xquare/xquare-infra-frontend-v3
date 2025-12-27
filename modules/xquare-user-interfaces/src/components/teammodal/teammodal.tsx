@@ -37,6 +37,9 @@ export const TeamModal = ({
         {error && <ErrorText>팀 목록을 불러올 수 없습니다.</ErrorText>}
 
         <TeamList>
+          {!loading && !error && teams?.length === 0 && (
+            <EmptyText>소속된 팀이 없습니다.</EmptyText>
+          )}
           {teams?.map((team: Team) => (
             <TeamItem
               key={team.id}
@@ -205,6 +208,13 @@ const CreateTeamText = styled.span`
 const ErrorText = styled.p`
   text-align: center;
   color: ${Xquare_colors.red[500]};
+  font-size: 14px;
+  margin: 0;
+`;
+
+const EmptyText = styled.p`
+  text-align: center;
+  color: ${Xquare_colors.gray[500]};
   font-size: 14px;
   margin: 0;
 `;

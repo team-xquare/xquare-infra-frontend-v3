@@ -31,7 +31,7 @@ export const getSelectedTeam = (): SelectedTeamInfo | null => {
     console.log("[getSelectedTeam] 저장된 팀 조회:", team);
     return team;
   } catch (error) {
-    console.error("[getSelectedTeam] ❌ 불러오기 실패:", error);
+    console.error("[getSelectedTeam] 불러오기 실패:", error);
     return null;
   }
 };
@@ -53,8 +53,8 @@ export const clearSelectedTeam = (): void => {
   try {
     console.log("[clearSelectedTeam] 팀 정보 삭제 시작");
     localStorage.removeItem(SELECTED_TEAM_KEY);
-    console.log("[clearSelectedTeam] ✅ 팀 정보 삭제 완료");
+    console.log("[clearSelectedTeam] 팀 정보 삭제 완료");
   } catch (error) {
-    console.error("[clearSelectedTeam] ❌ 삭제 실패:", error);
+    console.error("[clearSelectedTeam] 삭제 실패:", error);
   }
 };

@@ -9,11 +9,11 @@ interface AddonItemProps {
   domain: string;
   type: string;
   description: string;
-  traffic: number;
-  health: number;
-  lastdeploy: string;
-  lastbuild: string;
-  charge: string;
+  traffic?: number | string;
+  health?: number | string;
+  lastdeploy?: string | null;
+  lastbuild?: string | null;
+  charge?: string | null;
 }
 
 function AddonItem({
@@ -21,12 +21,46 @@ function AddonItem({
   domain = "https://undefined.dsmhs.kr",
   type = "pod",
   description = "서비스 설명이 없습니다.",
-  traffic = 0,
-  health = 1,
-  lastdeploy = "0000.00.00",
-  lastbuild = "0000.00.00",
-  charge = "undefined",
+  traffic,
+  health,
+  lastdeploy,
+  lastbuild,
+  charge,
 }: AddonItemProps) {
+  const safeHealth =
+    typeof health === "number" && Number.isFinite(health) && health > 0
+      ? health
+      : null;
+  const safeTraffic =
+    typeof traffic === "number" && Number.isFinite(traffic)
+      ? `${traffic}req/sec`
+      : "N/A";
+  const safeLastDeploy = lastdeploy ?? "N/A";
+  const safeLastBuild = lastbuild ?? "N/A";
+  const safeCharge = charge ?? "N/A";
+
+  const renderHealth = () => {
+    if (safeHealth) {
+      return (
+        <TrafficWrapper>
+          {Array.from({ length: safeHealth }).map((_, idx) => (
+            <Box key={idx} isFirst={idx === 0 && safeHealth <= 2} />
+          ))}
+        </TrafficWrapper>
+      );
+    }
+
+    return (
+      <Typography
+        size="3x"
+        weight="regular"
+        color={String(Xquare_colors.gray[500])}
+      >
+        N/A
+      </Typography>
+    );
+  };
+
   return (
     <Container>
       <Contents>
@@ -55,12 +89,7 @@ function AddonItem({
             <Typography size="4x" weight="semiBold">
               Health
             </Typography>
-
-            <TrafficWrapper>
-              {Array.from({ length: Number(health) }).map((_, idx) => (
-                <Box key={idx} isFirst={idx === 0 && health <= 2} />
-              ))}
-            </TrafficWrapper>
+            {renderHealth()}
           </ItemSet>
           <ItemSet>
             <Typography size="4x" weight="semiBold">
@@ -71,7 +100,7 @@ function AddonItem({
               weight="regular"
               color={String(Xquare_colors.gray[500])}
             >
-              {traffic}req/sec
+              {safeTraffic}
             </Typography>
           </ItemSet>
         </Status>
@@ -85,7 +114,7 @@ function AddonItem({
               weight="regular"
               color={String(Xquare_colors.gray[500])}
             >
-              {lastdeploy}
+              {safeLastDeploy}
             </Typography>
           </ItemSet>
           <ItemSet>
@@ -97,7 +126,7 @@ function AddonItem({
               weight="regular"
               color={String(Xquare_colors.gray[500])}
             >
-              {lastbuild}
+              {safeLastBuild}
             </Typography>
           </ItemSet>
         </Status>
@@ -112,7 +141,7 @@ function AddonItem({
           weight="medium"
           color={String(Xquare_colors.gray[500])}
         >
-          {charge}
+          {safeCharge}
         </Typography>
       </Charge>
     </Container>

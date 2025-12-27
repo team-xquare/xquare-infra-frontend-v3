@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useTeamAddons } from "@xquare/hooks";
 import { getSelectedTeamId } from "@xquare/utils";
@@ -12,10 +13,17 @@ import {
 function AddonPage() {
   useAuthGuard();
   const navigate = useNavigate();
-  const teamId = getSelectedTeamId() ?? undefined;
+  const teamId = useMemo(() => getSelectedTeamId() ?? undefined, []);
   console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);
   const { data: addons, loading, error } = useTeamAddons(teamId);
-  console.log("[AddonPage] 애드온 상태 - loading:", loading, ", addons:", addons?.length ?? 0, "개, error:", error);
+  console.log(
+    "[AddonPage] 애드온 상태 - loading:",
+    loading,
+    ", addons:",
+    addons?.length ?? 0,
+    "개, error:",
+    error
+  );
   const handleAddAddonClick = () => {
     navigate("/addons/createaddon");
   };
@@ -40,20 +48,46 @@ function AddonPage() {
         <div style={{ color: "red" }}>애드온 조회 실패: {error.message}</div>
       )}
       <Addons>
-        {(addons ?? []).map((addon) => (
-          <AddonItem
-            key={`addon-${addon.id}`}
-            title={addon.name}
-            domain={""}
-            type={addon.type === "pod" ? "pod" : "database"}
-            description={`Tier: ${addon.tier} / Storage: ${addon.storageGi}Gi`}
-            traffic={0}
-            health={3}
-            lastdeploy={"-"}
-            lastbuild={"-"}
-            charge={"-"}
-          />
-        ))}
+        {(addons ?? []).map((addon) => {
+          type AddonWithMeta = typeof addon & {
+            traffic?: number;
+            health?: number;
+            lastDeploy?: string;
+            lastdeploy?: string;
+            lastBuild?: string;
+            lastbuild?: string;
+            charge?: string;
+          };
+
+          const addonWithMeta = addon as AddonWithMeta;
+
+          return (
+            <AddonItem
+              key={`addon-${addon.id}`}
+              title={addon.name}
+              domain={""}
+              type={addon.type === "pod" ? "pod" : "database"}
+              description={`Tier: ${addon.tier} / Storage: ${addon.storageGi}Gi`}
+              traffic={
+                typeof addonWithMeta.traffic === "number"
+                  ? addonWithMeta.traffic
+                  : "N/A"
+              }
+              health={
+                typeof addonWithMeta.health === "number"
+                  ? addonWithMeta.health
+                  : "N/A"
+              }
+              lastdeploy={
+                addonWithMeta.lastDeploy ?? addonWithMeta.lastdeploy ?? "N/A"
+              }
+              lastbuild={
+                addonWithMeta.lastBuild ?? addonWithMeta.lastbuild ?? "N/A"
+              }
+              charge={addonWithMeta.charge ?? "N/A"}
+            />
+          );
+        })}
       </Addons>
     </Container>
   );
