@@ -13,7 +13,11 @@ import {
   RoutesContents,
   LogContents,
 } from "@xquare/user-interfaces";
-import { useAuthGuard, useApplicationDetail, useUpdateApplicationConfiguration } from "@xquare/hooks";
+import {
+  useAuthGuard,
+  useApplicationDetail,
+  useUpdateApplicationConfiguration,
+} from "@xquare/hooks";
 
 const DeploymentView = () => {
   useAuthGuard();
@@ -21,10 +25,15 @@ const DeploymentView = () => {
   const applicationId = appIdParam ? parseInt(appIdParam, 10) : undefined;
 
   // 애플리케이션 상세 정보 조회
-  const { data: appDetail, loading: appLoading, error: appError } = useApplicationDetail(applicationId);
+  const {
+    data: appDetail,
+    loading: appLoading,
+    error: appError,
+  } = useApplicationDetail(applicationId);
 
   // 애플리케이션 설정 수정
-  const { update: updateConfig, error: updateError } = useUpdateApplicationConfiguration();
+  const { update: updateConfig, error: updateError } =
+    useUpdateApplicationConfiguration();
 
   const [activeTab, setActiveTab] = useState(0);
   const [editable, setEditable] = useState(false);
@@ -34,12 +43,24 @@ const DeploymentView = () => {
   const servicename = appDetail?.name ?? "service-name";
   const servicedesc = appDetail?.status ?? "service-description";
 
-  console.log("[DeploymentView] initialized", { applicationId, id, servicename });
+  console.log("[DeploymentView] initialized", {
+    applicationId,
+    id,
+    servicename,
+  });
 
   const handleSave = useCallback(async () => {
+    // 유효한 applicationId 확인
+    if (!applicationId || applicationId < 0) {
+      console.error("[DeploymentView] invalid applicationId for save", {
+        applicationId,
+      });
+      return;
+    }
+
     // 구성 변경 시 서버에 저장 (추후 실제 변경된 설정 전달)
     if (appDetail) {
-      const success = await updateConfig(applicationId ?? 0, {
+      const success = await updateConfig(applicationId, {
         configuration: appDetail.configuration,
       });
       if (success) {
@@ -95,7 +116,10 @@ const DeploymentView = () => {
     return (
       <Container>
         <ContentsArea>
-          <Title title="로딩 중..." subTitle="애플리케이션 정보를 불러오고 있습니다." />
+          <Title
+            title="로딩 중..."
+            subTitle="애플리케이션 정보를 불러오고 있습니다."
+          />
         </ContentsArea>
       </Container>
     );

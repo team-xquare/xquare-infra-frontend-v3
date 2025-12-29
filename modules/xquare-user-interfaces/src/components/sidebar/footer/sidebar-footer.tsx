@@ -31,6 +31,11 @@ function SidebarFooterComponent({
   const [modalOpen, setModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
+  // 사용자가 명시적으로 팀을 선택했는지 추적
+  const [isUserSelectedTeam, setIsUserSelectedTeam] = useState(() => {
+    return getSelectedTeam() !== null;
+  });
+
   const [selectedProject, setSelectedProject] = useState(() => {
     const savedTeam = getSelectedTeam();
     return savedTeam?.name ?? project;
@@ -54,7 +59,13 @@ function SidebarFooterComponent({
     }
   }, [onTeamCreated]);
 
-  const isTeamSelected = selectedProject !== project;
+  // 팀 선택 처리: 명시적 선택 상태와 팀명 모두 업데이트
+  const handleTeamSelect = useCallback((teamName: string) => {
+    setSelectedProject(teamName);
+    setIsUserSelectedTeam(true);
+  }, []);
+
+  const isTeamSelected = isUserSelectedTeam;
 
   return (
     <>
@@ -75,9 +86,7 @@ function SidebarFooterComponent({
           teams={teams ?? []}
           loading={teamsLoading}
           error={teamsError}
-          onSelectTeam={(teamName) => {
-            setSelectedProject(teamName);
-          }}
+          onSelectTeam={handleTeamSelect}
           onClose={() => setModalOpen(false)}
           onCreateTeam={handleOpenCreateModal}
         />

@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -53,6 +54,171 @@ interface GetApplicationDetailApiResponse {
 }
 
 /**
+ * 런타임 유효성 검사: 응답 객체가 required fields를 포함하는지 확인
+ */
+const validateApplicationDetailResponse = (
+  data: unknown
+): data is GetApplicationDetailApiResponse => {
+  if (typeof data !== "object" || data === null) {
+    console.error(
+      "[validateApplicationDetailResponse] data is not an object",
+      data
+    );
+    return false;
+  }
+
+  const obj = data as Record<string, unknown>;
+
+  if (typeof obj.success !== "boolean") {
+    console.error(
+      "[validateApplicationDetailResponse] success is not boolean",
+      obj.success
+    );
+    return false;
+  }
+
+  if (typeof obj.data !== "object" || obj.data === null) {
+    console.error(
+      "[validateApplicationDetailResponse] data field is not an object",
+      obj.data
+    );
+    return false;
+  }
+
+  const appDetail = obj.data as Record<string, unknown>;
+
+  if (typeof appDetail.id !== "number") {
+    console.error(
+      "[validateApplicationDetailResponse] data.id is not a number",
+      appDetail.id
+    );
+    return false;
+  }
+
+  if (typeof appDetail.teamId !== "number") {
+    console.error(
+      "[validateApplicationDetailResponse] data.teamId is not a number",
+      appDetail.teamId
+    );
+    return false;
+  }
+
+  if (typeof appDetail.name !== "string" || !appDetail.name.trim()) {
+    console.error(
+      "[validateApplicationDetailResponse] data.name is not a non-empty string",
+      appDetail.name
+    );
+    return false;
+  }
+
+  if (
+    typeof appDetail.status !== "string" ||
+    !["pending", "running", "failed", "stopped"].includes(appDetail.status)
+  ) {
+    console.error(
+      "[validateApplicationDetailResponse] data.status is not a valid status",
+      appDetail.status
+    );
+    return false;
+  }
+
+  if (
+    typeof appDetail.configuration !== "object" ||
+    appDetail.configuration === null
+  ) {
+    console.error(
+      "[validateApplicationDetailResponse] data.configuration is not an object",
+      appDetail.configuration
+    );
+    return false;
+  }
+
+  const config = appDetail.configuration as Record<string, unknown>;
+
+  if (typeof config.github !== "object" || config.github === null) {
+    console.error(
+      "[validateApplicationDetailResponse] data.configuration.github is not an object",
+      config.github
+    );
+    return false;
+  }
+
+  const github = config.github as Record<string, unknown>;
+  if (
+    typeof github.owner !== "string" ||
+    typeof github.repo !== "string" ||
+    typeof github.branch !== "string" ||
+    typeof github.installationId !== "string" ||
+    typeof github.hash !== "string"
+  ) {
+    console.error(
+      "[validateApplicationDetailResponse] github fields are invalid",
+      github
+    );
+    return false;
+  }
+
+  if (!Array.isArray(github.triggerPaths)) {
+    console.error(
+      "[validateApplicationDetailResponse] github.triggerPaths is not an array",
+      github.triggerPaths
+    );
+    return false;
+  }
+
+  if (typeof config.build !== "object" || config.build === null) {
+    console.error(
+      "[validateApplicationDetailResponse] data.configuration.build is not an object",
+      config.build
+    );
+    return false;
+  }
+
+  const build = config.build as Record<string, unknown>;
+  if (
+    typeof build.type !== "string" ||
+    typeof build.version !== "string" ||
+    typeof build.buildCommand !== "string" ||
+    typeof build.startCommand !== "string" ||
+    typeof build.inputPath !== "string" ||
+    typeof build.outputPath !== "string" ||
+    typeof build.workingDirectory !== "string"
+  ) {
+    console.error(
+      "[validateApplicationDetailResponse] build fields are invalid",
+      build
+    );
+    return false;
+  }
+
+  // Validate endpoints array
+  if (!Array.isArray(config.endpoints)) {
+    console.error(
+      "[validateApplicationDetailResponse] data.configuration.endpoints is not an array",
+      config.endpoints
+    );
+    return false;
+  }
+
+  for (const endpoint of config.endpoints) {
+    if (
+      typeof endpoint !== "object" ||
+      endpoint === null ||
+      typeof (endpoint as Record<string, unknown>).port !== "number" ||
+      !Array.isArray((endpoint as Record<string, unknown>).routes)
+    ) {
+      console.error(
+        "[validateApplicationDetailResponse] endpoint is invalid",
+        endpoint
+      );
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
  * 애플리케이션 상세 조회
  * - GET {API_BASE_URL}/applications/{applicationId}
  *
@@ -86,7 +252,7 @@ export const getApplicationDetail = async (
       "[getApplicationDetail] GET",
       `${API_BASE_URL}/applications/${applicationId}`
     );
-    response = await fetch(`${API_BASE_URL}/applications/${applicationId}`, {
+    response = await fetchWithTimeout(`${API_BASE_URL}/applications/${applicationId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -125,10 +291,10 @@ export const getApplicationDetail = async (
     );
   }
 
-  let result: GetApplicationDetailApiResponse;
+  let result: unknown;
 
   try {
-    result = (await response.json()) as GetApplicationDetailApiResponse;
+    result = await response.json();
   } catch {
     let rawBody = "";
     try {
@@ -138,6 +304,7 @@ export const getApplicationDetail = async (
     }
     console.error("[getApplicationDetail] parse error", {
       status: response.status,
+      url: response.url,
       body: rawBody,
     });
     throw new Error(
@@ -145,9 +312,21 @@ export const getApplicationDetail = async (
     );
   }
 
-  if (!result.success || !result.data) {
-    console.error("[getApplicationDetail] invalid response", result);
-    throw new Error("애플리케이션 조회 실패: 응답 데이터가 올바르지 않습니다.");
+  // Runtime validation
+  if (!validateApplicationDetailResponse(result)) {
+    console.error("[getApplicationDetail] validation error", {
+      status: response.status,
+      url: response.url,
+      data: result,
+    });
+    throw new Error(
+      `애플리케이션 조회 실패: 서버 응답 형식이 올바르지 않습니다. (status: ${response.status}, url: ${response.url})`
+    );
+  }
+
+  if (!result.success) {
+    console.error("[getApplicationDetail] response success is false", result);
+    throw new Error("애플리케이션 조회 실패: 서버에서 실패를 반환했습니다.");
   }
 
   console.log("[getApplicationDetail] success", result.data.id);

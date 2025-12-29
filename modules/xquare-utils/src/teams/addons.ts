@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,7 +45,7 @@ export const getTeamAddons = async (teamId: number): Promise<TeamAddon[]> => {
 
   try {
     const url = new URL(`/teams/${teamId}/addons`, API_BASE_URL).href;
-    response = await fetch(url, {
+    response = await fetchWithTimeout(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

@@ -3,6 +3,8 @@
  * - Public GitHub API calls for repo info, branches, and latest commit
  */
 
+import { fetchWithTimeout } from "../fetch";
+
 export interface RepoInfo {
   defaultBranch: string;
 }
@@ -15,7 +17,7 @@ export const getRepoInfo = async (
   repo: string
 ): Promise<RepoInfo> => {
   console.log("[github] getRepoInfo", { owner, repo });
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+  const res = await fetchWithTimeout(`https://api.github.com/repos/${owner}/${repo}`);
   if (!res.ok) {
     console.error("[github] getRepoInfo error", res.status);
     throw new Error(`GitHub 응답 오류: ${res.status}`);
@@ -35,15 +37,38 @@ export const listBranches = async (
   perPage = 100
 ): Promise<string[]> => {
   console.log("[github] listBranches", { owner, repo, perPage });
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`
   );
   if (!res.ok) {
-    console.error("[github] listBranches error", res.status);
-    return [];
+    console.error("[github] listBranches error", {
+      status: res.status,
+      statusText: res.statusText,
+    });
+    throw new Error(
+      `브랜치 목록 조회 실패 (HTTP ${res.status} ${res.statusText || ""})`
+    );
   }
-  const json: unknown = await res.json();
-  if (!Array.isArray(json)) return [];
+
+  let json: unknown;
+  try {
+    json = await res.json();
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "JSON 파싱 오류";
+    console.error("[github] listBranches parse error", message);
+    throw new Error(`브랜치 목록 파싱 실패: ${message}`);
+  }
+
+  if (!Array.isArray(json)) {
+    console.error("[github] listBranches invalid response type", {
+      receivedType: typeof json,
+      receivedValue: json,
+    });
+    throw new Error(
+      `브랜치 목록이 배열이 아닙니다. (받은 타입: ${typeof json})`
+    );
+  }
 
   return (json as Array<{ name?: string }>)
     .map((item) => item.name)
@@ -59,7 +84,7 @@ export const getLatestCommitSha = async (
   branch: string
 ): Promise<string> => {
   console.log("[github] getLatestCommitSha", { owner, repo, branch });
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`
   );
   if (!res.ok) {

@@ -1,4 +1,5 @@
 import { validateAuthResponse } from "./validation";
+import { fetchWithTimeout } from "../fetch";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,7 +29,7 @@ export async function registerUser(
   payload: RegisterRequest
 ): Promise<RegisterResponse> {
   try {
-    const res = await fetch(`${BASE_URL}/auth/register`, {
+    const res = await fetchWithTimeout(`${BASE_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -50,7 +51,7 @@ export async function registerUser(
 
     // 응답 구조 검증
     // 검증 통과한 토큰 저장
-  validateAuthResponse(data, "register");
+    validateAuthResponse(data, "register");
 
     return data as RegisterResponse;
   } catch (error) {

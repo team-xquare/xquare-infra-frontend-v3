@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -44,7 +45,7 @@ export const createTeam = async (
   let response: Response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/teams`, {
+    response = await fetchWithTimeout(`${API_BASE_URL}/teams`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,

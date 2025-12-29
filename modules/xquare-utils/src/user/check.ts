@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "./../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 /* ======================
  * 타입
@@ -55,7 +56,7 @@ export const checkUser = async (): Promise<Me> => {
   let response: Response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/users/me`, {
+    response = await fetchWithTimeout(`${API_BASE_URL}/users/me`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

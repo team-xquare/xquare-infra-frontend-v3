@@ -1,4 +1,5 @@
 import { setTokens, getRefreshToken, clearAllTokens } from "./token";
+import { fetchWithTimeout } from "../fetch";
 
 //========================================
 // 토큰 재발급 설정
@@ -90,7 +91,7 @@ export class TokenReissuer {
     };
   }> {
     try {
-      const response = await fetch(getReissueEndpoint(), {
+      const response = await fetchWithTimeout(getReissueEndpoint(), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
