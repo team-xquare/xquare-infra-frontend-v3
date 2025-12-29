@@ -39,7 +39,7 @@ const HomePage = () => {
   }, []);
 
   const handleDeployClick = useCallback(() => {
-    navigate("/deployments");
+    navigate("/deployment");
   }, [navigate]);
 
   const handleNoticeClick = useCallback(() => {

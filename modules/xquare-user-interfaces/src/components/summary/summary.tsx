@@ -63,7 +63,7 @@ function Summary({ page }: SummaryProps) {
     page === 1 ? items.slice(0, 4) : page === 2 ? items.slice(0, 3) : items;
 
   function handleViewAllClick() {
-    navigate("/monitor");
+    navigate("/status");
   }
 
   return (
