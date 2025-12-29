@@ -19,12 +19,12 @@ export interface ApplicationGitHub {
 
 export interface ApplicationBuild {
   type: string;
-  version: string;
-  buildCommand: string;
-  startCommand: string;
-  inputPath: string;
-  outputPath: string;
-  workingDirectory: string;
+  version?: string;
+  buildCommand?: string;
+  startCommand?: string;
+  inputPath?: string;
+  outputPath?: string;
+  workingDirectory?: string;
 }
 
 export interface ApplicationConfiguration {

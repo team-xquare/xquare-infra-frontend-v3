@@ -12,7 +12,7 @@ import {
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useCreateApplication } from "@xquare/hooks";
 import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
-import type { CreateApplicationRequest } from "@xquare/utils";
+import type { CreateApplicationRequest, ApplicationBuild } from "@xquare/utils";
 import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
 
 // --- Domain validation helpers (module scope for stable references) ---
@@ -34,6 +34,44 @@ function isAllowedDomain(value: string): boolean {
   const host = extractHostname(value).toLowerCase();
   return host.endsWith("dsmhs.kr");
 }
+
+// --- Build configuration required fields per type ---
+type BuildField =
+  | "VERSION"
+  | "BUILD_COMMAND"
+  | "START_COMMAND"
+  | "INPUT_PATH"
+  | "OUTPUT_PATH"
+  | "WORKING_DIRECTORY";
+
+const REQUIRED_FIELDS: Record<string, BuildField[]> = {
+  gradle: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  node_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  react: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  vite: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  vue: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  next_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  go: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  rust: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  maven: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  django: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  flask: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  docker: ["INPUT_PATH", "WORKING_DIRECTORY"],
+};
+
+const needsField = (type: string, field: BuildField) => {
+  const t = (type ?? "").trim();
+  const set = REQUIRED_FIELDS[t];
+  return Array.isArray(set) ? set.includes(field) : false;
+};
+
+const needsVersion = (type: string) => needsField(type, "VERSION");
+const needsBuildCommand = (type: string) => needsField(type, "BUILD_COMMAND");
+const needsStartCommand = (type: string) => needsField(type, "START_COMMAND");
+const needsInputPath = (type: string) => needsField(type, "INPUT_PATH");
+const needsOutputPath = (type: string) => needsField(type, "OUTPUT_PATH");
+const needsWorkingDirectory = (type: string) =>
+  needsField(type, "WORKING_DIRECTORY");
 
 const CreateApplication = () => {
   useAuthGuard();
@@ -93,7 +131,6 @@ const CreateApplication = () => {
       ),
     [routes]
   );
-
   const isValid = useMemo(
     () =>
       hasTeam &&
@@ -104,12 +141,12 @@ const CreateApplication = () => {
       branch.trim() !== "" &&
       normalizedTriggerPaths.length > 0 &&
       buildTools.trim() !== "" &&
-      javaVersion.trim() !== "" &&
-      workingDirectory.trim() !== "" &&
-      buildCommand.trim() !== "" &&
-      startCommand.trim() !== "" &&
-      inputPath.trim() !== "" &&
-      outputPath.trim() !== "" &&
+      (!needsVersion(buildTools) || javaVersion.trim() !== "") &&
+      (!needsWorkingDirectory(buildTools) || workingDirectory.trim() !== "") &&
+      (!needsBuildCommand(buildTools) || buildCommand.trim() !== "") &&
+      (!needsStartCommand(buildTools) || startCommand.trim() !== "") &&
+      (!needsInputPath(buildTools) || inputPath.trim() !== "") &&
+      (!needsOutputPath(buildTools) || outputPath.trim() !== "") &&
       routesValid,
     [
       hasTeam,
@@ -178,6 +215,29 @@ const CreateApplication = () => {
       routes: [r.url.trim()],
     }));
 
+    let buildConfig: ApplicationBuild = { type: buildTools.trim() };
+    if (needsVersion(buildTools) && javaVersion.trim()) {
+      buildConfig = { ...buildConfig, version: javaVersion.trim() };
+    }
+    if (needsBuildCommand(buildTools) && buildCommand.trim()) {
+      buildConfig = { ...buildConfig, buildCommand: buildCommand.trim() };
+    }
+    if (needsStartCommand(buildTools) && startCommand.trim()) {
+      buildConfig = { ...buildConfig, startCommand: startCommand.trim() };
+    }
+    if (needsInputPath(buildTools) && inputPath.trim()) {
+      buildConfig = { ...buildConfig, inputPath: inputPath.trim() };
+    }
+    if (needsOutputPath(buildTools) && outputPath.trim()) {
+      buildConfig = { ...buildConfig, outputPath: outputPath.trim() };
+    }
+    if (needsWorkingDirectory(buildTools) && workingDirectory.trim()) {
+      buildConfig = {
+        ...buildConfig,
+        workingDirectory: workingDirectory.trim(),
+      };
+    }
+
     const payload: CreateApplicationRequest = {
       teamId: teamId!,
       name: projectName.trim(),
@@ -190,15 +250,7 @@ const CreateApplication = () => {
           hash: commitHash.trim(),
           triggerPaths: normalizedTriggerPaths,
         },
-        build: {
-          type: buildTools.trim(),
-          version: javaVersion.trim(),
-          buildCommand: buildCommand.trim(),
-          startCommand: startCommand.trim(),
-          inputPath: inputPath.trim(),
-          outputPath: outputPath.trim(),
-          workingDirectory: workingDirectory.trim(),
-        },
+        build: buildConfig,
         endpoints,
       },
     };
@@ -506,87 +558,109 @@ const CreateApplication = () => {
             </SelectBox>
           </InputArea>
 
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Version
-            </Typography>
-            <Input_basic
-              value={javaVersion}
-              onChange={(e) => setJavaVersion(e.target.value)}
-              placeholder="ex) 17"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Working Directory
-            </Typography>
-            <Input_basic
-              value={workingDirectory}
-              onChange={(e) => setWorkingDirectory(e.target.value)}
-              placeholder="ex) /backend/service"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-
-          <InputAreaSecond>
-            <InputAreaVertical>
+          {needsVersion(buildTools) && (
+            <InputArea>
               <Typography size="5x" weight="semiBold">
-                Build Command
+                Version
               </Typography>
-              <Input_record
-                value={buildCommand}
-                onChange={(e) => setBuildCommand(e.target.value)}
-                placeholder="ex) ./gradlew build"
-                width="100%"
+              <Input_basic
+                value={javaVersion}
+                onChange={(e) => setJavaVersion(e.target.value)}
+                placeholder="ex) 17"
+                width="950px"
                 height="35px"
               />
-            </InputAreaVertical>
+            </InputArea>
+          )}
 
-            <InputAreaVertical>
+          {needsWorkingDirectory(buildTools) && (
+            <InputArea>
               <Typography size="5x" weight="semiBold">
-                Start Command
+                Working Directory
               </Typography>
-              <Input_record
-                value={startCommand}
-                onChange={(e) => setStartCommand(e.target.value)}
-                placeholder="ex) java -jar app.jar"
-                width="100%"
+              <Input_basic
+                value={workingDirectory}
+                onChange={(e) => setWorkingDirectory(e.target.value)}
+                placeholder="ex) /backend/service"
+                width="950px"
                 height="35px"
               />
-            </InputAreaVertical>
-          </InputAreaSecond>
+            </InputArea>
+          )}
 
-          <InputAreaSecond>
-            <InputAreaVertical>
-              <Typography size="5x" weight="semiBold">
-                Input Path
-              </Typography>
-              <Input_record
-                value={inputPath}
-                onChange={(e) => setInputPath(e.target.value)}
-                placeholder="Source root path"
-                width="100%"
-                height="35px"
-              />
-            </InputAreaVertical>
+          {(() => {
+            const recordFields: {
+              id: string;
+              label: string;
+              value: string;
+              onChange: (next: string) => void;
+              placeholder: string;
+            }[] = [];
 
-            <InputAreaVertical>
-              <Typography size="5x" weight="semiBold">
-                Output Path
-              </Typography>
-              <Input_record
-                value={outputPath}
-                onChange={(e) => setOutputPath(e.target.value)}
-                placeholder="Build output path"
-                width="100%"
-                height="35px"
-              />
-            </InputAreaVertical>
-          </InputAreaSecond>
+            if (needsBuildCommand(buildTools)) {
+              recordFields.push({
+                id: "buildCommand",
+                label: "Build Command",
+                value: buildCommand,
+                onChange: setBuildCommand,
+                placeholder: "ex) ./gradlew build",
+              });
+            }
+
+            if (needsStartCommand(buildTools)) {
+              recordFields.push({
+                id: "startCommand",
+                label: "Start Command",
+                value: startCommand,
+                onChange: setStartCommand,
+                placeholder: "ex) java -jar app.jar",
+              });
+            }
+
+            if (needsInputPath(buildTools)) {
+              recordFields.push({
+                id: "inputPath",
+                label: "Input Path",
+                value: inputPath,
+                onChange: setInputPath,
+                placeholder: "Source root path",
+              });
+            }
+
+            if (needsOutputPath(buildTools)) {
+              recordFields.push({
+                id: "outputPath",
+                label: "Output Path",
+                value: outputPath,
+                onChange: setOutputPath,
+                placeholder: "Build output path",
+              });
+            }
+
+            const groups: (typeof recordFields)[] = [];
+            for (let i = 0; i < recordFields.length; i += 2) {
+              groups.push(recordFields.slice(i, i + 2));
+            }
+
+            return groups.map((group, idx) => (
+              <InputAreaSecond key={`record-row-${idx}`}>
+                {group.map((field) => (
+                  <InputAreaVertical key={field.id}>
+                    <Typography size="5x" weight="semiBold">
+                      {field.label}
+                    </Typography>
+                    <Input_record
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      placeholder={field.placeholder}
+                      width="100%"
+                      height="35px"
+                    />
+                  </InputAreaVertical>
+                ))}
+              </InputAreaSecond>
+            ));
+          })()}
         </ValueBox>
         <ValueBox>
           <Typography size="5x" weight="bold">
@@ -770,7 +844,7 @@ const InputAreaSecond = styled.div`
   display: flex;
   padding: 3px 5px;
   width: 100%;
-  margin-left: 15px;
+  margin-left: 0;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
