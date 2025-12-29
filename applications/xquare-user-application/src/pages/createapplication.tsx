@@ -15,6 +15,26 @@ import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
 import type { CreateApplicationRequest } from "@xquare/utils";
 import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
 
+// --- Domain validation helpers (module scope for stable references) ---
+function extractHostname(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  try {
+    const withProtocol = trimmed.includes("://")
+      ? trimmed
+      : `https://${trimmed}`;
+    const u = new URL(withProtocol);
+    return u.hostname;
+  } catch {
+    return trimmed.split("/")[0];
+  }
+}
+
+function isAllowedDomain(value: string): boolean {
+  const host = extractHostname(value).toLowerCase();
+  return host.endsWith("dsmhs.kr");
+}
+
 const CreateApplication = () => {
   useAuthGuard();
   const navigate = useNavigate();
@@ -67,6 +87,7 @@ const CreateApplication = () => {
       routes.every(
         (r) =>
           r.url.trim() !== "" &&
+          isAllowedDomain(r.url) &&
           r.port.trim() !== "" &&
           Number.isFinite(Number(r.port))
       ),
@@ -611,6 +632,11 @@ const CreateApplication = () => {
           >
             + 추가
           </AddBtn>
+          {routes.some((r) => r.url.trim() && !isAllowedDomain(r.url)) && (
+            <StatusText color="red">
+              URL은 XXX.dsmhs.kr 형태여야 합니다. (dsmhs.kr 도메인만 허용)
+            </StatusText>
+          )}
         </ValueBox>
         {formError && <StatusText color="red">{formError}</StatusText>}
         {createError && !formError && (
