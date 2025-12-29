@@ -20,11 +20,19 @@ function AddonPage() {
   useEffect(() => {
     const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
 
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "xquare:selectedTeam") {
+        syncTeam();
+      }
+    };
+
     syncTeam();
-    window.addEventListener("storage", syncTeam);
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("xquare:selectedTeam-changed", syncTeam);
 
     return () => {
-      window.removeEventListener("storage", syncTeam);
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("xquare:selectedTeam-changed", syncTeam);
     };
   }, []);
   console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);

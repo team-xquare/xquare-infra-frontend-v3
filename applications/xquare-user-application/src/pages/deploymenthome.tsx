@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -15,7 +15,28 @@ import { getSelectedTeamId } from "@xquare/utils";
 const DeploymentHome = () => {
   useAuthGuard();
   const navigate = useNavigate();
-  const teamId = getSelectedTeamId() ?? undefined;
+  const [teamId, setTeamId] = useState<number | undefined>(
+    getSelectedTeamId() ?? undefined
+  );
+
+  useEffect(() => {
+    const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "xquare:selectedTeam") {
+        syncTeam();
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("xquare:selectedTeam-changed", syncTeam);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("xquare:selectedTeam-changed", syncTeam);
+    };
+  }, []);
+
   console.log("[DeploymentHome] 현재 선택된 팀 ID:", teamId);
   const { data: applications, loading, error } = useTeamApplications(teamId);
   console.log(
