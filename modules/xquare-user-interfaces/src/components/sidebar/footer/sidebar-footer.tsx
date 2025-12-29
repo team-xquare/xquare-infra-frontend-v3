@@ -31,7 +31,6 @@ function SidebarFooterComponent({
   const [modalOpen, setModalOpen] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  // Initialize selected project from localStorage or fallback to prop
   const [selectedProject, setSelectedProject] = useState(() => {
     const savedTeam = getSelectedTeam();
     return savedTeam?.name ?? project;
@@ -55,6 +54,8 @@ function SidebarFooterComponent({
     }
   }, [onTeamCreated]);
 
+  const isTeamSelected = selectedProject !== project;
+
   return (
     <>
       <SideBarFooter>
@@ -64,7 +65,7 @@ function SidebarFooterComponent({
           </SideBarFooterNameSpan>
 
           <SideBarFooterProjectDiv onClick={() => setModalOpen(true)}>
-            {selectedProject}
+            {isTeamSelected ? selectedProject : "팀 선택"}
           </SideBarFooterProjectDiv>
         </SideBarFooterDiv>
       </SideBarFooter>

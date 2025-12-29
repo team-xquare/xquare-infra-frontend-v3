@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Title,
@@ -9,16 +10,28 @@ import {
   Input_record,
   Button_square,
 } from "@xquare/user-interfaces";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useCreateApplication } from "@xquare/hooks";
+import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
+import type { CreateApplicationRequest } from "@xquare/utils";
+import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
 
 const CreateApplication = () => {
   useAuthGuard();
   const navigate = useNavigate();
+  const {
+    create,
+    loading: creating,
+    error: createError,
+  } = useCreateApplication();
+  const [teamId] = useState<number | null>(getSelectedTeamId());
+  const [teamName] = useState<string>(getSelectedTeam()?.name ?? "");
   const [projectName, setProjectName] = useState("");
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
-  // const [installationId, setInstallationId] = useState("");
+  const [installationId, setInstallationId] = useState("");
   const [branch, setBranch] = useState("");
+  const [branches, setBranches] = useState<string[]>([]);
+  const [commitHash, setCommitHash] = useState("");
   const [triggerPaths, setTriggerPaths] = useState<string[]>([""]);
   const [buildTools, setBuildTools] = useState("");
   const [javaVersion, setJavaVersion] = useState("");
@@ -30,22 +43,71 @@ const CreateApplication = () => {
   const [routes, setRoutes] = useState<{ url: string; port: string }[]>([
     { url: "", port: "" },
   ]);
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [githubError, setGithubError] = useState<string | null>(null);
+  const [githubMessage, setGithubMessage] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const isValid =
-    projectName.trim() !== "" &&
-    repoName.trim() !== "" &&
-    repoOwner.trim() !== "" &&
-    // installationId.trim() !== "" &&
-    branch.trim() !== "" &&
-    triggerPaths.every((path) => path.trim() !== "") &&
-    buildTools.trim() !== "" &&
-    javaVersion.trim() !== "" &&
-    workingDirectory.trim() !== "" &&
-    buildCommand.trim() !== "" &&
-    startCommand.trim() !== "" &&
-    inputPath.trim() !== "" &&
-    outputPath.trim() !== "" &&
-    routes.every((r) => r.url.trim() !== "" && r.port.trim() !== "");
+  const hasTeam = typeof teamId === "number" && !Number.isNaN(teamId);
+
+  const normalizedTriggerPaths = useMemo(
+    () => triggerPaths.map((p) => p.trim()).filter(Boolean),
+    [triggerPaths]
+  );
+
+  const branchOptions = useMemo(
+    () =>
+      branch && !branches.includes(branch) ? [branch, ...branches] : branches,
+    [branch, branches]
+  );
+
+  const routesValid = useMemo(
+    () =>
+      routes.length > 0 &&
+      routes.every(
+        (r) =>
+          r.url.trim() !== "" &&
+          r.port.trim() !== "" &&
+          Number.isFinite(Number(r.port))
+      ),
+    [routes]
+  );
+
+  const isValid = useMemo(
+    () =>
+      hasTeam &&
+      projectName.trim() !== "" &&
+      repoName.trim() !== "" &&
+      repoOwner.trim() !== "" &&
+      installationId.trim() !== "" &&
+      branch.trim() !== "" &&
+      normalizedTriggerPaths.length > 0 &&
+      buildTools.trim() !== "" &&
+      javaVersion.trim() !== "" &&
+      workingDirectory.trim() !== "" &&
+      buildCommand.trim() !== "" &&
+      startCommand.trim() !== "" &&
+      inputPath.trim() !== "" &&
+      outputPath.trim() !== "" &&
+      routesValid,
+    [
+      hasTeam,
+      projectName,
+      repoName,
+      repoOwner,
+      installationId,
+      branch,
+      normalizedTriggerPaths,
+      buildTools,
+      javaVersion,
+      workingDirectory,
+      buildCommand,
+      startCommand,
+      inputPath,
+      outputPath,
+      routesValid,
+    ]
+  );
 
   const handleKeyChange = (index: number, value: string) => {
     setRoutes((prev) =>
@@ -60,7 +122,141 @@ const CreateApplication = () => {
   };
 
   const removeRoute = (index: number) => {
+    // 라우트 삭제 로그
+    console.log("[CreateApplication] remove route", { index });
     setRoutes((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const fetchCommitForBranch = async (
+    owner: string,
+    repo: string,
+    targetBranch: string
+  ) => {
+    const sha = await getLatestCommitSha(owner, repo, targetBranch);
+    setCommitHash(sha);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    console.log("[CreateApplication] submit", {
+      teamId,
+      projectName,
+      repoOwner,
+      repoName,
+    });
+
+    if (!hasTeam) {
+      console.error("[CreateApplication] submit error: no team selected");
+      setFormError("팀을 선택해주세요. (사이드바 하단)");
+      return;
+    }
+    setFormError(null);
+
+    const endpoints = routes.map((r) => ({
+      port: Number(r.port),
+      routes: [r.url.trim()],
+    }));
+
+    const payload: CreateApplicationRequest = {
+      teamId: teamId!,
+      name: projectName.trim(),
+      configuration: {
+        github: {
+          owner: repoOwner.trim(),
+          repo: repoName.trim(),
+          branch: branch.trim(),
+          installationId: installationId.trim(),
+          hash: commitHash.trim(),
+          triggerPaths: normalizedTriggerPaths,
+        },
+        build: {
+          type: buildTools.trim(),
+          version: javaVersion.trim(),
+          buildCommand: buildCommand.trim(),
+          startCommand: startCommand.trim(),
+          inputPath: inputPath.trim(),
+          outputPath: outputPath.trim(),
+          workingDirectory: workingDirectory.trim(),
+        },
+        endpoints,
+      },
+    };
+
+    const createdId = await create(payload);
+    if (createdId) {
+      navigate("/deployment");
+    }
+  };
+
+  const handleBranchChange = async (value: string) => {
+    setBranch(value);
+    console.log("[CreateApplication] branch change", value);
+
+    if (!value.trim() || !repoOwner.trim() || !repoName.trim()) {
+      setCommitHash("");
+      return;
+    }
+
+    setGithubLoading(true);
+    setGithubError(null);
+    setGithubMessage(null);
+
+    try {
+      await fetchCommitForBranch(repoOwner.trim(), repoName.trim(), value);
+      setGithubMessage("선택한 브랜치의 최신 커밋을 불러왔습니다.");
+    } catch (err) {
+      console.error("[CreateApplication] branch commit fetch error", err);
+      setGithubError(
+        err instanceof Error ? err.message : "커밋 정보를 불러오지 못했습니다."
+      );
+      setCommitHash("");
+    } finally {
+      setGithubLoading(false);
+    }
+  };
+
+  const handleFetchGithub = async () => {
+    if (!repoOwner.trim() || !repoName.trim()) {
+      setGithubError("Owner와 Repository를 입력해주세요.");
+      return;
+    }
+
+    const owner = repoOwner.trim();
+    const repo = repoName.trim();
+
+    setGithubLoading(true);
+    setGithubError(null);
+    setGithubMessage(null);
+
+    try {
+      const { defaultBranch } = await getRepoInfo(owner, repo);
+      const branchNames = await listBranches(owner, repo, 100);
+      setBranches(branchNames);
+
+      const targetBranch =
+        branchNames.find((name) => name === defaultBranch) ??
+        branchNames[0] ??
+        defaultBranch;
+
+      setBranch(targetBranch);
+
+      if (targetBranch) {
+        await fetchCommitForBranch(owner, repo, targetBranch);
+      } else {
+        setCommitHash("");
+      }
+
+      setGithubMessage("GitHub 정보가 업데이트되었습니다.");
+    } catch (err) {
+      console.error("[CreateApplication] github fetch error", err);
+      setGithubError(
+        err instanceof Error
+          ? err.message
+          : "GitHub 정보를 불러오지 못했습니다."
+      );
+    } finally {
+      setGithubLoading(false);
+    }
   };
 
   return (
@@ -71,11 +267,24 @@ const CreateApplication = () => {
           subTitle={`Create a new application with XQUARE`}
         ></Title>
       </ContentsArea>
-      <Contents>
+      <Contents as="form" onSubmit={handleSubmit}>
         <ValueBox>
           <Typography size="5x" weight="bold">
             Step0. Application
           </Typography>
+          <InputArea>
+            <Typography size="5x" weight="semiBold">
+              Team
+            </Typography>
+            <Input_basic
+              value={teamName}
+              onChange={() => {}}
+              placeholder="현재 선택된 팀"
+              width="950px"
+              height="35px"
+              disabled
+            />
+          </InputArea>
           <InputArea>
             <Typography size="5x" weight="semiBold">
               Project Name
@@ -92,22 +301,26 @@ const CreateApplication = () => {
           </InputArea>
         </ValueBox>
         <ValueBox>
-          <Typography size="5x" weight="bold">
-            Step1. Repository
-          </Typography>
+          <SectionHeader>
+            <Typography size="5x" weight="bold">
+              Step1. Repository
+            </Typography>
+          </SectionHeader>
           <InputArea>
             <Typography size="5x" weight="semiBold">
               Repository Name
             </Typography>
-            <Input_basic
-              value={repoName}
-              onChange={(e) => {
-                setRepoName(e.target.value);
-              }}
-              placeholder="Repository Name"
-              width="950px"
-              height="35px"
-            />
+            <InlineInputs>
+              <Input_basic
+                value={repoName}
+                onChange={(e) => {
+                  setRepoName(e.target.value);
+                }}
+                placeholder="Repository Name"
+                width="100%"
+                height="35px"
+              />
+            </InlineInputs>
           </InputArea>
           <InputArea>
             <Typography size="5x" weight="semiBold">
@@ -123,20 +336,75 @@ const CreateApplication = () => {
               height="35px"
             />
           </InputArea>
+          <div
+            style={{
+              margin: "0.5rem",
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button_square
+              type="button"
+              width="200px"
+              height="40px"
+              onClick={handleFetchGithub}
+              disabled={githubLoading || !repoOwner.trim() || !repoName.trim()}
+            >
+              {githubLoading ? "불러오는 중..." : "GitHub에서 불러오기"}
+            </Button_square>
+          </div>
           <InputArea>
             <Typography size="5x" weight="semiBold">
               Branch
             </Typography>
-            <Input_basic
+            <SelectBox
               value={branch}
-              onChange={(e) => {
-                setBranch(e.target.value);
-              }}
-              placeholder="Branch"
+              onChange={(e) => handleBranchChange(e.target.value)}
+              disabled={!branchOptions.length || githubLoading}
+            >
+              <option value="" disabled>
+                {githubLoading ? "불러오는 중..." : "브랜치를 불러오세요"}
+              </option>
+              {branchOptions.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </SelectBox>
+          </InputArea>
+          <InputArea>
+            <Typography size="5x" weight="semiBold">
+              Installation ID
+            </Typography>
+            <Input_basic
+              value={installationId}
+              onChange={(e) => setInstallationId(e.target.value)}
+              placeholder="GitHub App installation id"
               width="950px"
               height="35px"
             />
           </InputArea>
+          <InputArea>
+            <Typography size="5x" weight="semiBold">
+              Commit Hash
+            </Typography>
+            <Input_basic
+              value={commitHash}
+              onChange={(e) => setCommitHash(e.target.value)}
+              disabled={true}
+              placeholder="latest commit sha(auto-filled)"
+              width="950px"
+              height="35px"
+            />
+          </InputArea>
+          <StatusRow>
+            {githubError && <StatusText color="red">{githubError}</StatusText>}
+            {githubMessage && !githubError && (
+              <StatusText>{githubMessage}</StatusText>
+            )}
+          </StatusRow>
           <InputAreaSecond>
             <InputAreaVertical>
               <Typography size="5x" weight="semiBold">
@@ -195,13 +463,26 @@ const CreateApplication = () => {
             <Typography size="5x" weight="semiBold">
               Type
             </Typography>
-            <Input_basic
+            <SelectBox
               value={buildTools}
               onChange={(e) => setBuildTools(e.target.value)}
-              placeholder="ex) gradle / maven"
-              width="950px"
-              height="35px"
-            />
+            >
+              <option value="" disabled>
+                빌드 타입 선택
+              </option>
+              <option value="gradle">gradle</option>
+              <option value="node_js">node_js</option>
+              <option value="react">react</option>
+              <option value="vite">vite</option>
+              <option value="vue">vue</option>
+              <option value="next_js">next_js</option>
+              <option value="go">go</option>
+              <option value="rust">rust</option>
+              <option value="maven">maven</option>
+              <option value="django">django</option>
+              <option value="flask">flask</option>
+              <option value="docker">docker</option>
+            </SelectBox>
           </InputArea>
 
           <InputArea>
@@ -331,23 +612,27 @@ const CreateApplication = () => {
             + 추가
           </AddBtn>
         </ValueBox>
+        {formError && <StatusText color="red">{formError}</StatusText>}
+        {createError && !formError && (
+          <StatusText color="red">{createError.message}</StatusText>
+        )}
         <ButtonGroup>
           <Button_square
             type="button"
             width="120px"
             height="50px"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/deployment")}
           >
             취소
           </Button_square>
 
           <Button_square
             type="submit"
-            disabled={!isValid}
-            width="120px"
+            disabled={!isValid || creating}
+            width="150px"
             height="50px"
           >
-            생성
+            {creating ? "생성 중..." : "생성"}
           </Button_square>
         </ButtonGroup>
       </Contents>
@@ -408,6 +693,51 @@ const InputArea = styled.div`
   width: 100%;
   height: 40px;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
+`;
+
+const InlineInputs = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 80%;
+`;
+
+const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const SelectBox = styled.select`
+  width: 300px;
+  height: 35px;
+  border: none;
+  background: transparent;
+  text-align: right;
+  font-size: 16px;
+  color: ${Xquare_colors.gray[700]};
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    color: ${Xquare_colors.gray[400]};
+  }
+`;
+
+const StatusRow = styled.div`
+  display: flex;
+  width: 100%;
+  min-height: 15px;
+  padding: 0 0px;
+`;
+
+const StatusText = styled.span<{ color?: string }>`
+  font-size: 14px;
+  color: ${({ color }) => color ?? Xquare_colors.gray[500]};
 `;
 
 const InputAreaSecond = styled.div`

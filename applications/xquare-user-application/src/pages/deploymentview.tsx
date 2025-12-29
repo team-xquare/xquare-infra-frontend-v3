@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import {
   Title,
   Xquare_colors,
@@ -12,19 +13,41 @@ import {
   RoutesContents,
   LogContents,
 } from "@xquare/user-interfaces";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useApplicationDetail, useUpdateApplicationConfiguration } from "@xquare/hooks";
 
 const DeploymentView = () => {
   useAuthGuard();
+  const { applicationId: appIdParam } = useParams<{ applicationId: string }>();
+  const applicationId = appIdParam ? parseInt(appIdParam, 10) : undefined;
+
+  // 애플리케이션 상세 정보 조회
+  const { data: appDetail, loading: appLoading, error: appError } = useApplicationDetail(applicationId);
+
+  // 애플리케이션 설정 수정
+  const { update: updateConfig, error: updateError } = useUpdateApplicationConfiguration();
+
   const [activeTab, setActiveTab] = useState(0);
   const [editable, setEditable] = useState(false);
-  const id = 0;
-  const servicename = "service-name";
-  const servicedesc = "service-description";
 
-  const handleSave = useCallback(() => {
-    setEditable(false);
-  }, []);
+  // appDetail 또는 기본값 사용
+  const id = appDetail?.id ?? 0;
+  const servicename = appDetail?.name ?? "service-name";
+  const servicedesc = appDetail?.status ?? "service-description";
+
+  console.log("[DeploymentView] initialized", { applicationId, id, servicename });
+
+  const handleSave = useCallback(async () => {
+    // 구성 변경 시 서버에 저장 (추후 실제 변경된 설정 전달)
+    if (appDetail) {
+      const success = await updateConfig(applicationId ?? 0, {
+        configuration: appDetail.configuration,
+      });
+      if (success) {
+        console.log("[DeploymentView] configuration saved");
+        setEditable(false);
+      }
+    }
+  }, [applicationId, appDetail, updateConfig]);
 
   const tabContents = [
     <SummaryContents key="summary" />,
@@ -49,6 +72,11 @@ const DeploymentView = () => {
     <LogContents key="log" />,
   ];
 
+  // 에러 상태 표시
+  if (updateError) {
+    console.error("[DeploymentView] update error", updateError);
+  }
+
   const handleTabClick = useCallback((index: number) => {
     setActiveTab(index);
     setEditable(false);
@@ -61,6 +89,32 @@ const DeploymentView = () => {
       setEditable(true);
     }
   }, [editable]);
+
+  // 로딩 중
+  if (appLoading) {
+    return (
+      <Container>
+        <ContentsArea>
+          <Title title="로딩 중..." subTitle="애플리케이션 정보를 불러오고 있습니다." />
+        </ContentsArea>
+      </Container>
+    );
+  }
+
+  // 에러 발생
+  if (appError) {
+    console.error("[DeploymentView] error", appError);
+    return (
+      <Container>
+        <ContentsArea>
+          <Title
+            title="오류 발생"
+            subTitle={appError.message || "애플리케이션을 불러올 수 없습니다."}
+          />
+        </ContentsArea>
+      </Container>
+    );
+  }
 
   return (
     <Container>
