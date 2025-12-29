@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 import type { ApplicationConfigurationDetail } from "./detail";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -48,7 +49,7 @@ export const updateApplicationConfiguration = async (
       "[updateApplicationConfiguration] PUT",
       `${API_BASE_URL}/applications/${applicationId}/configuration`
     );
-    response = await fetch(
+    response = await fetchWithTimeout(
       `${API_BASE_URL}/applications/${applicationId}/configuration`,
       {
         method: "PUT",
@@ -97,7 +98,8 @@ export const updateApplicationConfiguration = async (
   let result: UpdateApplicationConfigurationApiResponse;
 
   try {
-    result = (await response.json()) as UpdateApplicationConfigurationApiResponse;
+    result =
+      (await response.json()) as UpdateApplicationConfigurationApiResponse;
   } catch {
     let rawBody = "";
     try {
@@ -116,7 +118,9 @@ export const updateApplicationConfiguration = async (
 
   if (!result.success) {
     console.error("[updateApplicationConfiguration] invalid response", result);
-    throw new Error("애플리케이션 설정 수정 실패: 응답 데이터가 올바르지 않습니다.");
+    throw new Error(
+      "애플리케이션 설정 수정 실패: 응답 데이터가 올바르지 않습니다."
+    );
   }
 
   console.log("[updateApplicationConfiguration] success");

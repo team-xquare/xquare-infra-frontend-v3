@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -78,13 +79,16 @@ export const getTeamApplications = async (
   let response: Response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/teams/${teamId}/applications`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Accept: "*/*",
-      },
-    });
+    response = await fetchWithTimeout(
+      `${API_BASE_URL}/teams/${teamId}/applications`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "*/*",
+        },
+      }
+    );
   } catch (error) {
     const message =
       error instanceof Error

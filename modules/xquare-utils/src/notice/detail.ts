@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -39,7 +40,7 @@ export const getNoticeDetail = async (
   console.log(`[getNoticeDetail] 요청 시작: url=${url}, noticeId=${noticeId}`);
 
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

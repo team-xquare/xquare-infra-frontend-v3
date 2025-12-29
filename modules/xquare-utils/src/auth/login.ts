@@ -1,4 +1,5 @@
 import { validateAuthResponse } from "./validation";
+import { fetchWithTimeout } from "../fetch";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -23,7 +24,7 @@ export interface LoginResponse {
 
 export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
   try {
-    const res = await fetch(`${BASE_URL}/auth/login`, {
+    const res = await fetchWithTimeout(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

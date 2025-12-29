@@ -1,4 +1,5 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
+import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -71,6 +72,94 @@ export const createApplication = async (
     throw new Error("애플리케이션 이름이 필요합니다.");
   }
 
+  // Validate configuration object exists
+  if (!request.configuration) {
+    console.error("[createApplication] missing configuration");
+    throw new Error("애플리케이션 설정이 필요합니다.");
+  }
+
+  // Validate github configuration
+  if (
+    typeof request.configuration.github !== "object" ||
+    request.configuration.github === null
+  ) {
+    console.error(
+      "[createApplication] invalid github configuration",
+      request.configuration.github
+    );
+    throw new Error("GitHub 설정이 올바르지 않습니다.");
+  }
+
+  const { github } = request.configuration;
+
+  if (typeof github.hash !== "string" || !github.hash.trim()) {
+    console.error(
+      "[createApplication] invalid or missing github.hash",
+      github.hash
+    );
+    throw new Error("GitHub 커밋 해시가 필요합니다.");
+  }
+
+  if (
+    typeof github.installationId !== "string" ||
+    !github.installationId.trim()
+  ) {
+    console.error(
+      "[createApplication] invalid or missing github.installationId",
+      github.installationId
+    );
+    throw new Error("GitHub 설치 ID가 필요합니다.");
+  }
+
+  if (typeof github.branch !== "string" || !github.branch.trim()) {
+    console.error(
+      "[createApplication] invalid or missing github.branch",
+      github.branch
+    );
+    throw new Error("GitHub 브랜치가 필요합니다.");
+  }
+
+  // Validate build configuration
+  if (
+    typeof request.configuration.build !== "object" ||
+    request.configuration.build === null
+  ) {
+    console.error(
+      "[createApplication] invalid build configuration",
+      request.configuration.build
+    );
+    throw new Error("빌드 설정이 올바르지 않습니다.");
+  }
+
+  const ALLOWED_BUILD_TYPES = [
+    "gradle",
+    "node_js",
+    "react",
+    "vite",
+    "vue",
+    "next_js",
+    "go",
+    "rust",
+    "maven",
+    "django",
+    "flask",
+    "docker",
+  ];
+
+  if (
+    typeof request.configuration.build.type !== "string" ||
+    !ALLOWED_BUILD_TYPES.includes(request.configuration.build.type)
+  ) {
+    console.error(
+      "[createApplication] invalid build.type",
+      request.configuration.build.type,
+      `allowed: ${ALLOWED_BUILD_TYPES.join(", ")}`
+    );
+    throw new Error(
+      `유효하지 않은 빌드 타입입니다. (허용: ${ALLOWED_BUILD_TYPES.join(", ")})`
+    );
+  }
+
   const accessToken = getAccessToken();
   if (!accessToken) {
     throw new Error("AccessToken이 없습니다.");
@@ -79,7 +168,7 @@ export const createApplication = async (
   let response: Response;
 
   try {
-    response = await fetch(`${API_BASE_URL}/applications`, {
+    response = await fetchWithTimeout(`${API_BASE_URL}/applications`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -106,7 +195,11 @@ export const createApplication = async (
       console.error("[createApplication] forbidden (403)");
       throw new Error("애플리케이션 생성 권한이 없습니다. (403)");
     }
-    console.error("[createApplication] http error", response.status, response.statusText);
+    console.error(
+      "[createApplication] http error",
+      response.status,
+      response.statusText
+    );
     throw new Error(
       `애플리케이션 생성 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
     );
