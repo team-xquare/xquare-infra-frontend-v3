@@ -1,4 +1,9 @@
-import { clearAllTokens, getSelectedTeam, type Team } from "@xquare/utils";
+import {
+  clearAllTokens,
+  getSelectedTeam,
+  saveSelectedTeam,
+  type Team,
+} from "@xquare/utils";
 import { useNavigate } from "react-router-dom";
 import { memo, useCallback, useState } from "react";
 import { TeamModal } from "../../teammodal";
@@ -41,6 +46,12 @@ function SidebarFooterComponent({
     return savedTeam?.name ?? project;
   });
 
+  // 선택된 팀의 ID를 상태로 관리 (필요시 사용)
+  const [, setSelectedTeamId] = useState<number | null>(() => {
+    const savedTeam = getSelectedTeam();
+    return savedTeam?.id ?? null;
+  });
+
   const handleLogout = useCallback(() => {
     if (!window.confirm("로그아웃하시겠습니까?")) return;
     clearAllTokens();
@@ -59,10 +70,23 @@ function SidebarFooterComponent({
     }
   }, [onTeamCreated]);
 
-  // 팀 선택 처리: 명시적 선택 상태와 팀명 모두 업데이트
-  const handleTeamSelect = useCallback((teamName: string) => {
+  // 팀 선택 처리: 팀 이름과 ID를 모두 업데이트하고 스토리지에 저장
+  const handleTeamSelect = useCallback((teamName: string, teamId: number) => {
+    console.log("[SidebarFooter] 팀 선택:", { teamName, teamId });
     setSelectedProject(teamName);
+    setSelectedTeamId(teamId);
     setIsUserSelectedTeam(true);
+
+    // 선택한 팀 정보를 스토리지에 저장
+    // 현재 저장된 팀 정보를 조회하여 type 필드 유지
+    const savedTeam = getSelectedTeam();
+    const teamType = savedTeam?.type ?? "개인";
+
+    saveSelectedTeam({
+      id: teamId,
+      name: teamName,
+      type: teamType,
+    });
   }, []);
 
   const isTeamSelected = isUserSelectedTeam;
