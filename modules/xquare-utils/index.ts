@@ -47,13 +47,30 @@ export { getTeamAddons } from "./src/teams/addons";
 export type { TeamAddon } from "./src/teams/addons";
 
 export { getTeamApplications } from "./src/teams/applications";
-export type {
-  TeamApplication,
-  ApplicationConfiguration,
-  ApplicationGitHub,
-  ApplicationBuild,
-  ApplicationEndpoint,
-} from "./src/teams/applications";
+export type { TeamApplication } from "./src/teams/applications";
+
+export {
+  createApplication,
+  type CreateApplicationRequest,
+  type ApplicationConfiguration,
+  type ApplicationGitHub,
+  type ApplicationBuild,
+  type ApplicationEndpoint,
+} from "./src/application/create";
+
+export {
+  getApplicationDetail,
+  type ApplicationDetail,
+  type ApplicationConfigurationDetail,
+  type ApplicationGitHubDetail,
+  type ApplicationBuildDetail,
+  type ApplicationEndpointDetail,
+} from "./src/application/detail";
+
+export {
+  updateApplicationConfiguration,
+  type UpdateApplicationConfigurationRequest,
+} from "./src/application/update";
 
 export { getTeams } from "./src/teams/list";
 export type { Team, TeamMember } from "./src/teams/list";
@@ -68,3 +85,11 @@ export {
   clearSelectedTeam,
 } from "./src/teams/storage";
 export type { SelectedTeamInfo } from "./src/teams/storage";
+
+// GitHub repository utilities
+export {
+  getRepoInfo,
+  listBranches,
+  getLatestCommitSha,
+  type RepoInfo,
+} from "./src/application/repo";
