@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
+import { InfoIcon } from "@xquare/user-interfaces";
 import { useNavigate } from "react-router-dom";
 import {
   Title,
@@ -9,6 +10,7 @@ import {
   Input_basic,
   Input_record,
   Button_square,
+  Tooltip,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useCreateApplication } from "@xquare/hooks";
 import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
@@ -376,7 +378,7 @@ const CreateApplication = () => {
         <ValueBox>
           <SectionHeader>
             <Typography size="5x" weight="bold">
-              Step1. Repository
+              Step1. Github Repository
             </Typography>
           </SectionHeader>
           <InputArea>
@@ -418,20 +420,37 @@ const CreateApplication = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Button_square
-              type="button"
-              width="200px"
-              height="40px"
-              onClick={handleFetchGithub}
-              disabled={githubLoading || !repoOwner.trim() || !repoName.trim()}
+            <Tooltip
+              content="Owner와 Repository의 GitHub 정보를 불러옵니다.
+              브랜치 목록과 최신 커밋 해시가 자동으로 채워집니다."
+              position="left"
             >
-              {githubLoading ? "불러오는 중..." : "GitHub에서 불러오기"}
-            </Button_square>
+              <Button_square
+                type="button"
+                width="200px"
+                height="40px"
+                onClick={handleFetchGithub}
+                disabled={
+                  githubLoading || !repoOwner.trim() || !repoName.trim()
+                }
+              >
+                {githubLoading ? "불러오는 중..." : "GitHub에서 불러오기"}
+              </Button_square>
+            </Tooltip>
           </div>
           <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Branch
-            </Typography>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Typography size="5x" weight="semiBold">
+                Branch
+              </Typography>
+              <Tooltip
+                content="배포에 사용할 Branch를 선택해 주세요. 선택한 Branch의 최신 커밋이 자동으로 반영됩니다."
+                position="right"
+                iconType="question"
+              >
+                <InfoIcon size={18} />
+              </Tooltip>
+            </div>
             <SelectBox
               value={branch}
               onChange={(e) => handleBranchChange(e.target.value)}
@@ -448,9 +467,18 @@ const CreateApplication = () => {
             </SelectBox>
           </InputArea>
           <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Installation ID
-            </Typography>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Typography size="5x" weight="semiBold">
+                Installation ID
+              </Typography>
+              <Tooltip
+                content="GitHub App 설치 ID는 저장소 연동 설정에서 확인할 수 있습니다."
+                position="right"
+                iconType="question"
+              >
+                <InfoIcon size={18} />
+              </Tooltip>
+            </div>
             <Input_basic
               value={installationId}
               onChange={(e) => setInstallationId(e.target.value)}
@@ -480,9 +508,20 @@ const CreateApplication = () => {
           </StatusRow>
           <InputAreaSecond>
             <InputAreaVertical>
-              <Typography size="5x" weight="semiBold">
-                Trigger Paths
-              </Typography>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <Typography size="5x" weight="semiBold">
+                  Trigger Paths
+                </Typography>
+                <Tooltip
+                  content="지정된 경로에 변경 사항이 있을 때만 배포에 반영됩니다. 예: src/** (src 폴더 내 모든 변경 감지 후 재배포)"
+                  position="right"
+                  iconType="info"
+                >
+                  <InfoIcon size={18} />
+                </Tooltip>
+              </div>
 
               {triggerPaths.map((path, i) => (
                 <div
@@ -663,9 +702,18 @@ const CreateApplication = () => {
           })()}
         </ValueBox>
         <ValueBox>
-          <Typography size="5x" weight="bold">
-            Step3. Routes
-          </Typography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Typography size="5x" weight="bold">
+              Step3. Routes
+            </Typography>
+            <Tooltip
+              content="애플리케이션에 접근할 URL 경로와 포트를 설정하세요."
+              position="right"
+              iconType="info"
+            >
+              <InfoIcon size={18} />
+            </Tooltip>
+          </div>
 
           {routes.map((item, i) => (
             <InputArea key={i}>
