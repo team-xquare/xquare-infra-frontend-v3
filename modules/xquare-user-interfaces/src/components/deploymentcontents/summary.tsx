@@ -3,8 +3,13 @@ import Xquare_colors from "../../styles";
 import { Typography } from "../typography/index";
 import PodImg from "../../assets/pod.svg";
 import DatabaseImg from "../../assets/db.svg";
+import type { ApplicationDetail } from "@xquare/utils";
 
-function SecretContents() {
+interface SummaryContentsProps {
+  appDetail?: ApplicationDetail;
+}
+
+function SummaryContents({ appDetail }: SummaryContentsProps) {
   const serverlog = `025-10-10 15:17:10+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
 2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
 2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
@@ -21,15 +26,22 @@ function SecretContents() {
 2025-10-10T15:17:19.376056Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
 2025-10-10T15:17:19.376123Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.43'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.`;
 
-  const title = "User Database";
-  const domain = "userdb.xquare.app";
-  const description = "Database for user information storage.";
-  const type = "database";
-  const repository = "1200-1300 ";
-  const owner = "john.doe";
-  const health = 3; // 1 to 5
-  const lastDeploy = "2025-10-10 15:00";
-  const lastbuild = "2025-10-10 14:45";
+  const title = appDetail?.name || "Application";
+  const domain = `${appDetail?.name || "app"}.xquare.app`;
+  const description = `Application ID: ${appDetail?.id || "N/A"}`;
+  const type: "application" | "database" = "application"; // 또는 appDetail에서 유추
+  const repository = appDetail?.configuration?.github
+    ? `${appDetail.configuration.github.owner}/${appDetail.configuration.github.repo}`
+    : "N/A";
+  const owner = appDetail?.configuration?.github?.owner || "N/A";
+  const health =
+    appDetail?.status === "running"
+      ? 5
+      : appDetail?.status === "pending"
+        ? 3
+        : 1;
+  const lastDeploy = "2025-10-10 15:00"; // 실제 API에서 제공되면 사용
+  const lastbuild = "2025-10-10 14:45"; // 실제 API에서 제공되면 사용
 
   return (
     <Container>
@@ -45,7 +57,7 @@ function SecretContents() {
               </Typography>
             </Typo>
             <Icons>
-              {type === "database" ? (
+              {(type as string) === "database" ? (
                 <img src={DatabaseImg} alt="Database" height={55} />
               ) : (
                 <img src={PodImg} alt="POD" />
@@ -269,4 +281,4 @@ const LogType = styled.div`
   color: ${Xquare_colors.white};
 `;
 
-export default SecretContents;
+export default SummaryContents;

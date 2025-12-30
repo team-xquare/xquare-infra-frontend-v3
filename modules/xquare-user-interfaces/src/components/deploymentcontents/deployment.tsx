@@ -1,24 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
 import { Input_basic, Input_record } from "../input";
+import type {
+  ApplicationGitHubDetail,
+  ApplicationBuildDetail,
+  ApplicationConfigurationDetail,
+} from "@xquare/utils";
 
-function DeploymentContents({
-  id,
-  editable,
-  onSave,
-}: {
-  id: number;
+interface DeploymentContentsProps {
+  applicationId?: number;
   editable: boolean;
   onSave: () => void;
-}) {
-  const [owner, setOwner] = useState(id.toString());
+  github?: ApplicationGitHubDetail;
+  build?: ApplicationBuildDetail;
+  configuration?: ApplicationConfigurationDetail;
+  onUpdate: (applicationId: number, request: any) => Promise<boolean>;
+}
+
+function DeploymentContents({
+  applicationId,
+  editable,
+  onSave,
+  github,
+  build,
+  configuration,
+  onUpdate,
+}: DeploymentContentsProps) {
+  // GitHub 설정
+  const [owner, setOwner] = useState("");
   const [repo, setRepo] = useState("");
   const [branch, setBranch] = useState("main");
-  // const [installationId, setInstallationId] = useState("");
-  // const [hash, setHash] = useState(id.toString());
   const [triggerPaths, setTriggerPaths] = useState<string[]>([]);
+
+  // API로부터 받은 GitHub 데이터로 초기화
+  useEffect(() => {
+    if (github) {
+      setOwner(github.owner || "");
+      setRepo(github.repo || "");
+      setBranch(github.branch || "main");
+      setTriggerPaths(github.triggerPaths || []);
+    }
+  }, [github]);
 
   const [isDirtyGithub, setIsDirtyGithub] = useState(false);
 
@@ -35,25 +59,39 @@ function DeploymentContents({
   };
 
   const handleSaveGithub = async () => {
+    if (!applicationId || !configuration) {
+      console.error(
+        "[DeploymentContents] applicationId or configuration missing"
+      );
+      return;
+    }
+
     try {
-      // const body = {
-      //   owner,
-      //   repo,
-      //   branch,
-      //   installationId,
-      //   hash,
-      //   triggerPaths,
-      // };
+      const updatedConfig: ApplicationConfigurationDetail = {
+        ...configuration,
+        github: {
+          ...configuration.github,
+          owner,
+          repo,
+          branch,
+          triggerPaths,
+        },
+      };
 
-      // API 로직 들어갈 자리
-
+      await onUpdate(applicationId, { configuration: updatedConfig });
+      console.log("[DeploymentContents] GitHub 설정 저장 성공");
       setIsDirtyGithub(false);
       onSave();
     } catch (err) {
-      console.error(err);
+      console.error("[DeploymentContents] GitHub 설정 저장 실패", err);
+      alert(
+        "저장에 실패했습니다: " +
+          (err instanceof Error ? err.message : "알 수 없는 오류")
+      );
     }
   };
 
+  // Build 설정
   const [type, setType] = useState("gradle");
   const [version, setVersion] = useState("");
   const [buildCommand, setBuildCommand] = useState("");
@@ -62,26 +100,53 @@ function DeploymentContents({
   const [outputPath, setOutputPath] = useState("");
   const [workingDirectory, setWorkingDirectory] = useState("");
 
+  // API로부터 받은 빌드 데이터로 초기화
+  useEffect(() => {
+    if (build) {
+      setType(build.type || "gradle");
+      setVersion(build.version || "");
+      setBuildCommand(build.buildCommand || "");
+      setStartCommand(build.startCommand || "");
+      setInputPath(build.inputPath || "");
+      setOutputPath(build.outputPath || "");
+      setWorkingDirectory(build.workingDirectory || "");
+    }
+  }, [build]);
+
   const [isDirtyBuild, setIsDirtyBuild] = useState(false);
 
   const handleSaveBuild = async () => {
+    if (!applicationId || !configuration) {
+      console.error(
+        "[DeploymentContents] applicationId or configuration missing"
+      );
+      return;
+    }
+
     try {
-      // const body = {
-      //   type,
-      //   version,
-      //   buildCommand,
-      //   startCommand,
-      //   inputPath,
-      //   outputPath,
-      //   workingDirectory,
-      // };
+      const updatedConfig: ApplicationConfigurationDetail = {
+        ...configuration,
+        build: {
+          type,
+          version,
+          buildCommand,
+          startCommand,
+          inputPath,
+          outputPath,
+          workingDirectory,
+        },
+      };
 
-      // API 로직 들어갈 자리
-
+      await onUpdate(applicationId, { configuration: updatedConfig });
+      console.log("[DeploymentContents] Build 설정 저장 성공");
       setIsDirtyBuild(false);
       onSave();
     } catch (err) {
-      console.error(err);
+      console.error("[DeploymentContents] Build 설정 저장 실패", err);
+      alert(
+        "저장에 실패했습니다: " +
+          (err instanceof Error ? err.message : "알 수 없는 오류")
+      );
     }
   };
 

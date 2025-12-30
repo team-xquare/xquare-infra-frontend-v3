@@ -99,7 +99,7 @@ const DeploymentHome = () => {
       <DploymentSell>
         {(applications ?? []).map((app) => (
           <DeploymentItem
-            id={`app-${app.id}`}
+            id={String(app.id)}
             key={`app-${app.id}`}
             title={app.name}
             domain={`${app.configuration.github.owner}/${app.configuration.github.repo}`}

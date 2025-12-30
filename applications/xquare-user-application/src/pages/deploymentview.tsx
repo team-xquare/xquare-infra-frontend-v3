@@ -21,7 +21,7 @@ import {
 
 const DeploymentView = () => {
   useAuthGuard();
-  const { applicationId: appIdParam } = useParams<{ applicationId: string }>();
+  const { id: appIdParam } = useParams<{ id: string }>();
   const applicationId = appIdParam ? parseInt(appIdParam, 10) : undefined;
 
   // 애플리케이션 상세 정보 조회
@@ -47,6 +47,9 @@ const DeploymentView = () => {
     applicationId,
     id,
     servicename,
+    appDetail,
+    loading: appLoading,
+    error: appError,
   });
 
   const handleSave = useCallback(async () => {
@@ -71,12 +74,16 @@ const DeploymentView = () => {
   }, [applicationId, appDetail, updateConfig]);
 
   const tabContents = [
-    <SummaryContents key="summary" />,
+    <SummaryContents key="summary" appDetail={appDetail || undefined} />,
     <DeploymentContents
       key={`deployment-${editable ? "edit" : "readonly"}`}
-      id={id}
+      applicationId={applicationId}
       editable={editable}
       onSave={handleSave}
+      github={appDetail?.configuration?.github}
+      build={appDetail?.configuration?.build}
+      configuration={appDetail?.configuration}
+      onUpdate={updateConfig}
     />,
     <SecretContents
       key={`secret-${editable ? "edit" : "readonly"}`}
@@ -86,9 +93,12 @@ const DeploymentView = () => {
     />,
     <RoutesContents
       key={`routes-${editable ? "edit" : "readonly"}`}
-      id={id}
+      applicationId={applicationId}
       editable={editable}
       onSave={handleSave}
+      endpoints={appDetail?.configuration?.endpoints}
+      configuration={appDetail?.configuration}
+      onUpdate={updateConfig}
     />,
     <LogContents key="log" />,
   ];
@@ -150,6 +160,7 @@ const DeploymentView = () => {
           {["Summary", "Deployment", "Secret", "Routes", "Log"].map(
             (label, index) => (
               <NavItem
+                key={index}
                 children={label}
                 onClick={() => handleTabClick(index)}
                 active={activeTab === index}
