@@ -36,7 +36,7 @@ const StyledButton = styled.button<ButtonProps>`
 
   &:disabled {
     border: 1px solid ${Xquare_colors.gray[300]};
-    color: ${Xquare_colors.gray[300]};
+    color: ${Xquare_colors.gray[400]};
     cursor: not-allowed;
   }
 `;

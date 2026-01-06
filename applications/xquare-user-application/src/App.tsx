@@ -11,7 +11,7 @@ import SignupPage from "./pages/signup";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 // import FeedPage from "./pages/feedpage";
-import StatusPage from "./pages/status";
+import SummaryPage from "./pages/summary";
 import NoticeView from "./pages/noticeview";
 // import FeedView from "./pages/feedview";
 import AddonPage from "./pages/addonpage";
@@ -103,10 +103,10 @@ function App() {
         />
 
         <Route
-          path="/status"
+          path="/summary"
           element={
             <Layout>
-              <StatusPage />
+              <SummaryPage />
             </Layout>
           }
         />

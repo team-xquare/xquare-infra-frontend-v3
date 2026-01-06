@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -10,12 +10,39 @@ import {
   DeploymentItem,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useTeamApplications } from "@xquare/hooks";
-import { getSelectedTeamId } from "@xquare/utils";
+import { getSelectedTeamId, SELECTED_TEAM_EVENT } from "@xquare/utils";
 
 const DeploymentHome = () => {
   useAuthGuard();
   const navigate = useNavigate();
-  const teamId = getSelectedTeamId() ?? undefined;
+  const [teamId, setTeamId] = useState<number | undefined>(
+    getSelectedTeamId() ?? undefined
+  );
+
+  useEffect(() => {
+    const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "xquare:selectedTeam") {
+        syncTeam();
+      }
+    };
+
+    // CustomEvent 리스너를 EventListener 타입으로 캐스팅
+    const handleSelectedTeamChanged: EventListener = () => syncTeam();
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener(SELECTED_TEAM_EVENT, handleSelectedTeamChanged);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener(
+        SELECTED_TEAM_EVENT,
+        handleSelectedTeamChanged
+      );
+    };
+  }, []);
+
   console.log("[DeploymentHome] 현재 선택된 팀 ID:", teamId);
   const { data: applications, loading, error } = useTeamApplications(teamId);
   console.log(
@@ -78,7 +105,7 @@ const DeploymentHome = () => {
       <DploymentSell>
         {(applications ?? []).map((app) => (
           <DeploymentItem
-            id={`app-${app.id}`}
+            id={String(app.id)}
             key={`app-${app.id}`}
             title={app.name}
             domain={`${app.configuration.github.owner}/${app.configuration.github.repo}`}

@@ -29,7 +29,7 @@ function Layout({
       { id: "home", label: "HOME", path: "/" },
       { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
       { id: "addons", label: "ADDONS", path: "/addons" },
-      { id: "status", label: "STATUS", path: "/status" },
+      { id: "summary", label: "SUMMARY", path: "/summary" },
       { id: "notice", label: "NOTICE", path: "/notice" },
       // { id: "feed", label: "FEED", path: "/feed" },
     ],
@@ -41,7 +41,7 @@ function Layout({
       home: "/",
       deployment: "/deployment",
       addons: "/addons",
-      status: "/status",
+      summary: "/summary",
       notice: "/notice",
       // feed: "/feed",
     };

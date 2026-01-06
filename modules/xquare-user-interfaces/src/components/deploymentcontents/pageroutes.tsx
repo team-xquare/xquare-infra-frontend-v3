@@ -1,49 +1,73 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
 import { Xquare_colors } from "../../styles/colors";
+import type {
+  ApplicationEndpointDetail,
+  ApplicationConfigurationDetail,
+  UpdateApplicationConfigurationRequest,
+} from "@xquare/utils";
 
 interface RoutesItem {
   url: string;
   port: number;
 }
 
-export default function RoutesContents({
-  id,
-  editable,
-  onSave,
-}: {
-  id: number;
+interface RoutesContentsProps {
+  applicationId?: number;
   editable: boolean;
   onSave: () => void;
-}) {
+  endpoints?: ApplicationEndpointDetail[];
+  configuration?: ApplicationConfigurationDetail;
+  onUpdate: (
+    applicationId: number,
+    request: UpdateApplicationConfigurationRequest
+  ) => Promise<boolean>;
+}
+
+export default function RoutesContents({
+  applicationId,
+  editable,
+  onSave,
+  endpoints,
+  configuration,
+  onUpdate,
+}: RoutesContentsProps) {
   const [routes, setRoutes] = useState<RoutesItem[]>([]);
   const [isDirty, setIsDirty] = useState(false);
 
+  // API로부터 받은 endpoints 데이터로 초기화
   useEffect(() => {
-    const loadDummy = async () => {
-      const dummy = [
-        { url: "API_KEY", port: 1234 },
-        { url: "PORT", port: 8080 },
-      ];
-      setRoutes(dummy);
-      setIsDirty(false);
-    };
-
-    loadDummy();
-  }, [id]);
+    if (endpoints && endpoints.length > 0) {
+      const routesList: RoutesItem[] = [];
+      endpoints.forEach((endpoint) => {
+        endpoint.routes.forEach((route) => {
+          routesList.push({ url: route, port: endpoint.port });
+        });
+      });
+      startTransition(() => {
+        setRoutes(routesList);
+        setIsDirty(false);
+      });
+    } else {
+      startTransition(() => {
+        setRoutes([]);
+        setIsDirty(false);
+      });
+    }
+  }, [endpoints]);
 
   const handleKeyChange = (index: number, v: string) => {
     setRoutes((prev) =>
-      prev.map((s, i) => (i === index ? { ...s, url: v } : s)),
+      prev.map((s, i) => (i === index ? { ...s, url: v } : s))
     );
     setIsDirty(true);
   };
 
   const handleValueChange = (index: number, v: string) => {
     setRoutes((prev) =>
-      prev.map((s, i) => (i === index ? { ...s, port: Number(v) } : s)),
+      prev.map((s, i) => (i === index ? { ...s, port: Number(v) } : s))
     );
     setIsDirty(true);
   };
@@ -61,12 +85,55 @@ export default function RoutesContents({
   const saveRoutes = async () => {
     const invalidRoutes = routes.filter((r) => r.port < 1 || r.port > 65535);
     if (invalidRoutes.length > 0) {
-      // 에러 처리 (예: 토스트 메시지)
+      alert("포트 번호는 1-65535 범위여야 합니다.");
       return;
     }
-    console.log("전송될 데이터:", routes);
-    setIsDirty(false);
-    onSave();
+
+    if (!applicationId || !configuration) {
+      console.error("[RoutesContents] applicationId or configuration missing");
+      return;
+    }
+
+    try {
+      // routes를 endpoints 형식으로 변환
+      const endpointsMap = new Map<number, string[]>();
+      routes.forEach((route) => {
+        const existing = endpointsMap.get(route.port) || [];
+        existing.push(route.url);
+        endpointsMap.set(route.port, existing);
+      });
+
+      const newEndpoints: ApplicationEndpointDetail[] = Array.from(
+        endpointsMap.entries()
+      ).map(([port, routesList]) => ({
+        port,
+        routes: routesList,
+      }));
+
+      const updatedConfig: ApplicationConfigurationDetail = {
+        ...configuration,
+        endpoints: newEndpoints,
+      };
+
+      const success = await onUpdate(applicationId, {
+        configuration: updatedConfig,
+      });
+
+      if (success) {
+        console.log("[RoutesContents] Routes 설정 저장 성공");
+        setIsDirty(false);
+        onSave();
+      } else {
+        console.error("[RoutesContents] Routes 설정 저장 실패 (false 반환)");
+        alert("저장에 실패했습니다: 업데이트가 완료되지 않았습니다.");
+      }
+    } catch (err) {
+      console.error("[RoutesContents] Routes 설정 저장 실패", err);
+      alert(
+        "저장에 실패했습니다: " +
+          (err instanceof Error ? err.message : "알 수 없는 오류")
+      );
+    }
   };
 
   return (

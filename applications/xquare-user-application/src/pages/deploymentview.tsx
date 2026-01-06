@@ -21,7 +21,7 @@ import {
 
 const DeploymentView = () => {
   useAuthGuard();
-  const { applicationId: appIdParam } = useParams<{ applicationId: string }>();
+  const { id: appIdParam } = useParams<{ id: string }>();
   const applicationId = appIdParam ? parseInt(appIdParam, 10) : undefined;
 
   // 애플리케이션 상세 정보 조회
@@ -47,10 +47,12 @@ const DeploymentView = () => {
     applicationId,
     id,
     servicename,
+    appDetail,
+    loading: appLoading,
+    error: appError,
   });
 
   const handleSave = useCallback(async () => {
-    // 유효한 applicationId 확인
     if (!applicationId || applicationId < 0) {
       console.error("[DeploymentView] invalid applicationId for save", {
         applicationId,
@@ -58,7 +60,6 @@ const DeploymentView = () => {
       return;
     }
 
-    // 구성 변경 시 서버에 저장 (추후 실제 변경된 설정 전달)
     if (appDetail) {
       const success = await updateConfig(applicationId, {
         configuration: appDetail.configuration,
@@ -71,12 +72,16 @@ const DeploymentView = () => {
   }, [applicationId, appDetail, updateConfig]);
 
   const tabContents = [
-    <SummaryContents key="summary" />,
+    <SummaryContents key="summary" appDetail={appDetail || undefined} />,
     <DeploymentContents
       key={`deployment-${editable ? "edit" : "readonly"}`}
-      id={id}
+      applicationId={applicationId}
       editable={editable}
       onSave={handleSave}
+      github={appDetail?.configuration?.github}
+      build={appDetail?.configuration?.build}
+      configuration={appDetail?.configuration}
+      onUpdate={updateConfig}
     />,
     <SecretContents
       key={`secret-${editable ? "edit" : "readonly"}`}
@@ -86,14 +91,16 @@ const DeploymentView = () => {
     />,
     <RoutesContents
       key={`routes-${editable ? "edit" : "readonly"}`}
-      id={id}
+      applicationId={applicationId}
       editable={editable}
       onSave={handleSave}
+      endpoints={appDetail?.configuration?.endpoints}
+      configuration={appDetail?.configuration}
+      onUpdate={updateConfig}
     />,
     <LogContents key="log" />,
   ];
 
-  // 에러 상태 표시
   if (updateError) {
     console.error("[DeploymentView] update error", updateError);
   }
@@ -111,7 +118,6 @@ const DeploymentView = () => {
     }
   }, [editable]);
 
-  // 로딩 중
   if (appLoading) {
     return (
       <Container>
@@ -125,7 +131,6 @@ const DeploymentView = () => {
     );
   }
 
-  // 에러 발생
   if (appError) {
     console.error("[DeploymentView] error", appError);
     return (
@@ -150,6 +155,7 @@ const DeploymentView = () => {
           {["Summary", "Deployment", "Secret", "Routes", "Log"].map(
             (label, index) => (
               <NavItem
+                key={index}
                 children={label}
                 onClick={() => handleTabClick(index)}
                 active={activeTab === index}

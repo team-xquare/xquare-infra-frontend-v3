@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
+import { InfoIcon } from "@xquare/user-interfaces";
 import { useNavigate } from "react-router-dom";
 import {
   Title,
@@ -9,11 +10,70 @@ import {
   Input_basic,
   Input_record,
   Button_square,
+  Tooltip,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useCreateApplication } from "@xquare/hooks";
 import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
-import type { CreateApplicationRequest } from "@xquare/utils";
+import type { CreateApplicationRequest, ApplicationBuild } from "@xquare/utils";
 import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
+
+// --- Domain validation helpers (module scope for stable references) ---
+function extractHostname(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  try {
+    const withProtocol = trimmed.includes("://")
+      ? trimmed
+      : `https://${trimmed}`;
+    const u = new URL(withProtocol);
+    return u.hostname;
+  } catch {
+    return trimmed.split("/")[0];
+  }
+}
+
+function isAllowedDomain(value: string): boolean {
+  const host = extractHostname(value).toLowerCase();
+  return host.endsWith(".dsmhs.kr");
+}
+
+// --- Build configuration required fields per type ---
+type BuildField =
+  | "VERSION"
+  | "BUILD_COMMAND"
+  | "START_COMMAND"
+  | "INPUT_PATH"
+  | "OUTPUT_PATH"
+  | "WORKING_DIRECTORY";
+
+const REQUIRED_FIELDS: Record<string, BuildField[]> = {
+  gradle: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  node_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  react: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  vite: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  vue: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  next_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  go: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  rust: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  maven: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
+  django: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  flask: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  docker: ["INPUT_PATH", "WORKING_DIRECTORY"],
+};
+
+const needsField = (type: string, field: BuildField) => {
+  const t = (type ?? "").trim();
+  const set = REQUIRED_FIELDS[t];
+  return Array.isArray(set) ? set.includes(field) : false;
+};
+
+const needsVersion = (type: string) => needsField(type, "VERSION");
+const needsBuildCommand = (type: string) => needsField(type, "BUILD_COMMAND");
+const needsStartCommand = (type: string) => needsField(type, "START_COMMAND");
+const needsInputPath = (type: string) => needsField(type, "INPUT_PATH");
+const needsOutputPath = (type: string) => needsField(type, "OUTPUT_PATH");
+const needsWorkingDirectory = (type: string) =>
+  needsField(type, "WORKING_DIRECTORY");
 
 const CreateApplication = () => {
   useAuthGuard();
@@ -67,12 +127,12 @@ const CreateApplication = () => {
       routes.every(
         (r) =>
           r.url.trim() !== "" &&
+          isAllowedDomain(r.url) &&
           r.port.trim() !== "" &&
           Number.isFinite(Number(r.port))
       ),
     [routes]
   );
-
   const isValid = useMemo(
     () =>
       hasTeam &&
@@ -83,12 +143,12 @@ const CreateApplication = () => {
       branch.trim() !== "" &&
       normalizedTriggerPaths.length > 0 &&
       buildTools.trim() !== "" &&
-      javaVersion.trim() !== "" &&
-      workingDirectory.trim() !== "" &&
-      buildCommand.trim() !== "" &&
-      startCommand.trim() !== "" &&
-      inputPath.trim() !== "" &&
-      outputPath.trim() !== "" &&
+      (!needsVersion(buildTools) || javaVersion.trim() !== "") &&
+      (!needsWorkingDirectory(buildTools) || workingDirectory.trim() !== "") &&
+      (!needsBuildCommand(buildTools) || buildCommand.trim() !== "") &&
+      (!needsStartCommand(buildTools) || startCommand.trim() !== "") &&
+      (!needsInputPath(buildTools) || inputPath.trim() !== "") &&
+      (!needsOutputPath(buildTools) || outputPath.trim() !== "") &&
       routesValid,
     [
       hasTeam,
@@ -157,6 +217,29 @@ const CreateApplication = () => {
       routes: [r.url.trim()],
     }));
 
+    let buildConfig: ApplicationBuild = { type: buildTools.trim() };
+    if (needsVersion(buildTools) && javaVersion.trim()) {
+      buildConfig = { ...buildConfig, version: javaVersion.trim() };
+    }
+    if (needsBuildCommand(buildTools) && buildCommand.trim()) {
+      buildConfig = { ...buildConfig, buildCommand: buildCommand.trim() };
+    }
+    if (needsStartCommand(buildTools) && startCommand.trim()) {
+      buildConfig = { ...buildConfig, startCommand: startCommand.trim() };
+    }
+    if (needsInputPath(buildTools) && inputPath.trim()) {
+      buildConfig = { ...buildConfig, inputPath: inputPath.trim() };
+    }
+    if (needsOutputPath(buildTools) && outputPath.trim()) {
+      buildConfig = { ...buildConfig, outputPath: outputPath.trim() };
+    }
+    if (needsWorkingDirectory(buildTools) && workingDirectory.trim()) {
+      buildConfig = {
+        ...buildConfig,
+        workingDirectory: workingDirectory.trim(),
+      };
+    }
+
     const payload: CreateApplicationRequest = {
       teamId: teamId!,
       name: projectName.trim(),
@@ -169,15 +252,7 @@ const CreateApplication = () => {
           hash: commitHash.trim(),
           triggerPaths: normalizedTriggerPaths,
         },
-        build: {
-          type: buildTools.trim(),
-          version: javaVersion.trim(),
-          buildCommand: buildCommand.trim(),
-          startCommand: startCommand.trim(),
-          inputPath: inputPath.trim(),
-          outputPath: outputPath.trim(),
-          workingDirectory: workingDirectory.trim(),
-        },
+        build: buildConfig,
         endpoints,
       },
     };
@@ -303,7 +378,7 @@ const CreateApplication = () => {
         <ValueBox>
           <SectionHeader>
             <Typography size="5x" weight="bold">
-              Step1. Repository
+              Step1. Github Repository
             </Typography>
           </SectionHeader>
           <InputArea>
@@ -345,20 +420,36 @@ const CreateApplication = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Button_square
-              type="button"
-              width="200px"
-              height="40px"
-              onClick={handleFetchGithub}
-              disabled={githubLoading || !repoOwner.trim() || !repoName.trim()}
+            <Tooltip
+              content="Owner와 Repository의 GitHub 정보를 불러옵니다.
+              브랜치 목록과 최신 커밋 해시가 자동으로 채워집니다."
+              position="left"
             >
-              {githubLoading ? "불러오는 중..." : "GitHub에서 불러오기"}
-            </Button_square>
+              <Button_square
+                type="button"
+                width="200px"
+                height="40px"
+                onClick={handleFetchGithub}
+                disabled={
+                  githubLoading || !repoOwner.trim() || !repoName.trim()
+                }
+              >
+                {githubLoading ? "불러오는 중..." : "GitHub에서 불러오기"}
+              </Button_square>
+            </Tooltip>
           </div>
           <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Branch
-            </Typography>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Typography size="5x" weight="semiBold">
+                Branch
+              </Typography>
+              <Tooltip
+                content="배포에 사용할 Branch를 선택해 주세요. 선택한 Branch의 최신 커밋이 자동으로 반영됩니다."
+                position="right"
+              >
+                <InfoIcon size={18} />
+              </Tooltip>
+            </div>
             <SelectBox
               value={branch}
               onChange={(e) => handleBranchChange(e.target.value)}
@@ -375,9 +466,17 @@ const CreateApplication = () => {
             </SelectBox>
           </InputArea>
           <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Installation ID
-            </Typography>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Typography size="5x" weight="semiBold">
+                Installation ID
+              </Typography>
+              <Tooltip
+                content="GitHub App 설치 ID는 저장소 연동 설정에서 확인할 수 있습니다."
+                position="right"
+              >
+                <InfoIcon size={18} />
+              </Tooltip>
+            </div>
             <Input_basic
               value={installationId}
               onChange={(e) => setInstallationId(e.target.value)}
@@ -407,9 +506,19 @@ const CreateApplication = () => {
           </StatusRow>
           <InputAreaSecond>
             <InputAreaVertical>
-              <Typography size="5x" weight="semiBold">
-                Trigger Paths
-              </Typography>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <Typography size="5x" weight="semiBold">
+                  Trigger Paths
+                </Typography>
+                <Tooltip
+                  content="지정된 경로에 변경 사항이 있을 때만 배포에 반영됩니다. 예: src/** (src 폴더 내 모든 변경 감지 후 재배포)"
+                  position="right"
+                >
+                  <InfoIcon size={18} />
+                </Tooltip>
+              </div>
 
               {triggerPaths.map((path, i) => (
                 <div
@@ -485,92 +594,122 @@ const CreateApplication = () => {
             </SelectBox>
           </InputArea>
 
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Version
-            </Typography>
-            <Input_basic
-              value={javaVersion}
-              onChange={(e) => setJavaVersion(e.target.value)}
-              placeholder="ex) 17"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Working Directory
-            </Typography>
-            <Input_basic
-              value={workingDirectory}
-              onChange={(e) => setWorkingDirectory(e.target.value)}
-              placeholder="ex) /backend/service"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-
-          <InputAreaSecond>
-            <InputAreaVertical>
+          {needsVersion(buildTools) && (
+            <InputArea>
               <Typography size="5x" weight="semiBold">
-                Build Command
+                Version
               </Typography>
-              <Input_record
-                value={buildCommand}
-                onChange={(e) => setBuildCommand(e.target.value)}
-                placeholder="ex) ./gradlew build"
-                width="100%"
+              <Input_basic
+                value={javaVersion}
+                onChange={(e) => setJavaVersion(e.target.value)}
+                placeholder="ex) 17"
+                width="950px"
                 height="35px"
               />
-            </InputAreaVertical>
+            </InputArea>
+          )}
 
-            <InputAreaVertical>
+          {needsWorkingDirectory(buildTools) && (
+            <InputArea>
               <Typography size="5x" weight="semiBold">
-                Start Command
+                Working Directory
               </Typography>
-              <Input_record
-                value={startCommand}
-                onChange={(e) => setStartCommand(e.target.value)}
-                placeholder="ex) java -jar app.jar"
-                width="100%"
+              <Input_basic
+                value={workingDirectory}
+                onChange={(e) => setWorkingDirectory(e.target.value)}
+                placeholder="ex) /backend/service"
+                width="950px"
                 height="35px"
               />
-            </InputAreaVertical>
-          </InputAreaSecond>
+            </InputArea>
+          )}
 
-          <InputAreaSecond>
-            <InputAreaVertical>
-              <Typography size="5x" weight="semiBold">
-                Input Path
-              </Typography>
-              <Input_record
-                value={inputPath}
-                onChange={(e) => setInputPath(e.target.value)}
-                placeholder="Source root path"
-                width="100%"
-                height="35px"
-              />
-            </InputAreaVertical>
+          {(() => {
+            const recordFields: {
+              id: string;
+              label: string;
+              value: string;
+              onChange: (next: string) => void;
+              placeholder: string;
+            }[] = [];
 
-            <InputAreaVertical>
-              <Typography size="5x" weight="semiBold">
-                Output Path
-              </Typography>
-              <Input_record
-                value={outputPath}
-                onChange={(e) => setOutputPath(e.target.value)}
-                placeholder="Build output path"
-                width="100%"
-                height="35px"
-              />
-            </InputAreaVertical>
-          </InputAreaSecond>
+            if (needsBuildCommand(buildTools)) {
+              recordFields.push({
+                id: "buildCommand",
+                label: "Build Command",
+                value: buildCommand,
+                onChange: setBuildCommand,
+                placeholder: "ex) ./gradlew build",
+              });
+            }
+
+            if (needsStartCommand(buildTools)) {
+              recordFields.push({
+                id: "startCommand",
+                label: "Start Command",
+                value: startCommand,
+                onChange: setStartCommand,
+                placeholder: "ex) java -jar app.jar",
+              });
+            }
+
+            if (needsInputPath(buildTools)) {
+              recordFields.push({
+                id: "inputPath",
+                label: "Input Path",
+                value: inputPath,
+                onChange: setInputPath,
+                placeholder: "Source root path",
+              });
+            }
+
+            if (needsOutputPath(buildTools)) {
+              recordFields.push({
+                id: "outputPath",
+                label: "Output Path",
+                value: outputPath,
+                onChange: setOutputPath,
+                placeholder: "Build output path",
+              });
+            }
+
+            const groups: (typeof recordFields)[] = [];
+            for (let i = 0; i < recordFields.length; i += 2) {
+              groups.push(recordFields.slice(i, i + 2));
+            }
+
+            return groups.map((group, idx) => (
+              <InputAreaSecond key={`record-row-${idx}`}>
+                {group.map((field) => (
+                  <InputAreaVertical key={field.id}>
+                    <Typography size="5x" weight="semiBold">
+                      {field.label}
+                    </Typography>
+                    <Input_record
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      placeholder={field.placeholder}
+                      width="100%"
+                      height="35px"
+                    />
+                  </InputAreaVertical>
+                ))}
+              </InputAreaSecond>
+            ));
+          })()}
         </ValueBox>
         <ValueBox>
-          <Typography size="5x" weight="bold">
-            Step3. Routes
-          </Typography>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <Typography size="5x" weight="bold">
+              Step3. Routes
+            </Typography>
+            <Tooltip
+              content="애플리케이션에 접근할 URL 경로와 포트를 설정하세요."
+              position="right"
+            >
+              <InfoIcon size={18} />
+            </Tooltip>
+          </div>
 
           {routes.map((item, i) => (
             <InputArea key={i}>
@@ -611,6 +750,11 @@ const CreateApplication = () => {
           >
             + 추가
           </AddBtn>
+          {routes.some((r) => r.url.trim() && !isAllowedDomain(r.url)) && (
+            <StatusText color="red">
+              URL은 XXX.dsmhs.kr 형태여야 합니다. (dsmhs.kr 도메인만 허용)
+            </StatusText>
+          )}
         </ValueBox>
         {formError && <StatusText color="red">{formError}</StatusText>}
         {createError && !formError && (
@@ -744,7 +888,7 @@ const InputAreaSecond = styled.div`
   display: flex;
   padding: 3px 5px;
   width: 100%;
-  margin-left: 15px;
+  margin-left: 0;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;

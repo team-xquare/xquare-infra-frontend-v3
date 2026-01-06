@@ -13,15 +13,31 @@ export interface ApplicationGitHubDetail {
   triggerPaths: string[];
 }
 
+// 빌드 타입별 필수 필드 정의
+const BUILD_REQUIRED_FIELDS: Record<string, string[]> = {
+  gradle: ["version", "buildCommand", "outputPath"],
+  node_js: ["version", "buildCommand", "startCommand"],
+  react: ["version", "buildCommand", "outputPath"],
+  vite: ["version", "buildCommand", "outputPath"],
+  vue: ["version", "buildCommand", "outputPath"],
+  next_js: ["version", "buildCommand", "startCommand"],
+  go: ["version", "buildCommand", "outputPath"],
+  rust: ["version", "buildCommand", "outputPath"],
+  maven: ["version", "buildCommand", "outputPath"],
+  django: ["version", "buildCommand", "startCommand"],
+  flask: ["version", "buildCommand", "startCommand"],
+  docker: ["inputPath", "workingDirectory"],
+};
+
 // 빌드 설정
 export interface ApplicationBuildDetail {
   type: string;
-  version: string;
-  buildCommand: string;
-  startCommand: string;
-  inputPath: string;
-  outputPath: string;
-  workingDirectory: string;
+  version?: string;
+  buildCommand?: string;
+  startCommand?: string;
+  inputPath?: string;
+  outputPath?: string;
+  workingDirectory?: string;
 }
 
 // 엔드포인트
@@ -43,7 +59,7 @@ export interface ApplicationDetail {
   id: number;
   teamId: number;
   name: string;
-  status: "pending" | "running" | "failed" | "stopped";
+  status: "pending" | "running" | "failed" | "stopped" | "published";
   configuration: ApplicationConfigurationDetail;
 }
 
@@ -113,7 +129,9 @@ const validateApplicationDetailResponse = (
 
   if (
     typeof appDetail.status !== "string" ||
-    !["pending", "running", "failed", "stopped"].includes(appDetail.status)
+    !["pending", "running", "failed", "stopped", "published"].includes(
+      appDetail.status
+    )
   ) {
     console.error(
       "[validateApplicationDetailResponse] data.status is not a valid status",
@@ -175,20 +193,45 @@ const validateApplicationDetailResponse = (
   }
 
   const build = config.build as Record<string, unknown>;
-  if (
-    typeof build.type !== "string" ||
-    typeof build.version !== "string" ||
-    typeof build.buildCommand !== "string" ||
-    typeof build.startCommand !== "string" ||
-    typeof build.inputPath !== "string" ||
-    typeof build.outputPath !== "string" ||
-    typeof build.workingDirectory !== "string"
-  ) {
+  if (typeof build.type !== "string") {
     console.error(
-      "[validateApplicationDetailResponse] build fields are invalid",
-      build
+      "[validateApplicationDetailResponse] build.type is not a string",
+      build.type
     );
     return false;
+  }
+
+  // 빌드 타입별로 필요한 필드 검증
+  const requiredFields = BUILD_REQUIRED_FIELDS[build.type] || [];
+  for (const fieldName of requiredFields) {
+    const fieldValue = build[fieldName];
+    if (typeof fieldValue !== "string" || !fieldValue.trim()) {
+      console.error(
+        `[validateApplicationDetailResponse] build.${fieldName} is required for type ${build.type}`,
+        fieldValue
+      );
+      return false;
+    }
+  }
+
+  // 옵셔널 필드는 있으면 string이어야 함
+  const optionalFields = [
+    "version",
+    "buildCommand",
+    "startCommand",
+    "inputPath",
+    "outputPath",
+    "workingDirectory",
+  ];
+  for (const fieldName of optionalFields) {
+    const fieldValue = build[fieldName];
+    if (fieldValue !== undefined && typeof fieldValue !== "string") {
+      console.error(
+        `[validateApplicationDetailResponse] build.${fieldName} must be a string if provided`,
+        fieldValue
+      );
+      return false;
+    }
   }
 
   // Validate endpoints array
@@ -252,13 +295,16 @@ export const getApplicationDetail = async (
       "[getApplicationDetail] GET",
       `${API_BASE_URL}/applications/${applicationId}`
     );
-    response = await fetchWithTimeout(`${API_BASE_URL}/applications/${applicationId}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Accept: "*/*",
-      },
-    });
+    response = await fetchWithTimeout(
+      `${API_BASE_URL}/applications/${applicationId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "*/*",
+        },
+      }
+    );
   } catch (error) {
     const message =
       error instanceof Error

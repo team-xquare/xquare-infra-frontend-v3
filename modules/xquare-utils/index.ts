@@ -83,13 +83,20 @@ export {
   getSelectedTeam,
   getSelectedTeamId,
   clearSelectedTeam,
+  SELECTED_TEAM_EVENT,
 } from "./src/teams/storage";
 export type { SelectedTeamInfo } from "./src/teams/storage";
 
-// GitHub repository utilities
 export {
   getRepoInfo,
   listBranches,
   getLatestCommitSha,
   type RepoInfo,
 } from "./src/application/repo";
+
+export {
+  getDeploymentSummary,
+  getMultipleDeploymentSummaries,
+  type DeploymentSummary,
+  type DeploymentListResponse,
+} from "./src/deployment/summary";

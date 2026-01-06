@@ -1,4 +1,18 @@
 const SELECTED_TEAM_KEY = "xquare:selectedTeam";
+export const SELECTED_TEAM_EVENT = "xquare:selectedTeam-changed";
+
+const emitTeamChange = (team: SelectedTeamInfo | null) => {
+  if (typeof window === "undefined") return;
+  try {
+    window.dispatchEvent(
+      new CustomEvent(SELECTED_TEAM_EVENT, {
+        detail: team,
+      })
+    );
+  } catch (error) {
+    console.error("[emitTeamChange] 이벤트 전파 실패:", error);
+  }
+};
 
 export interface SelectedTeamInfo {
   id: number;
@@ -12,14 +26,12 @@ export interface SelectedTeamInfo {
 export const saveSelectedTeam = (team: SelectedTeamInfo): void => {
   try {
     localStorage.setItem(SELECTED_TEAM_KEY, JSON.stringify(team));
+    emitTeamChange(team);
   } catch (error) {
     console.error("[saveSelectedTeam] 저장 실패:", error);
   }
 };
 
-/**
- * 로컬 스토리지에서 선택된 팀 정보를 불러옴
- */
 export const getSelectedTeam = (): SelectedTeamInfo | null => {
   try {
     const stored = localStorage.getItem(SELECTED_TEAM_KEY);
@@ -53,6 +65,7 @@ export const clearSelectedTeam = (): void => {
   try {
     console.log("[clearSelectedTeam] 팀 정보 삭제 시작");
     localStorage.removeItem(SELECTED_TEAM_KEY);
+    emitTeamChange(null);
     console.log("[clearSelectedTeam] 팀 정보 삭제 완료");
   } catch (error) {
     console.error("[clearSelectedTeam] 삭제 실패:", error);

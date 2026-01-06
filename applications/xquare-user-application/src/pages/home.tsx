@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
-import { useAuthGuard, useUserName } from "@xquare/hooks";
+import {
+  useAuthGuard,
+  useUserName,
+  useTeams,
+  useTeamApplications,
+  useMultipleDeploymentSummaries,
+} from "@xquare/hooks";
 import {
   HomeImg,
   Typography,
@@ -11,6 +17,7 @@ import {
   Summary,
   Notice,
 } from "@xquare/user-interfaces";
+import { getSelectedTeamId } from "@xquare/utils";
 
 const HomePage = () => {
   useAuthGuard();
@@ -19,6 +26,32 @@ const HomePage = () => {
   const [deployCount, setDeployCount] = useState<number>(0);
   const [traffic, setTraffic] = useState<number>(0);
   const { userName, loading } = useUserName();
+
+  const { data: teams } = useTeams();
+
+  const selectedTeamId = useMemo(() => {
+    const storedTeamId = getSelectedTeamId();
+    if (!storedTeamId || !teams) return undefined;
+    const foundTeam = teams.find((team) => team.id === storedTeamId);
+    return foundTeam?.id;
+  }, [teams]);
+
+  const { data: applications } = useTeamApplications(selectedTeamId);
+
+  const applicationIds = useMemo(() => {
+    if (!applications || applications.length === 0) return undefined;
+    return applications.map((app) => app.id);
+  }, [applications]);
+
+  const { data: deploymentData, loading: deploymentLoading } =
+    useMultipleDeploymentSummaries(applicationIds);
+
+  console.log("[HomePage] deployment data state:", {
+    selectedTeamId,
+    applicationIds,
+    deploymentData,
+    deploymentLoading,
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -167,7 +200,11 @@ const HomePage = () => {
         </ImgText>
       </HeroSection>
       <NoticeSection>
-        <Summary page={1} />
+        <Summary
+          page={1}
+          deploymentData={deploymentData}
+          deploymentLoading={deploymentLoading}
+        />
         <Notice page={1} />
       </NoticeSection>
     </Container>

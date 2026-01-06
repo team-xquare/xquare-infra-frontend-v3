@@ -4,66 +4,76 @@ import { SummaryItem } from "./summaryitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
+import type { DeploymentListResponse } from "@xquare/utils";
 
 interface SummaryProps {
   page?: number;
+  deploymentData?: Record<number, DeploymentListResponse> | null;
+  deploymentLoading?: boolean;
 }
 
-function Summary({ page }: SummaryProps) {
+function Summary({ page, deploymentData, deploymentLoading }: SummaryProps) {
   const navigate = useNavigate();
-  const items = [
-    {
-      id: 1,
-      SummaryValue:
-        "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-    },
-    {
-      id: 2,
-      SummaryValue:
-        "XQUARE-INFRA-BACKEND-V3 서비스가 api.dsmhs.kr 로 배포되었습니다.",
-    },
-    {
-      id: 3,
-      SummaryValue:
-        "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-    },
-    {
-      id: 4,
-      SummaryValue:
-        "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-    },
-    {
-      id: 5,
-      SummaryValue:
-        "XQUARE-INFRA-BACKEND-V3 서비스가 api.dsmhs.kr 로 배포되었습니다.",
-    },
-    {
-      id: 6,
-      SummaryValue:
-        "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-    },
-    {
-      id: 7,
-      SummaryValue:
-        "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-    },
-    {
-      id: 8,
-      SummaryValue:
-        "XQUARE-INFRA-BACKEND-V3 서비스가 api.dsmhs.kr 로 배포되었습니다.",
-    },
-    {
-      id: 9,
-      SummaryValue:
-        "XQUARE INFRASTRUCTURE를 이용하여 50일간 서비스 되었습니다.",
-    },
-  ];
 
-  const displayItems =
-    page === 1 ? items.slice(0, 4) : page === 2 ? items.slice(0, 3) : items;
+  const generateDeploymentItems = () => {
+    if (deploymentLoading) {
+      return [
+        {
+          id: 0,
+          SummaryValue: "배포 정보를 불러오는 중입니다...",
+        },
+      ];
+    }
+
+    if (!deploymentData || Object.keys(deploymentData).length === 0) {
+      return [
+        {
+          id: 0,
+          SummaryValue: "배포 정보가 없습니다.",
+        },
+      ];
+    }
+
+    const items: Array<{ id: number; SummaryValue: string }> = [];
+    let itemId = 1;
+
+    Object.entries(deploymentData).forEach(([appId, deploymentList]) => {
+      if (deploymentList.deployments && deploymentList.deployments.length > 0) {
+        const latestDeployment = deploymentList.deployments[0];
+        items.push({
+          id: itemId++,
+          SummaryValue: `애플리케이션 #${appId} - ${latestDeployment.status} (${latestDeployment.commitHash.substring(0, 7)})`,
+        });
+      }
+    });
+
+    return items.length > 0
+      ? items
+      : [
+          {
+            id: 0,
+            SummaryValue: "배포 정보가 없습니다.",
+          },
+        ];
+  };
+
+  const deploymentItems = generateDeploymentItems();
+
+  const hasRealDeploymentData =
+    !deploymentLoading &&
+    deploymentData &&
+    Object.keys(deploymentData).length > 0;
+
+  const items = hasRealDeploymentData
+    ? page === 1
+      ? deploymentItems.slice(0, 4)
+      : page === 2
+        ? deploymentItems.slice(0, 3)
+        : deploymentItems
+    : deploymentItems;
 
   function handleViewAllClick() {
-    navigate("/status");
+    navigate("/summary");
   }
 
   return (
@@ -77,7 +87,7 @@ function Summary({ page }: SummaryProps) {
         )}
       </TileArea>
       <div>
-        {displayItems.map((item) => (
+        {items.map((item) => (
           <SummaryItem
             key={item.SummaryValue}
             SummaryValue={item.SummaryValue}
