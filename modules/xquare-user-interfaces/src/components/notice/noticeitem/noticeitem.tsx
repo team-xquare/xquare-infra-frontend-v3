@@ -32,6 +32,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
+  cursor: default;
 `;
 
 const Item = styled.div`
@@ -59,6 +60,7 @@ const Date = styled.div`
   font-size: 13px;
   font-weight: 400;
   color: ${Xquare_colors.gray[500]};
+  cursor: default;
 `;
 
 export { NoticeItem };

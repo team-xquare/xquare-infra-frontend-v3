@@ -23,7 +23,6 @@ export const updateApplicationConfiguration = async (
   applicationId: number,
   request: UpdateApplicationConfigurationRequest
 ): Promise<void> => {
-  // 시작 로그: 요청 ID
   console.log("[updateApplicationConfiguration] start", { applicationId });
 
   if (!isAuthenticated()) {

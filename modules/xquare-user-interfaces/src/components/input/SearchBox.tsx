@@ -23,6 +23,7 @@ const StyledInput = styled.input<SearchBoxProps>`
   border: 2px solid ${Xquare_colors.gray[400]};
   border-radius: 30px;
   outline: none;
+  cursor: text;
 
   padding: 22px;
 
@@ -39,6 +40,7 @@ const StyledInput = styled.input<SearchBoxProps>`
   &:disabled {
     border: none;
     border-bottom: 1.2px solid ${Xquare_colors.gray[300]};
+    cursor: not-allowed;
 
     &::placeholder {
       color: ${Xquare_colors.gray[300]};

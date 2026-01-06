@@ -11,12 +11,14 @@ import {
   Typography,
   Button_square,
   Xquare_colors,
+  ErrorMessage,
 } from "@xquare/user-interfaces";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [tokenError, setTokenError] = useState<string | null>(null);
 
   const { login, loading, error } = useLogin();
 
@@ -62,9 +64,12 @@ const LoginPage: React.FC = () => {
         setTokens(res.data.accessToken, res.data.refreshToken);
         // 토큰 자동 재발급 시작
         startTokenAutoReissue();
+        setTokenError(null);
         navigate("/");
       } else {
-        console.error("[Auth-login] 토큰 가져오기 실패", error);
+        const tokenErrorMsg = "토큰 가져오기 실패: 응답에 토큰이 없습니다.";
+        console.error("[Auth-login]", tokenErrorMsg, error);
+        setTokenError(tokenErrorMsg);
       }
     } else {
       console.error("[Auth-login] 로그인 실패", error);
@@ -84,6 +89,7 @@ const LoginPage: React.FC = () => {
           </Typography>
 
           <Inputs>
+            {tokenError && <ErrorMessage message={tokenError} />}
             <Input_text
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -148,6 +154,7 @@ const Container = styled.div`
   min-height: 100vh;
   width: 100vw;
   background-color: ${Xquare_colors.white};
+  cursor: default;
 
   @media (max-width: 600px) {
     flex-direction: column;
@@ -161,6 +168,7 @@ const Left = styled.div`
   box-shadow: inset -4px 0 10px rgba(0, 0, 0, 0.35);
   align-items: center;
   justify-content: center;
+  cursor: default;
 
   @media (max-width: 600px) {
     width: 100%;

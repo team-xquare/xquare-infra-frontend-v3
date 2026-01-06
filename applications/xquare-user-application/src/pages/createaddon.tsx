@@ -142,6 +142,7 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -151,6 +152,7 @@ const ContentsArea = styled.div`
   width: 100%;
   margin-bottom: 15px;
   gap: 15px;
+  cursor: default;
 `;
 
 const Contents = styled.div`

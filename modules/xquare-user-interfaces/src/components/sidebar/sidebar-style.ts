@@ -14,6 +14,7 @@ export const SidebarContainer = styled.div`
   height: 100vh;
   width: ${SIDEBAR_WIDTH};
   transition: width ${ANIMATION_DURATION} ease;
+  cursor: default;
 `;
 
 export const SidebarContent = styled.div`

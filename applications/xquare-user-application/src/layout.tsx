@@ -73,6 +73,7 @@ function Layout({
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  cursor: default;
 `;
 
 const Page = styled.div`
@@ -80,6 +81,7 @@ const Page = styled.div`
   width: calc(100% - 280px);
   height: 100vh;
   overflow-y: auto;
+  cursor: default;
 `;
 
 export default Layout;

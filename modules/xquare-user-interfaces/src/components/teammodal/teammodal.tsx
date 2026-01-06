@@ -33,7 +33,6 @@ export const TeamModal = ({
       <ModalContent>
         <Title>프로젝트 선택</Title>
 
-        {loading && <LoadingText>팀 목록을 불러오는 중...</LoadingText>}
         {error && <ErrorText>팀 목록을 불러올 수 없습니다.</ErrorText>}
 
         <TeamList>
@@ -88,6 +87,7 @@ const ModalBackground = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  cursor: default;
 `;
 
 const ModalContent = styled.div`
@@ -100,6 +100,7 @@ const ModalContent = styled.div`
   gap: 20px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   animation: fadeIn 0.22s ease-out;
+  cursor: default;
 
   @keyframes fadeIn {
     from {
@@ -119,6 +120,7 @@ const Title = styled.h3`
   font-size: 18px;
   font-weight: 600;
   color: ${Xquare_colors.purple[400]};
+  cursor: default;
 `;
 
 const TeamList = styled.ul`
@@ -156,19 +158,14 @@ const TeamItem = styled.li`
 
 const TeamName = styled.span`
   font-weight: 600;
+  cursor: default;
 `;
 
 const TeamType = styled.span`
   font-size: 12px;
   color: ${Xquare_colors.gray[500]};
   text-transform: uppercase;
-`;
-
-const LoadingText = styled.p`
-  text-align: center;
-  color: ${Xquare_colors.gray[500]};
-  font-size: 14px;
-  margin: 0;
+  cursor: default;
 `;
 
 const CreateTeamItem = styled.li`
@@ -199,10 +196,12 @@ const CreateTeamItem = styled.li`
 const PlusIcon = styled.span`
   font-size: 20px;
   font-weight: bold;
+  cursor: default;
 `;
 
 const CreateTeamText = styled.span`
   font-weight: 600;
+  cursor: default;
 `;
 
 const ErrorText = styled.p`
@@ -210,6 +209,7 @@ const ErrorText = styled.p`
   color: ${Xquare_colors.red[500]};
   font-size: 14px;
   margin: 0;
+  cursor: default;
 `;
 
 const EmptyText = styled.p`
@@ -217,6 +217,7 @@ const EmptyText = styled.p`
   color: ${Xquare_colors.gray[500]};
   font-size: 14px;
   margin: 0;
+  cursor: default;
 `;
 
 const CloseButton = styled.button`

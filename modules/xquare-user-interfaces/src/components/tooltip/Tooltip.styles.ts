@@ -28,6 +28,7 @@ const fadeOut = keyframes`
 export const TooltipContainer = styled.div`
   position: relative;
   display: inline-block;
+  cursor: default;
 `;
 
 export const TooltipTrigger = styled.button<{
@@ -75,6 +76,7 @@ export const TooltipPopover = styled.div<{
   width: max-content;
   max-width: 320px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: default;
 
   animation: ${({ $isVisible }) => ($isVisible ? fadeIn : fadeOut)} 0.2s
     ease-in-out;
@@ -116,6 +118,7 @@ export const TooltipContent = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 10px;
+  cursor: default;
 `;
 
 export const TooltipText = styled.span`
@@ -123,4 +126,5 @@ export const TooltipText = styled.span`
   line-height: 1.6;
   word-break: keep-all;
   letter-spacing: 0px;
+  cursor: default;
 `;

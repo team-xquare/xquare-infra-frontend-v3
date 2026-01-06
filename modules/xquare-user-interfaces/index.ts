@@ -10,6 +10,9 @@ export * from "./src/components/button/index";
 export * from "./src/components/input/index";
 export * from "./src/components/title/index";
 export * from "./src/components/tooltip/index";
+export * from "./src/components/errormessage/index";
+export * from "./src/components/spinner/index";
+export * from "./src/components/loadingoverlays/index";
 export * from "./src/styles";
 
 export { default as Logo } from "./src/assets/icons/Logo.svg";

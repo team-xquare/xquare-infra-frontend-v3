@@ -5,8 +5,7 @@
     "declaration": true,
     "outDir": "dist",
     "module": "esnext",
-    "target": "esnext",
-    "rootDir": "./"
+    "target": "esnext"
   },
   "include": ["index.ts", "src"]
 }

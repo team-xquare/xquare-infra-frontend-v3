@@ -100,3 +100,28 @@ export {
   type DeploymentSummary,
   type DeploymentListResponse,
 } from "./src/deployment/summary";
+
+export {
+  type BuildField,
+  REQUIRED_FIELDS,
+  needsField,
+  needsVersion,
+  needsBuildCommand,
+  needsStartCommand,
+  needsInputPath,
+  needsOutputPath,
+  needsWorkingDirectory,
+} from "./src/buildinput/fields";
+
+export {
+  getEnvironmentVariables,
+  type EnvironmentVariable,
+  type EnvironmentVariablesResponse,
+} from "./src/environment/get";
+
+export {
+  addOrUpdateEnvironmentVariable,
+  type AddOrUpdateEnvironmentVariableRequest,
+} from "./src/environment/update";
+
+export { deleteEnvironmentVariable } from "./src/environment/delete";

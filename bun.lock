@@ -89,6 +89,9 @@
     "modules/xquare-user-interfaces": {
       "name": "@xquare/user-interfaces",
       "version": "1.0.0",
+      "dependencies": {
+        "@xquare/hooks": "workspace:*",
+      },
     },
     "modules/xquare-utils": {
       "name": "@xquare/utils",

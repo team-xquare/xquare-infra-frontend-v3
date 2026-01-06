@@ -13,6 +13,7 @@ const TitleContainer = styled.div`
   align-items: flex-start;
   flex-direction: column;
   gap: 2px;
+  cursor: default;
 `;
 
 const MainTitle = styled.h1`
@@ -20,6 +21,7 @@ const MainTitle = styled.h1`
   font-weight: 600;
   color: ${Xquare_colors.black};
   margin: 0;
+  cursor: default;
 `;
 
 const SubTitle = styled.h2`
@@ -27,6 +29,7 @@ const SubTitle = styled.h2`
   font-weight: 400;
   color: ${Xquare_colors.black};
   margin-bottom: 4px;
+  cursor: default;
 `;
 
 const Title: React.FC<TitleProps> = ({ title, subTitle }) => {

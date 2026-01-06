@@ -12,6 +12,7 @@ export const SideBarHeader = styled.header`
   display: flex;
   justify-content: space-between;
   min-width: 280px;
+  cursor: default;
 `;
 
 export const SideBarHeaderDiv = styled.div`

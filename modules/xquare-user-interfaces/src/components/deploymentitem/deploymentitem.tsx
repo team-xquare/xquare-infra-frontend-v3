@@ -88,6 +88,7 @@ const Container = styled.div`
 const Contents = styled.div`
   display: flex;
   flex-direction: column;
+  cursor: default;
 `;
 
 const Heading = styled.div`
@@ -97,12 +98,14 @@ const Heading = styled.div`
   justify-content: space-between;
   margin-bottom: 15px;
   width: 360px;
+  cursor: default;
 `;
 
 const Typo = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
+  cursor: default;
 `;
 
 const Icons = styled.div`
@@ -110,6 +113,7 @@ const Icons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  cursor: default;
 `;
 
 const Charge = styled.div`
@@ -118,6 +122,7 @@ const Charge = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
+  cursor: default;
 `;
 
 export { DeploymentItem };

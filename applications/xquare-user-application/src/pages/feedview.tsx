@@ -59,6 +59,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100%;
   padding: 20px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`

@@ -9,6 +9,8 @@ import { formatDate } from "@xquare/utils";
 import Xquare_colors from "../../styles";
 import { listNotices } from "@xquare/utils";
 import type { NoticeSummary } from "@xquare/utils";
+import { ErrorMessage } from "../errormessage";
+import { LoadingOverlay } from "../loadingoverlays";
 
 interface NoticeProps {
   page: number;
@@ -24,6 +26,8 @@ function Notice({ page }: NoticeProps) {
   const [items, setItems] = useState<NoticeSummary[]>([]);
   const [searchValue, setSearchValue] = useState("");
   const [pagination, setPagination] = useState({ pageKey: page, index: 0 });
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const currentPage = useMemo(
     () => (pagination.pageKey === page ? pagination.index : 0),
@@ -38,15 +42,27 @@ function Notice({ page }: NoticeProps) {
 
     const load = async () => {
       try {
+        setLoading(true);
         const serverPage = isFullList ? currentPage + 1 : 1;
         const notices = await listNotices({
           page: serverPage,
           limit: fetchLimit,
         });
-        if (!cancelled) setItems(notices);
+        if (!cancelled) {
+          setItems(notices);
+          setLoading(false);
+        }
       } catch (e) {
         console.error("[Notice] 공지 목록 조회 실패", e);
-        if (!cancelled) setItems([]);
+        if (!cancelled) {
+          setItems([]);
+          setLoading(false);
+          setError(
+            e instanceof Error
+              ? e.message
+              : "공지 목록을 불러오는데 실패했습니다."
+          );
+        }
       }
     };
     load();
@@ -86,6 +102,7 @@ function Notice({ page }: NoticeProps) {
 
   return (
     <Noticecontainer page={page}>
+      <LoadingOverlay isLoading={loading} />
       <TileArea>
         <Subtitle
           title={`XQUARE 공지사항`}
@@ -106,6 +123,7 @@ function Notice({ page }: NoticeProps) {
           />
         )}
       </TileArea>
+      {error && <ErrorMessage message={error} />}
       <div>
         {displayItems.map((item) => (
           <NoticeItem
@@ -180,6 +198,7 @@ const PaginationArea = styled.div`
   justify-content: flex-end;
   margin-top: 10px;
   margin-right: 20px;
+  cursor: default;
 `;
 
 const PageButton = styled.button<{ disabled?: boolean }>`

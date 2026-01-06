@@ -1,143 +1,174 @@
 import styled from "@emotion/styled";
 import Xquare_colors from "../../styles";
 import { Typography } from "../typography/index";
+import { ErrorMessage } from "../errormessage";
+import { LoadingOverlay } from "../loadingoverlays";
 import PodImg from "../../assets/pod.svg";
 import DatabaseImg from "../../assets/db.svg";
 import type { ApplicationDetail } from "@xquare/utils";
+import { getSelectedTeam } from "@xquare/utils";
 
 interface SummaryContentsProps {
   appDetail?: ApplicationDetail;
+  loading?: boolean;
+  error?: Error | null;
 }
 
-function SummaryContents({ appDetail }: SummaryContentsProps) {
-  const serverlog = `025-10-10 15:17:10+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
-2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
-2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
-'/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
-2025-10-10T15:17:14.292976Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
-2025-10-10T15:17:14.296089Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.43) starting as process 1
-2025-10-10T15:17:14.339583Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
-2025-10-10T15:17:18.254530Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
-2025-10-10T15:17:18.896897Z 0 [System] [MY-010229] [Server] Starting XA crash recovery...
-2025-10-10T15:17:18.913815Z 0 [System] [MY-010232] [Server] XA crash recovery finished.
-2025-10-10T15:17:19.091948Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
-2025-10-10T15:17:19.091987Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
-2025-10-10T15:17:19.273334Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
-2025-10-10T15:17:19.376056Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
-2025-10-10T15:17:19.376123Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.43'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.`;
+function SummaryContents({ appDetail, loading, error }: SummaryContentsProps) {
+  const serverlog = `$ turbo run dev "--filter=@xquare/user-application"
+
+• Packages in scope: @xquare/user-application
+• Running dev in 1 packages
+• Remote caching disabled
+
+@xquare/user-application:dev:  cache bypass, force executing c64837b090f3051c
+@xquare/user-application:dev:  $ vite
+@xquare/user-application:dev: 
+@xquare/user-application:dev:  VITE v7.2.6  ready in 387 ms
+@xquare/user-application:dev:
+@xquare/user-application:dev:  ➜  Local:   http://localhost:5173/
+@xquare/user-application:dev:  ➜  Network: use --host to expose`;
 
   const title = appDetail?.name || "Application";
   const domain = `${appDetail?.name || "app"}.xquare.app`;
-  const description = `Application ID: ${appDetail?.id || "N/A"}`;
   const type: "application" | "database" = "application";
+  const description = appDetail
+    ? `Status: ${appDetail.status} | Tier: ${appDetail.configuration.tier}`
+    : "N/A";
   const repository = appDetail?.configuration?.github
     ? `${appDetail.configuration.github.owner}/${appDetail.configuration.github.repo}`
     : "N/A";
   const owner = appDetail?.configuration?.github?.owner || "N/A";
-  const health =
-    appDetail?.status === "running"
-      ? 5
-      : appDetail?.status === "pending"
-        ? 3
-        : 1;
-  const lastDeploy = "2025-10-10 15:00"; // 실제 API에서 제공되면 사용
-  const lastbuild = "2025-10-10 14:45"; // 실제 API에서 제공되면 사용
+  const lastDeploy = "2025-10-10 15:00";
+  const lastbuild = "2025-10-10 14:45";
+  const team = getSelectedTeam()?.name ?? "";
 
   return (
     <Container>
-      <Info>
-        <Value>
-          <Heading>
-            <Typo>
-              <Typography size="7x" weight="semiBold">
-                {title}
+      <LoadingOverlay isLoading={loading} />
+      {error && (
+        <ErrorMessage
+          message={error.message || "애플리케이션 정보를 불러올 수 없습니다."}
+        />
+      )}
+      {!loading && !error && (
+        <>
+          <Info>
+            <Value>
+              <Heading>
+                <Typo>
+                  <Typography size="7x" weight="semiBold">
+                    {title}
+                  </Typography>
+                  <Typography size="4x" weight="light">
+                    {domain}
+                  </Typography>
+                </Typo>
+                <Icons>
+                  {(type as string) === "database" ? (
+                    <img src={DatabaseImg} alt="Database" height={55} />
+                  ) : (
+                    <img src={PodImg} alt="POD" />
+                  )}
+                </Icons>
+              </Heading>
+              <Typography size="5x" weight="medium">
+                {description}
               </Typography>
-              <Typography size="4x" weight="light">
-                {domain}
-              </Typography>
-            </Typo>
-            <Icons>
-              {(type as string) === "database" ? (
-                <img src={DatabaseImg} alt="Database" height={55} />
-              ) : (
-                <img src={PodImg} alt="POD" />
-              )}
-            </Icons>
-          </Heading>
-          <Typography size="5x" weight="medium">
-            {description}
-          </Typography>
-          <Status>
-            <Typography size="5x" weight="semiBold">
-              Repository
-            </Typography>
+              <Status>
+                <Typography size="5x" weight="semiBold">
+                  Repository
+                </Typography>
 
-            <Typography
-              size="4x"
-              weight="semiBold"
-              color={String(Xquare_colors.gray[500])}
-            >
-              {repository}
-            </Typography>
-          </Status>
-          <Status>
-            <Typography size="5x" weight="semiBold">
-              Owner
-            </Typography>
+                <Typography
+                  size="4x"
+                  weight="semiBold"
+                  color={String(Xquare_colors.gray[500])}
+                >
+                  {repository}
+                </Typography>
+              </Status>
+              <Status>
+                <Typography size="5x" weight="semiBold">
+                  Owner
+                </Typography>
 
-            <Typography
-              size="4x"
-              weight="semiBold"
-              color={String(Xquare_colors.gray[500])}
-            >
-              {owner}
-            </Typography>
-          </Status>
-          <Status>
-            <Typography size="5x" weight="semiBold">
-              Traffic
-            </Typography>
+                <Typography
+                  size="4x"
+                  weight="semiBold"
+                  color={String(Xquare_colors.gray[500])}
+                >
+                  {owner}
+                </Typography>
+              </Status>
+              <div style={{ height: "15px" }}></div>
+              <Status>
+                <Typography size="5x" weight="semiBold">
+                  Last Deploy
+                </Typography>
 
-            <TrafficWrapper>
-              {Array.from({ length: Number(health) }).map((_, idx) => (
-                <Box key={idx} isFirst={idx === 0 && health <= 2} />
-              ))}
-            </TrafficWrapper>
-          </Status>
+                <Typography
+                  size="4x"
+                  weight="semiBold"
+                  color={String(Xquare_colors.gray[500])}
+                >
+                  {lastDeploy}
+                </Typography>
+              </Status>
+              <Status>
+                <Typography size="5x" weight="semiBold">
+                  Last Build
+                </Typography>
 
-          <Status>
-            <Typography size="5x" weight="semiBold">
-              Last Deploy
-            </Typography>
+                <Typography
+                  size="4x"
+                  weight="semiBold"
+                  color={String(Xquare_colors.gray[500])}
+                >
+                  {lastbuild}
+                </Typography>
+              </Status>
+            </Value>
+            <Area></Area>
+          </Info>
+          <div style={{ position: "relative", width: "100%" }}>
+            <Unknown>
+              <h1
+                style={{
+                  fontSize: "26px",
+                  fontWeight: 800,
+                  marginBottom: "10px",
+                  color: String(Xquare_colors.purple[400]),
+                }}
+              >
+                서비스 준비중입니다
+              </h1>
 
-            <Typography
-              size="4x"
-              weight="semiBold"
-              color={String(Xquare_colors.gray[500])}
-            >
-              {lastDeploy}
-            </Typography>
-          </Status>
-          <Status>
-            <Typography size="5x" weight="semiBold">
-              Last Build
-            </Typography>
-
-            <Typography
-              size="4x"
-              weight="semiBold"
-              color={String(Xquare_colors.gray[500])}
-            >
-              {lastbuild}
-            </Typography>
-          </Status>
-        </Value>
-        <Area></Area>
-      </Info>
-      <div style={{ position: "relative", width: "100%" }}>
-        <LogBox>{serverlog}</LogBox>
-        <LogType>application</LogType>
-      </div>
+              <p
+                style={{
+                  fontSize: "22px",
+                  color: String(Xquare_colors.black),
+                  fontWeight: 700,
+                  maxWidth: "520px",
+                  lineHeight: "1.4",
+                  whiteSpace: "pre-line",
+                }}
+              >
+                <a
+                  href={`https://${team}-observability-dashboard.dsmhs.kr/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "black", textDecoration: "none" }}
+                >
+                  Grafana 대시보드 바로가기
+                </a>
+              </p>
+            </Unknown>
+            <LogBox>{serverlog}</LogBox>
+            <LogType>application</LogType>
+          </div>
+        </>
+      )}
     </Container>
   );
 }
@@ -146,6 +177,24 @@ const Container = styled.div`
   width: 100%;
   min-height: 100%;
   height: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Unknown = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  z-index: 999;
+
+  font-size: 18px;
+  opacity: 0.92;
+  background-color: ${Xquare_colors.white};
 
   display: flex;
   flex-direction: column;
@@ -201,26 +250,6 @@ const Status = styled.div`
   justify-content: flex-start;
   margin-top: 7px;
   gap: 25px;
-`;
-
-const TrafficWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 5px;
-  align-items: center;
-  height: 20px;
-`;
-
-const Box = styled.div<{ isFirst: boolean }>`
-  width: 17px;
-  height: 17px;
-  border-radius: 3px;
-
-  background-color: ${({ isFirst }) =>
-    isFirst ? Xquare_colors.red[400] : Xquare_colors.green[400]};
-  border: 2px solid
-    ${({ isFirst }) =>
-      isFirst ? Xquare_colors.red[500] : Xquare_colors.green[500]};
 `;
 
 const Area = styled.div`

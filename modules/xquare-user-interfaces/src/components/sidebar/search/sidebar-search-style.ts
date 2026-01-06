@@ -41,6 +41,7 @@ export const SideBarSearchInput = styled.input`
   padding: ${INPUT_PADDING};
   transition: ${INPUT_TRANSITION};
   width: 100%;
+  cursor: text;
 
   &::placeholder {
     color: ${Xquare_colors.white};

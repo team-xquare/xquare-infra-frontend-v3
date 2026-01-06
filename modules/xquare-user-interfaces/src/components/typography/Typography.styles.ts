@@ -38,4 +38,5 @@ export const Typography = styled.span<{
   color: ${({ $color }) => $color};
   text-align: ${({ $align }) => $align};
   text-decoration: ${({ $underline }) => ($underline ? "underline" : "none")};
+  cursor: default;
 `;

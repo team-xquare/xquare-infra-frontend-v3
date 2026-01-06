@@ -9,5 +9,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@xquare/hooks": "workspace:*"
   }
 }

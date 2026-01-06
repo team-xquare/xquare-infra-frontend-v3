@@ -7,6 +7,11 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@xquare/hooks": path.resolve(
+        __dirname,
+        "../../modules/xquare-hooks/index.ts"
+      ),
+      "@xquare/hooks/": path.resolve(__dirname, "../../modules/xquare-hooks/"),
       "@xquare/user-interfaces": path.resolve(
         __dirname,
         "../../modules/xquare-user-interfaces/index.ts"

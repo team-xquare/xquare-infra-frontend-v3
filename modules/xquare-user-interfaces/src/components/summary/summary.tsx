@@ -5,6 +5,7 @@ import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
 import type { DeploymentListResponse } from "@xquare/utils";
+import { LoadingOverlay } from "../loadingoverlays";
 
 interface SummaryProps {
   page?: number;
@@ -16,15 +17,6 @@ function Summary({ page, deploymentData, deploymentLoading }: SummaryProps) {
   const navigate = useNavigate();
 
   const generateDeploymentItems = () => {
-    if (deploymentLoading) {
-      return [
-        {
-          id: 0,
-          SummaryValue: "배포 정보를 불러오는 중입니다...",
-        },
-      ];
-    }
-
     if (!deploymentData || Object.keys(deploymentData).length === 0) {
       return [
         {
@@ -70,7 +62,9 @@ function Summary({ page, deploymentData, deploymentLoading }: SummaryProps) {
       : page === 2
         ? deploymentItems.slice(0, 3)
         : deploymentItems
-    : deploymentItems;
+    : deploymentLoading
+      ? []
+      : deploymentItems;
 
   function handleViewAllClick() {
     navigate("/summary");
@@ -78,6 +72,7 @@ function Summary({ page, deploymentData, deploymentLoading }: SummaryProps) {
 
   return (
     <Summarycontainer page={page}>
+      <LoadingOverlay isLoading={deploymentLoading} />
       <TileArea>
         <Subtitle title={`Summary`} subTitle={"service status"} />
         {page !== 3 && (
@@ -111,6 +106,7 @@ const TileArea = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  cursor: default;
 `;
 
 const ClickableText = styled(Typography)`

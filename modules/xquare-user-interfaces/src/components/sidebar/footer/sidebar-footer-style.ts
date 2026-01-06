@@ -54,4 +54,9 @@ export const SideBarFooterProjectDiv = styled.div`
   font-weight: ${PROJECT_FONT_WEIGHT};
   line-height: normal;
   text-align: right;
+  cursor: pointer;
+
+  &:hover {
+    background: ${Xquare_colors.purple[200]};
+  }
 `;

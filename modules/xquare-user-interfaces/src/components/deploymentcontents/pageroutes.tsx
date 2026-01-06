@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
 import { Xquare_colors } from "../../styles/colors";
+import { ErrorMessage } from "../errormessage";
 import type {
   ApplicationEndpointDetail,
   ApplicationConfigurationDetail,
@@ -36,6 +37,7 @@ export default function RoutesContents({
 }: RoutesContentsProps) {
   const [routes, setRoutes] = useState<RoutesItem[]>([]);
   const [isDirty, setIsDirty] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // API로부터 받은 endpoints 데이터로 초기화
   useEffect(() => {
@@ -59,6 +61,7 @@ export default function RoutesContents({
   }, [endpoints]);
 
   const handleKeyChange = (index: number, v: string) => {
+    setSaveError(null);
     setRoutes((prev) =>
       prev.map((s, i) => (i === index ? { ...s, url: v } : s))
     );
@@ -66,6 +69,7 @@ export default function RoutesContents({
   };
 
   const handleValueChange = (index: number, v: string) => {
+    setSaveError(null);
     setRoutes((prev) =>
       prev.map((s, i) => (i === index ? { ...s, port: Number(v) } : s))
     );
@@ -73,11 +77,13 @@ export default function RoutesContents({
   };
 
   const removeRoute = (index: number) => {
+    setSaveError(null);
     setRoutes((prev) => prev.filter((_, i) => i !== index));
     setIsDirty(true);
   };
 
   const addRoute = () => {
+    setSaveError(null);
     setRoutes((prev) => [...prev, { url: "", port: 0 }]);
     setIsDirty(true);
   };
@@ -85,12 +91,17 @@ export default function RoutesContents({
   const saveRoutes = async () => {
     const invalidRoutes = routes.filter((r) => r.port < 1 || r.port > 65535);
     if (invalidRoutes.length > 0) {
-      alert("포트 번호는 1-65535 범위여야 합니다.");
+      setSaveError("포트 번호는 1-65535 범위여야 합니다.");
       return;
     }
 
+    setSaveError(null);
+
     if (!applicationId || !configuration) {
+      const errorMsg =
+        "애플리케이션 정보가 없습니다. 페이지를 새로고침 해주세요.";
       console.error("[RoutesContents] applicationId or configuration missing");
+      setSaveError(errorMsg);
       return;
     }
 
@@ -122,22 +133,23 @@ export default function RoutesContents({
       if (success) {
         console.log("[RoutesContents] Routes 설정 저장 성공");
         setIsDirty(false);
+        setSaveError(null);
         onSave();
       } else {
         console.error("[RoutesContents] Routes 설정 저장 실패 (false 반환)");
-        alert("저장에 실패했습니다: 업데이트가 완료되지 않았습니다.");
+        setSaveError("저장에 실패했습니다: 업데이트가 완료되지 않았습니다.");
       }
     } catch (err) {
       console.error("[RoutesContents] Routes 설정 저장 실패", err);
-      alert(
-        "저장에 실패했습니다: " +
-          (err instanceof Error ? err.message : "알 수 없는 오류")
-      );
+      const errorMessage =
+        err instanceof Error ? err.message : "알 수 없는 오류";
+      setSaveError(`저장에 실패했습니다: ${errorMessage}`);
     }
   };
 
   return (
     <Container>
+      {saveError && <ErrorMessage message={saveError} />}
       <ValueBox>
         <Typography size="6x" weight="bold">
           Routes
@@ -148,7 +160,7 @@ export default function RoutesContents({
               value={item.url}
               onChange={(e) => handleKeyChange(i, e.target.value)}
               placeholder="URL"
-              width="850px"
+              width="900px"
               height="35px"
               disabled={!editable}
               align="left"
@@ -196,6 +208,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  cursor: default;
 `;
 
 const ValueBox = styled.div`
@@ -204,18 +217,19 @@ const ValueBox = styled.div`
   flex-direction: column;
   gap: 1.2rem;
   margin-bottom: 2rem;
+  cursor: default;
 `;
 
 const InputArea = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8rem;
+  justify-content: space-between;
   padding: 3px 5px;
   width: 100%;
   height: 40px;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
+  cursor: default;
 `;
 
 const AddBtn = styled.button`
