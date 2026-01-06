@@ -68,7 +68,7 @@ export const getDeploymentSummary = async (
     const data: DeploymentListResponse = await response.json();
     console.log("[deployment] getDeploymentSummary success", {
       applicationId,
-      deploymentCount: data.deployments?.length || 0,
+      deploymentCount: data.deployments.length,
     });
 
     return data;

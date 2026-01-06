@@ -34,7 +34,7 @@ function extractHostname(value: string): string {
 
 function isAllowedDomain(value: string): boolean {
   const host = extractHostname(value).toLowerCase();
-  return host.endsWith("dsmhs.kr");
+  return host.endsWith(".dsmhs.kr");
 }
 
 // --- Build configuration required fields per type ---
@@ -446,7 +446,6 @@ const CreateApplication = () => {
               <Tooltip
                 content="배포에 사용할 Branch를 선택해 주세요. 선택한 Branch의 최신 커밋이 자동으로 반영됩니다."
                 position="right"
-                iconType="question"
               >
                 <InfoIcon size={18} />
               </Tooltip>
@@ -474,7 +473,6 @@ const CreateApplication = () => {
               <Tooltip
                 content="GitHub App 설치 ID는 저장소 연동 설정에서 확인할 수 있습니다."
                 position="right"
-                iconType="question"
               >
                 <InfoIcon size={18} />
               </Tooltip>
@@ -517,7 +515,6 @@ const CreateApplication = () => {
                 <Tooltip
                   content="지정된 경로에 변경 사항이 있을 때만 배포에 반영됩니다. 예: src/** (src 폴더 내 모든 변경 감지 후 재배포)"
                   position="right"
-                  iconType="info"
                 >
                   <InfoIcon size={18} />
                 </Tooltip>
@@ -709,7 +706,6 @@ const CreateApplication = () => {
             <Tooltip
               content="애플리케이션에 접근할 URL 경로와 포트를 설정하세요."
               position="right"
-              iconType="info"
             >
               <InfoIcon size={18} />
             </Tooltip>

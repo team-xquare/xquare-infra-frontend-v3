@@ -73,7 +73,7 @@ function Summary({ page, deploymentData, deploymentLoading }: SummaryProps) {
     : deploymentItems;
 
   function handleViewAllClick() {
-    navigate("/status");
+    navigate("/summary");
   }
 
   return (

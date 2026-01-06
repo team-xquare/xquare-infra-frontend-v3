@@ -9,7 +9,7 @@ import {
 import { getSelectedTeamId } from "@xquare/utils";
 import { useMemo } from "react";
 
-const StatusPage = () => {
+const SummaryPage = () => {
   useAuthGuard();
 
   const { data: teams } = useTeams();
@@ -52,4 +52,4 @@ const Container = styled.div`
   padding: 10px 40px;
 `;
 
-export default StatusPage;
+export default SummaryPage;

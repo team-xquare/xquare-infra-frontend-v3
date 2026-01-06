@@ -29,7 +29,7 @@ function SummaryContents({ appDetail }: SummaryContentsProps) {
   const title = appDetail?.name || "Application";
   const domain = `${appDetail?.name || "app"}.xquare.app`;
   const description = `Application ID: ${appDetail?.id || "N/A"}`;
-  const type: "application" | "database" = "application"; // 또는 appDetail에서 유추
+  const type: "application" | "database" = "application";
   const repository = appDetail?.configuration?.github
     ? `${appDetail.configuration.github.owner}/${appDetail.configuration.github.repo}`
     : "N/A";

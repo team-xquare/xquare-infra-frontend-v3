@@ -83,6 +83,7 @@ export {
   getSelectedTeam,
   getSelectedTeamId,
   clearSelectedTeam,
+  SELECTED_TEAM_EVENT,
 } from "./src/teams/storage";
 export type { SelectedTeamInfo } from "./src/teams/storage";
 

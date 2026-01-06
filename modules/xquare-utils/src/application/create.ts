@@ -160,6 +160,43 @@ export const createApplication = async (
     );
   }
 
+  // Validate build required fields per type (keeps client + server aligned)
+  const REQUIRED_BUILD_FIELDS: Record<string, Array<keyof ApplicationBuild>> = {
+    gradle: ["version", "buildCommand", "outputPath"],
+    node_js: ["version", "buildCommand", "startCommand"],
+    react: ["version", "buildCommand", "outputPath"],
+    vite: ["version", "buildCommand", "outputPath"],
+    vue: ["version", "buildCommand", "outputPath"],
+    next_js: ["version", "buildCommand", "startCommand"],
+    go: ["version", "buildCommand", "outputPath"],
+    rust: ["version", "buildCommand", "outputPath"],
+    maven: ["version", "buildCommand", "outputPath"],
+    django: ["version", "buildCommand", "startCommand"],
+    flask: ["version", "buildCommand", "startCommand"],
+    docker: ["inputPath", "workingDirectory"],
+  };
+
+  const build = request.configuration.build;
+  const requiredFields = REQUIRED_BUILD_FIELDS[build.type] ?? [];
+
+  const ensureField = (field: keyof ApplicationBuild, label: string): void => {
+    const value = build[field];
+    if (requiredFields.includes(field)) {
+      const validString = typeof value === "string" && value.trim() !== "";
+      if (!validString) {
+        console.error(`[createApplication] missing build.${field}`, value);
+        throw new Error(`${label}을(를) 입력해주세요.`);
+      }
+    }
+  };
+
+  ensureField("version", "빌드 버전");
+  ensureField("buildCommand", "빌드 커맨드");
+  ensureField("startCommand", "시작 커맨드");
+  ensureField("inputPath", "입력 경로");
+  ensureField("outputPath", "출력 경로");
+  ensureField("workingDirectory", "작업 디렉터리");
+
   const accessToken = getAccessToken();
   if (!accessToken) {
     throw new Error("AccessToken이 없습니다.");

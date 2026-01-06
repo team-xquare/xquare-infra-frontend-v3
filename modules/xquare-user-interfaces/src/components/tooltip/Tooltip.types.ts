@@ -15,8 +15,6 @@ export interface TooltipProps {
   children: ReactNode;
   /** 툴팁의 표시 위치 (기본값: "top") */
   position?: TooltipPosition;
-  /** 아이콘 타입 (아이콘 버튼 툴팁 사용 시) */
-  iconType?: TooltipIconType;
   /** 활성화 시 추가 CSS 클래스 */
   className?: string;
   /** 팝오버 활성화 지연 시간 (ms) */

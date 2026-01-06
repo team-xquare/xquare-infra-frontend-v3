@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
@@ -6,6 +6,7 @@ import { Xquare_colors } from "../../styles/colors";
 import type {
   ApplicationEndpointDetail,
   ApplicationConfigurationDetail,
+  UpdateApplicationConfigurationRequest,
 } from "@xquare/utils";
 
 interface RoutesItem {
@@ -19,7 +20,10 @@ interface RoutesContentsProps {
   onSave: () => void;
   endpoints?: ApplicationEndpointDetail[];
   configuration?: ApplicationConfigurationDetail;
-  onUpdate: (applicationId: number, request: any) => Promise<boolean>;
+  onUpdate: (
+    applicationId: number,
+    request: UpdateApplicationConfigurationRequest
+  ) => Promise<boolean>;
 }
 
 export default function RoutesContents({
@@ -42,12 +46,16 @@ export default function RoutesContents({
           routesList.push({ url: route, port: endpoint.port });
         });
       });
-      setRoutes(routesList);
+      startTransition(() => {
+        setRoutes(routesList);
+        setIsDirty(false);
+      });
     } else {
-      // 기본값 설정
-      setRoutes([]);
+      startTransition(() => {
+        setRoutes([]);
+        setIsDirty(false);
+      });
     }
-    setIsDirty(false);
   }, [endpoints]);
 
   const handleKeyChange = (index: number, v: string) => {
@@ -107,10 +115,18 @@ export default function RoutesContents({
         endpoints: newEndpoints,
       };
 
-      await onUpdate(applicationId, { configuration: updatedConfig });
-      console.log("[RoutesContents] Routes 설정 저장 성공");
-      setIsDirty(false);
-      onSave();
+      const success = await onUpdate(applicationId, {
+        configuration: updatedConfig,
+      });
+
+      if (success) {
+        console.log("[RoutesContents] Routes 설정 저장 성공");
+        setIsDirty(false);
+        onSave();
+      } else {
+        console.error("[RoutesContents] Routes 설정 저장 실패 (false 반환)");
+        alert("저장에 실패했습니다: 업데이트가 완료되지 않았습니다.");
+      }
     } catch (err) {
       console.error("[RoutesContents] Routes 설정 저장 실패", err);
       alert(

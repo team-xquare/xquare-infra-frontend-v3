@@ -10,7 +10,7 @@ import {
   DeploymentItem,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useTeamApplications } from "@xquare/hooks";
-import { getSelectedTeamId } from "@xquare/utils";
+import { getSelectedTeamId, SELECTED_TEAM_EVENT } from "@xquare/utils";
 
 const DeploymentHome = () => {
   useAuthGuard();
@@ -28,12 +28,18 @@ const DeploymentHome = () => {
       }
     };
 
+    // CustomEvent 리스너를 EventListener 타입으로 캐스팅
+    const handleSelectedTeamChanged: EventListener = () => syncTeam();
+
     window.addEventListener("storage", handleStorage);
-    window.addEventListener("xquare:selectedTeam-changed", syncTeam);
+    window.addEventListener(SELECTED_TEAM_EVENT, handleSelectedTeamChanged);
 
     return () => {
       window.removeEventListener("storage", handleStorage);
-      window.removeEventListener("xquare:selectedTeam-changed", syncTeam);
+      window.removeEventListener(
+        SELECTED_TEAM_EVENT,
+        handleSelectedTeamChanged
+      );
     };
   }, []);
 

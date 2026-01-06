@@ -14,10 +14,16 @@ export interface RepoInfo {
  */
 export const getRepoInfo = async (
   owner: string,
-  repo: string
+  repo: string,
+  signal?: AbortSignal
 ): Promise<RepoInfo> => {
   console.log("[github] getRepoInfo", { owner, repo });
-  const res = await fetchWithTimeout(`https://api.github.com/repos/${owner}/${repo}`);
+  const res = await fetchWithTimeout(
+    `https://api.github.com/repos/${owner}/${repo}`,
+    {
+      signal,
+    }
+  );
   if (!res.ok) {
     console.error("[github] getRepoInfo error", res.status);
     throw new Error(`GitHub 응답 오류: ${res.status}`);
@@ -34,11 +40,13 @@ export const getRepoInfo = async (
 export const listBranches = async (
   owner: string,
   repo: string,
-  perPage = 100
+  perPage = 100,
+  signal?: AbortSignal
 ): Promise<string[]> => {
   console.log("[github] listBranches", { owner, repo, perPage });
   const res = await fetchWithTimeout(
-    `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`
+    `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`,
+    { signal }
   );
   if (!res.ok) {
     console.error("[github] listBranches error", {
@@ -54,8 +62,7 @@ export const listBranches = async (
   try {
     json = await res.json();
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "JSON 파싱 오류";
+    const message = error instanceof Error ? error.message : "JSON 파싱 오류";
     console.error("[github] listBranches parse error", message);
     throw new Error(`브랜치 목록 파싱 실패: ${message}`);
   }
@@ -81,11 +88,13 @@ export const listBranches = async (
 export const getLatestCommitSha = async (
   owner: string,
   repo: string,
-  branch: string
+  branch: string,
+  signal?: AbortSignal
 ): Promise<string> => {
   console.log("[github] getLatestCommitSha", { owner, repo, branch });
   const res = await fetchWithTimeout(
-    `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`
+    `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`,
+    { signal }
   );
   if (!res.ok) {
     console.error("[github] getLatestCommitSha error", res.status);

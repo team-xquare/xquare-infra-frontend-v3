@@ -1,5 +1,5 @@
 const SELECTED_TEAM_KEY = "xquare:selectedTeam";
-const SELECTED_TEAM_EVENT = "xquare:selectedTeam-changed";
+export const SELECTED_TEAM_EVENT = "xquare:selectedTeam-changed";
 
 const emitTeamChange = (team: SelectedTeamInfo | null) => {
   if (typeof window === "undefined") return;
@@ -32,9 +32,6 @@ export const saveSelectedTeam = (team: SelectedTeamInfo): void => {
   }
 };
 
-/**
- * 로컬 스토리지에서 선택된 팀 정보를 불러옴
- */
 export const getSelectedTeam = (): SelectedTeamInfo | null => {
   try {
     const stored = localStorage.getItem(SELECTED_TEAM_KEY);

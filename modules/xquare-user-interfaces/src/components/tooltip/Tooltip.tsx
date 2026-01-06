@@ -4,7 +4,6 @@ import {
   useRef,
   useEffect,
   useCallback,
-  type ReactNode,
 } from "react";
 import * as S from "./Tooltip.styles";
 import type { TooltipProps } from "./Tooltip.types";
@@ -13,7 +12,7 @@ type TimerId = ReturnType<typeof setTimeout>;
 
 /**
  * Tooltip 컴포넌트
- * 
+ *
  * ```tsx
  * <Tooltip content="이것은 도움말입니다">
  *   <button>도움말</button>
@@ -118,15 +117,18 @@ const Tooltip = ({
   };
 
   const handleTouchStart = useCallback(() => {
-    if (enableTouch) {
-      setIsVisible((prev) => !prev);
-      if (!isVisible) {
+    if (!enableTouch) return;
+
+    setIsVisible((prev) => {
+      const next = !prev;
+      if (next) {
         requestAnimationFrame(() => {
           adjustPosition();
         });
       }
-    }
-  }, [enableTouch, isVisible, adjustPosition]);
+      return next;
+    });
+  }, [enableTouch, adjustPosition]);
 
   useEffect(() => {
     return () => {
@@ -134,14 +136,6 @@ const Tooltip = ({
       if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
     };
   }, []);
-
-  const triggerElement =
-    typeof children === "object" &&
-    children !== null &&
-    "type" in children &&
-    (typeof children.type === "function" || typeof children.type === "string")
-      ? (children as ReactNode)
-      : null;
 
   return (
     <S.TooltipContainer
@@ -159,7 +153,7 @@ const Tooltip = ({
         aria-label={typeof content === "string" ? content : "추가 정보"}
         aria-describedby={isVisible ? "tooltip-content" : undefined}
       >
-        {triggerElement || children}
+        {children}
       </S.TooltipTrigger>
 
       {isVisible && (

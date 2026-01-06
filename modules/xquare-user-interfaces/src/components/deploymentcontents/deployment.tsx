@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
@@ -120,9 +120,15 @@ function DeploymentContents({
   const fetchCommitForBranch = async (
     ownerVal: string,
     repoVal: string,
-    targetBranch: string
+    targetBranch: string,
+    signal?: AbortSignal
   ) => {
-    const sha = await getLatestCommitSha(ownerVal, repoVal, targetBranch);
+    const sha = await getLatestCommitSha(
+      ownerVal,
+      repoVal,
+      targetBranch,
+      signal
+    );
     setHash(sha);
   };
 
@@ -154,6 +160,8 @@ function DeploymentContents({
     }
   };
 
+  const githubAbortRef = useRef<AbortController | null>(null);
+
   const handleFetchGithub = async () => {
     if (!owner.trim() || !repo.trim()) {
       setGithubError("Owner와 Repository를 입력해주세요.");
@@ -163,13 +171,26 @@ function DeploymentContents({
     const ownerVal = owner.trim();
     const repoVal = repo.trim();
 
+    githubAbortRef.current?.abort();
+    const controller = new AbortController();
+    githubAbortRef.current = controller;
+
     setGithubLoading(true);
     setGithubError(null);
     setGithubMessage(null);
 
     try {
-      const { defaultBranch } = await getRepoInfo(ownerVal, repoVal);
-      const branchNames = await listBranches(ownerVal, repoVal, 100);
+      const { defaultBranch } = await getRepoInfo(
+        ownerVal,
+        repoVal,
+        controller.signal
+      );
+      const branchNames = await listBranches(
+        ownerVal,
+        repoVal,
+        100,
+        controller.signal
+      );
       setBranches(branchNames);
 
       const targetBranch =
@@ -180,7 +201,12 @@ function DeploymentContents({
       setBranch(targetBranch);
 
       if (targetBranch) {
-        await fetchCommitForBranch(ownerVal, repoVal, targetBranch);
+        await fetchCommitForBranch(
+          ownerVal,
+          repoVal,
+          targetBranch,
+          controller.signal
+        );
       } else {
         setHash("");
       }
@@ -188,6 +214,13 @@ function DeploymentContents({
       setGithubMessage("GitHub 정보가 업데이트되었습니다.");
       setIsDirtyGithub(true);
     } catch (err) {
+      const aborted =
+        (err instanceof DOMException && err.name === "AbortError") ||
+        (err instanceof Error && err.name === "AbortError");
+      if (aborted) {
+        console.log("[DeploymentContents] github fetch aborted");
+        return;
+      }
       console.error("[DeploymentContents] github fetch error", err);
       setGithubError(
         err instanceof Error
@@ -196,6 +229,9 @@ function DeploymentContents({
       );
     } finally {
       setGithubLoading(false);
+      if (githubAbortRef.current === controller) {
+        githubAbortRef.current = null;
+      }
     }
   };
 
@@ -225,13 +261,14 @@ function DeploymentContents({
       console.log("[DeploymentContents] GitHub 설정 저장 성공");
       setIsDirtyGithub(false);
       setGithubMessage(null);
+      setGithubError(null);
       onSave();
     } catch (err) {
       console.error("[DeploymentContents] GitHub 설정 저장 실패", err);
-      alert(
-        "저장에 실패했습니다: " +
-          (err instanceof Error ? err.message : "알 수 없는 오류")
-      );
+      const errorMessage =
+        err instanceof Error ? err.message : "알 수 없는 오류";
+      setGithubMessage(null);
+      setGithubError(errorMessage);
     }
   };
 
@@ -258,6 +295,7 @@ function DeploymentContents({
   }, [build]);
 
   const [isDirtyBuild, setIsDirtyBuild] = useState(false);
+  const [buildError, setBuildError] = useState<string | null>(null);
 
   const handleSaveBuild = async () => {
     if (!applicationId || !configuration) {
@@ -296,13 +334,14 @@ function DeploymentContents({
       await onUpdate(applicationId, { configuration: updatedConfig });
       console.log("[DeploymentContents] Build 설정 저장 성공");
       setIsDirtyBuild(false);
+      setBuildError(null);
       onSave();
     } catch (err) {
       console.error("[DeploymentContents] Build 설정 저장 실패", err);
-      alert(
-        "저장에 실패했습니다: " +
-          (err instanceof Error ? err.message : "알 수 없는 오류")
-      );
+      const errorMessage =
+        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+      setBuildError(`저장에 실패했습니다: ${errorMessage}`);
+      // onSave는 호출하지 않음 - 에러가 발생했으므로 저장되지 않음
     }
   };
 
@@ -625,6 +664,7 @@ function DeploymentContents({
             <SaveBtn onClick={handleSaveBuild}>저장</SaveBtn>
           </SaveBox>
         )}
+        {buildError && <StatusText color="red">{buildError}</StatusText>}
       </ValueBox>
     </Container>
   );

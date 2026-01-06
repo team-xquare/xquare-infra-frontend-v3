@@ -25,6 +25,9 @@ export function useDeploymentSummary(
         "[useDeploymentSummary] 유효하지 않은 애플리케이션 ID:",
         applicationId
       );
+      // 유효하지 않은 ID일 때 데이터 상태 초기화
+      setData(null);
+      setError(null);
       return;
     }
 
@@ -54,7 +57,7 @@ export function useDeploymentSummary(
     return () => {
       cancelled = true;
     };
-  }, [applicationId, isValidId, page, limit]);
+  }, [applicationId, page, limit]);
 
   const computedError = !isValidId
     ? new Error("유효한 애플리케이션 ID가 필요합니다.")
