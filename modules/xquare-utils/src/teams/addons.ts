@@ -44,7 +44,7 @@ export const getTeamAddons = async (teamId: number): Promise<TeamAddon[]> => {
   let response: Response;
 
   try {
-    const url = new URL(`/teams/${teamId}/addons`, API_BASE_URL).href;
+    const url = new URL(`${API_BASE_URL}/teams/${teamId}/addons`).href;
     response = await fetchWithTimeout(url, {
       method: "GET",
       headers: {

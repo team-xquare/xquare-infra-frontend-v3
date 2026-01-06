@@ -10,3 +10,7 @@ export { useCreateTeam } from "./src/useCreateTeam";
 export { useCreateApplication } from "./src/useCreateApplication";
 export { useApplicationDetail } from "./src/useApplicationDetail";
 export { useUpdateApplicationConfiguration } from "./src/useUpdateApplicationConfiguration";
+export {
+  useDeploymentSummary,
+  useMultipleDeploymentSummaries,
+} from "./src/useDeploymentSummary";

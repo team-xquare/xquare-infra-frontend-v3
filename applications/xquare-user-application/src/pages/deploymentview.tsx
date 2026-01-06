@@ -53,7 +53,6 @@ const DeploymentView = () => {
   });
 
   const handleSave = useCallback(async () => {
-    // 유효한 applicationId 확인
     if (!applicationId || applicationId < 0) {
       console.error("[DeploymentView] invalid applicationId for save", {
         applicationId,
@@ -61,7 +60,6 @@ const DeploymentView = () => {
       return;
     }
 
-    // 구성 변경 시 서버에 저장 (추후 실제 변경된 설정 전달)
     if (appDetail) {
       const success = await updateConfig(applicationId, {
         configuration: appDetail.configuration,
@@ -103,7 +101,6 @@ const DeploymentView = () => {
     <LogContents key="log" />,
   ];
 
-  // 에러 상태 표시
   if (updateError) {
     console.error("[DeploymentView] update error", updateError);
   }
@@ -121,7 +118,6 @@ const DeploymentView = () => {
     }
   }, [editable]);
 
-  // 로딩 중
   if (appLoading) {
     return (
       <Container>
@@ -135,7 +131,6 @@ const DeploymentView = () => {
     );
   }
 
-  // 에러 발생
   if (appError) {
     console.error("[DeploymentView] error", appError);
     return (

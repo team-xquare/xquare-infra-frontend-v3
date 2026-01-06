@@ -1,12 +1,43 @@
 import styled from "@emotion/styled";
 import { Summary } from "@xquare/user-interfaces";
-import { useAuthGuard } from "@xquare/hooks";
+import {
+  useAuthGuard,
+  useMultipleDeploymentSummaries,
+  useTeams,
+  useTeamApplications,
+} from "@xquare/hooks";
+import { getSelectedTeamId } from "@xquare/utils";
+import { useMemo } from "react";
 
 const StatusPage = () => {
   useAuthGuard();
+
+  const { data: teams } = useTeams();
+
+  const selectedTeamId = useMemo(() => {
+    const storedTeamId = getSelectedTeamId();
+    if (!storedTeamId || !teams) return undefined;
+    const foundTeam = teams.find((team) => team.id === storedTeamId);
+    return foundTeam?.id;
+  }, [teams]);
+
+  const { data: applications } = useTeamApplications(selectedTeamId);
+
+  const applicationIds = useMemo(() => {
+    if (!applications || applications.length === 0) return undefined;
+    return applications.map((app) => app.id);
+  }, [applications]);
+
+  const { data: deploymentData, loading: deploymentLoading } =
+    useMultipleDeploymentSummaries(applicationIds);
+
   return (
     <Container>
-      <Summary page={3} />
+      <Summary
+        page={3}
+        deploymentData={deploymentData}
+        deploymentLoading={deploymentLoading}
+      />
     </Container>
   );
 };
