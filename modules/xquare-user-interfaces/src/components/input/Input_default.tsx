@@ -21,6 +21,7 @@ const StyledInput = styled.input<InputProps>`
   border: none;
   border-bottom: 1.2px solid ${Xquare_colors.gray[500]};
   background-color: ${Xquare_colors.white};
+  cursor: text;
 
   color: ${Xquare_colors.black};
   font-family: "Pretendard";
@@ -44,6 +45,7 @@ const StyledInput = styled.input<InputProps>`
 
   &:disabled {
     border-bottom: 1.2px solid ${Xquare_colors.gray[300]};
+    cursor: not-allowed;
 
     &::placeholder {
       color: ${Xquare_colors.gray[300]};

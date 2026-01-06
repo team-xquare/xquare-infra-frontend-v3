@@ -11,11 +11,22 @@ import {
   Input_record,
   Button_square,
   Tooltip,
+  ErrorMessage,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useCreateApplication } from "@xquare/hooks";
 import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
 import type { CreateApplicationRequest, ApplicationBuild } from "@xquare/utils";
-import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
+import {
+  getRepoInfo,
+  listBranches,
+  getLatestCommitSha,
+  needsVersion,
+  needsBuildCommand,
+  needsStartCommand,
+  needsInputPath,
+  needsOutputPath,
+  needsWorkingDirectory,
+} from "@xquare/utils";
 
 // --- Domain validation helpers (module scope for stable references) ---
 function extractHostname(value: string): string {
@@ -36,44 +47,6 @@ function isAllowedDomain(value: string): boolean {
   const host = extractHostname(value).toLowerCase();
   return host.endsWith(".dsmhs.kr");
 }
-
-// --- Build configuration required fields per type ---
-type BuildField =
-  | "VERSION"
-  | "BUILD_COMMAND"
-  | "START_COMMAND"
-  | "INPUT_PATH"
-  | "OUTPUT_PATH"
-  | "WORKING_DIRECTORY";
-
-const REQUIRED_FIELDS: Record<string, BuildField[]> = {
-  gradle: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  node_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  react: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  vite: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  vue: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  next_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  go: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  rust: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  maven: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  django: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  flask: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  docker: ["INPUT_PATH", "WORKING_DIRECTORY"],
-};
-
-const needsField = (type: string, field: BuildField) => {
-  const t = (type ?? "").trim();
-  const set = REQUIRED_FIELDS[t];
-  return Array.isArray(set) ? set.includes(field) : false;
-};
-
-const needsVersion = (type: string) => needsField(type, "VERSION");
-const needsBuildCommand = (type: string) => needsField(type, "BUILD_COMMAND");
-const needsStartCommand = (type: string) => needsField(type, "START_COMMAND");
-const needsInputPath = (type: string) => needsField(type, "INPUT_PATH");
-const needsOutputPath = (type: string) => needsField(type, "OUTPUT_PATH");
-const needsWorkingDirectory = (type: string) =>
-  needsField(type, "WORKING_DIRECTORY");
 
 const CreateApplication = () => {
   useAuthGuard();
@@ -499,7 +472,7 @@ const CreateApplication = () => {
             />
           </InputArea>
           <StatusRow>
-            {githubError && <StatusText color="red">{githubError}</StatusText>}
+            {githubError && <ErrorMessage message={githubError} />}
             {githubMessage && !githubError && (
               <StatusText>{githubMessage}</StatusText>
             )}
@@ -756,9 +729,9 @@ const CreateApplication = () => {
             </StatusText>
           )}
         </ValueBox>
-        {formError && <StatusText color="red">{formError}</StatusText>}
+        {formError && <ErrorMessage message={formError} />}
         {createError && !formError && (
-          <StatusText color="red">{createError.message}</StatusText>
+          <ErrorMessage message={createError.message} />
         )}
         <ButtonGroup>
           <Button_square
@@ -791,6 +764,7 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -802,6 +776,7 @@ const ContentsArea = styled.div`
   width: 100%;
   margin-bottom: 15px;
   gap: 15px;
+  cursor: default;
 `;
 
 const Contents = styled.div`
@@ -814,6 +789,7 @@ const Contents = styled.div`
   align-items: center;
   justify-content: center;
   gap: 1rem;
+  cursor: default;
 `;
 
 const ValueBox = styled.div`
@@ -826,6 +802,7 @@ const ValueBox = styled.div`
   justify-content: center;
   gap: 1.2rem;
   margin-bottom: 2rem;
+  cursor: default;
 `;
 
 const InputArea = styled.div`
@@ -837,6 +814,7 @@ const InputArea = styled.div`
   width: 100%;
   height: 40px;
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
+  cursor: default;
 `;
 
 const InlineInputs = styled.div`
@@ -845,6 +823,7 @@ const InlineInputs = styled.div`
   justify-content: flex-start;
   gap: 10px;
   width: 80%;
+  cursor: default;
 `;
 
 const SectionHeader = styled.div`
@@ -852,6 +831,7 @@ const SectionHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  cursor: default;
 `;
 
 const SelectBox = styled.select`
@@ -862,6 +842,7 @@ const SelectBox = styled.select`
   text-align: right;
   font-size: 16px;
   color: ${Xquare_colors.gray[700]};
+  cursor: pointer;
 
   &:focus {
     outline: none;
@@ -869,6 +850,7 @@ const SelectBox = styled.select`
 
   &:disabled {
     color: ${Xquare_colors.gray[400]};
+    cursor: not-allowed;
   }
 `;
 
@@ -877,11 +859,13 @@ const StatusRow = styled.div`
   width: 100%;
   min-height: 15px;
   padding: 0 0px;
+  cursor: default;
 `;
 
 const StatusText = styled.span<{ color?: string }>`
   font-size: 14px;
   color: ${({ color }) => color ?? Xquare_colors.gray[500]};
+  cursor: default;
 `;
 
 const InputAreaSecond = styled.div`
@@ -893,6 +877,7 @@ const InputAreaSecond = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 40px;
+  cursor: default;
 `;
 
 const InputAreaVertical = styled.div`
@@ -902,6 +887,7 @@ const InputAreaVertical = styled.div`
   align-items: flex-start;
   justify-content: center;
   gap: 0.5rem;
+  cursor: default;
 `;
 
 const AddBtn = styled.button`
@@ -935,6 +921,7 @@ const ButtonGroup = styled.div`
   align-items: center;
   gap: 10px;
   width: 100%;
+  cursor: default;
 `;
 
 export default CreateApplication;

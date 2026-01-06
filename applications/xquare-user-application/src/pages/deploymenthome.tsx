@@ -8,6 +8,8 @@ import {
   Xquare_colors,
   Button_round,
   DeploymentItem,
+  ErrorMessage,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useTeamApplications } from "@xquare/hooks";
 import { getSelectedTeamId, SELECTED_TEAM_EVENT } from "@xquare/utils";
@@ -64,6 +66,7 @@ const DeploymentHome = () => {
 
   return (
     <Container>
+      <LoadingOverlay isLoading={loading && !!teamId} />
       <ContentsArea>
         <Title
           title={`Deployments`}
@@ -96,11 +99,8 @@ const DeploymentHome = () => {
           팀을 선택해주세요. (사이드바 하단에서 팀 선택)
         </div>
       )}
-      {loading && <div>애플리케이션을 불러오는 중...</div>}
       {error && (
-        <div style={{ color: "red" }}>
-          애플리케이션 조회 실패: {error.message}
-        </div>
+        <ErrorMessage message={`애플리케이션 조회 실패: ${error.message}`} />
       )}
       <DploymentSell>
         {(applications ?? []).map((app) => (
@@ -131,6 +131,7 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -142,6 +143,7 @@ const ContentsArea = styled.div`
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
   width: 100%;
   margin-bottom: 15px;
+  cursor: default;
 `;
 
 const HeroSection = styled.div`
@@ -154,12 +156,14 @@ const HeroSection = styled.div`
   justify-content: space-between;
   background-image: url(${HomeImg});
   margin-bottom: 15px;
+  cursor: default;
 `;
 
 const ImgText = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  cursor: default;
 `;
 
 const DploymentSell = styled.div`
@@ -169,6 +173,7 @@ const DploymentSell = styled.div`
   grid-auto-rows: auto;
   width: 100%;
   row-gap: 20px;
+  cursor: default;
 `;
 
 export default React.memo(DeploymentHome);

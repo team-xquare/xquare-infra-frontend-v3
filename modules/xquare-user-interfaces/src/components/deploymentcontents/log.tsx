@@ -1,41 +1,61 @@
 import styled from "@emotion/styled";
 import Xquare_colors from "../../styles";
+import { getSelectedTeam } from "@xquare/utils";
 
 function LogContents() {
-  const serverlog = `025-10-10 15:17:10+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
-2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
-2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
-'/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
-2025-10-10T15:17:14.292976Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
-2025-10-10T15:17:14.296089Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.43) starting as process 1
-2025-10-10T15:17:14.339583Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
-2025-10-10T15:17:18.254530Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
-2025-10-10T15:17:18.896897Z 0 [System] [MY-010229] [Server] Starting XA crash recovery...
-2025-10-10T15:17:18.913815Z 0 [System] [MY-010232] [Server] XA crash recovery finished.
-2025-10-10T15:17:19.091948Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
-2025-10-10T15:17:19.091987Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
-2025-10-10T15:17:19.273334Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
-2025-10-10T15:17:19.376056Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
-2025-10-10T15:17:19.376123Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.43'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.`;
+  const serverlog = `
+$ turbo run dev "--filter=@xquare/user-application"
 
-  const buildlog = `2025-10-10 15:17:10+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
-2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
-2025-10-10 15:17:13+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.43-1.el9 started.
-'/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
-2025-10-10T15:17:14.292976Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
-2025-10-10T15:17:14.296089Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.43) starting as process 1
-2025-10-10T15:17:14.339583Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
-2025-10-10T15:17:18.254530Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
-2025-10-10T15:17:18.896897Z 0 [System] [MY-010229] [Server] Starting XA crash recovery...
-2025-10-10T15:17:18.913815Z 0 [System] [MY-010232] [Server] XA crash recovery finished.
-2025-10-10T15:17:19.091948Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
-2025-10-10T15:17:19.091987Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
-2025-10-10T15:17:19.273334Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
-2025-10-10T15:17:19.376056Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
-2025-10-10T15:17:19.376123Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.43'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.`;
+• Packages in scope: @xquare/user-application
+• Running dev in 1 packages
+• Remote caching disabled
+
+@xquare/user-application:dev:  cache bypass, force executing c64837b090f3051c
+@xquare/user-application:dev:  $ vite
+@xquare/user-application:dev: 
+@xquare/user-application:dev:  VITE v7.2.6  ready in 387 ms
+@xquare/user-application:dev:
+@xquare/user-application:dev:  ➜  Local:   http://localhost:5173/
+@xquare/user-application:dev:  ➜  Network: use --host to expose
+`;
+  const buildlog = ``;
+
+  const team = getSelectedTeam()?.name ?? "";
 
   return (
     <Container>
+      <Unknown>
+        <h1
+          style={{
+            fontSize: "28px",
+            fontWeight: 800,
+            marginBottom: "18px",
+            color: String(Xquare_colors.purple[400]),
+          }}
+        >
+          서비스 준비중입니다
+        </h1>
+
+        <p
+          style={{
+            fontSize: "27px",
+            color: String(Xquare_colors.black),
+            fontWeight: 700,
+            maxWidth: "520px",
+            lineHeight: "1.4",
+            whiteSpace: "pre-line",
+          }}
+        >
+          <a
+            href={`https://${team}-observability-dashboard.dsmhs.kr/`}
+            target="_blank"
+            style={{ color: "black", textDecoration: "none" }}
+          >
+            Grafana 대시보드 바로가기
+          </a>
+        </p>
+      </Unknown>
+
       <div style={{ position: "relative", width: "100%" }}>
         <LogBox hasBuild={!!buildlog}>{serverlog}</LogBox>
         <LogType>application</LogType>
@@ -53,12 +73,31 @@ function LogContents() {
 const Container = styled.div`
   width: 100%;
   height: 100%;
+  position: relative;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 3px;
+`;
+
+const Unknown = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  z-index: 999;
+
+  font-size: 18px;
+  opacity: 0.92;
+  background-color: ${Xquare_colors.white};
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const LogBox = styled.pre<{ hasBuild: boolean }>`

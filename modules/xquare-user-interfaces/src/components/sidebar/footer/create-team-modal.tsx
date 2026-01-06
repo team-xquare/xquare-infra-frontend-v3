@@ -116,6 +116,7 @@ const ModalBackground = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  cursor: default;
 `;
 
 const ModalContent = styled.div`
@@ -128,6 +129,7 @@ const ModalContent = styled.div`
   gap: 24px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   animation: fadeIn 0.22s ease-out;
+  cursor: default;
 
   @keyframes fadeIn {
     from {
@@ -147,24 +149,28 @@ const Title = styled.h3`
   font-size: 20px;
   font-weight: 600;
   color: ${Xquare_colors.purple[400]};
+  cursor: default;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  cursor: default;
 `;
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  cursor: default;
 `;
 
 const Label = styled.label`
   font-size: 14px;
   font-weight: 600;
   color: ${Xquare_colors.gray[700]};
+  cursor: default;
 `;
 
 const Input = styled.input`
@@ -216,11 +222,13 @@ const ErrorText = styled.p`
   color: ${Xquare_colors.red[500]};
   font-size: 14px;
   margin: 0;
+  cursor: default;
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
+  cursor: default;
 `;
 
 const Button = styled.button`

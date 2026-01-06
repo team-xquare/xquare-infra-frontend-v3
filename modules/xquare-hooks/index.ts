@@ -14,3 +14,4 @@ export {
   useDeploymentSummary,
   useMultipleDeploymentSummaries,
 } from "./src/useDeploymentSummary";
+export { useEnvironmentVariables } from "./src/useEnvironmentVariables";

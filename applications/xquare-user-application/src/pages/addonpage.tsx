@@ -8,6 +8,8 @@ import {
   Xquare_colors,
   Button_round,
   AddonItem,
+  ErrorMessage,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
 
 function AddonPage() {
@@ -50,6 +52,7 @@ function AddonPage() {
   };
   return (
     <Container>
+      <LoadingOverlay isLoading={loading && !!teamId} />
       <ContentsArea>
         <Title
           title={`Addons`}
@@ -64,10 +67,7 @@ function AddonPage() {
           팀을 선택해주세요. (사이드바 하단에서 팀 선택)
         </div>
       )}
-      {loading && <div>불러오는 중...</div>}
-      {error && (
-        <div style={{ color: "red" }}>애드온 조회 실패: {error.message}</div>
-      )}
+      {error && <ErrorMessage message={`애드온 조회 실패: ${error.message}`} />}
       <Addons>
         {(addons ?? []).map((addon) => {
           type AddonWithMeta = typeof addon & {
@@ -122,6 +122,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -133,6 +134,7 @@ const ContentsArea = styled.div`
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
   width: 100%;
   margin-bottom: 20px;
+  cursor: default;
 `;
 
 const Addons = styled.div`
@@ -142,6 +144,7 @@ const Addons = styled.div`
   grid-auto-rows: auto;
   width: 100%;
   row-gap: 20px;
+  cursor: default;
 `;
 
 export default AddonPage;

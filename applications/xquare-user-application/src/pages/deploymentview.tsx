@@ -12,6 +12,8 @@ import {
   SecretContents,
   RoutesContents,
   LogContents,
+  ErrorMessage,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
 import {
   useAuthGuard,
@@ -67,12 +69,19 @@ const DeploymentView = () => {
       if (success) {
         console.log("[DeploymentView] configuration saved");
         setEditable(false);
+      } else if (updateError) {
+        console.error("[DeploymentView] update error", updateError);
       }
     }
-  }, [applicationId, appDetail, updateConfig]);
+  }, [applicationId, appDetail, updateConfig, updateError]);
 
   const tabContents = [
-    <SummaryContents key="summary" appDetail={appDetail || undefined} />,
+    <SummaryContents
+      key="summary"
+      appDetail={appDetail || undefined}
+      loading={appLoading}
+      error={appError}
+    />,
     <DeploymentContents
       key={`deployment-${editable ? "edit" : "readonly"}`}
       applicationId={applicationId}
@@ -118,21 +127,7 @@ const DeploymentView = () => {
     }
   }, [editable]);
 
-  if (appLoading) {
-    return (
-      <Container>
-        <ContentsArea>
-          <Title
-            title="로딩 중..."
-            subTitle="애플리케이션 정보를 불러오고 있습니다."
-          />
-        </ContentsArea>
-      </Container>
-    );
-  }
-
   if (appError) {
-    console.error("[DeploymentView] error", appError);
     return (
       <Container>
         <ContentsArea>
@@ -145,10 +140,20 @@ const DeploymentView = () => {
     );
   }
 
+  if (updateError) {
+    console.error("[DeploymentView] update error", updateError);
+  }
+
   return (
     <Container>
+      <LoadingOverlay isLoading={appLoading} />
       <ContentsArea>
         <Title title={`${servicename}`} subTitle={`${servicedesc}`}></Title>
+        {updateError && (
+          <ErrorMessage
+            message={updateError.message || "설정 업데이트에 실패했습니다"}
+          />
+        )}
       </ContentsArea>
       <ButtonArea>
         <NavBar>
@@ -180,6 +185,7 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -191,6 +197,7 @@ const ContentsArea = styled.div`
   width: 100%;
   margin-bottom: 15px;
   gap: 15px;
+  cursor: default;
 `;
 
 const ButtonArea = styled.div`

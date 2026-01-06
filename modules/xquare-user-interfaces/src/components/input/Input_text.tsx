@@ -26,6 +26,7 @@ const Wraper = styled.div`
   gap: 0.4rem;
 
   margin-top: 0.5rem;
+  cursor: default;
 `;
 
 const StyledInput = styled.input<InputProps>`
@@ -35,6 +36,7 @@ const StyledInput = styled.input<InputProps>`
   border: none;
   border-bottom: 1.2px solid ${Xquare_colors.gray[500]};
   background-color: ${Xquare_colors.white};
+  cursor: text;
 
   color: ${Xquare_colors.black};
   font-family: "Pretendard";
@@ -58,6 +60,7 @@ const StyledInput = styled.input<InputProps>`
 
   &:disabled {
     border-bottom: 1.2px solid ${Xquare_colors.gray[300]};
+    cursor: not-allowed;
 
     &::placeholder {
       color: ${Xquare_colors.gray[300]};
@@ -70,12 +73,14 @@ const Box = styled.div`
   justify-content: flex-start;
   align-items: center;
   height: 1rem;
+  cursor: default;
 `;
 
 const Title = styled.span<TitleProps>`
   font-size: 0.9rem;
   font-weight: 500;
   color: ${({ titleColor }) => titleColor || Xquare_colors.red[500]};
+  cursor: default;
 `;
 
 // 컴포넌트

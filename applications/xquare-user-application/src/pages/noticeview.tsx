@@ -1,5 +1,10 @@
 import styled from "@emotion/styled";
-import { Typography, Xquare_colors } from "@xquare/user-interfaces";
+import {
+  Typography,
+  Xquare_colors,
+  ErrorMessage,
+  LoadingOverlay,
+} from "@xquare/user-interfaces";
 import { useAuthGuard, useNoticeDetail } from "@xquare/hooks";
 import { useParams } from "react-router-dom";
 
@@ -19,6 +24,7 @@ const NoticeView = () => {
 
   return (
     <Container>
+      <LoadingOverlay isLoading={loading} />
       <ContentsArea>
         <Typography size="8x" weight="semiBold">
           {loading ? "loading..." : title}
@@ -31,9 +37,9 @@ const NoticeView = () => {
       </ContentsArea>
 
       {error ? (
-        <ErrorText>공지 상세 조회 실패: {error.message}</ErrorText>
+        <ErrorMessage message={`공지 상세 조회 실패: ${error.message}`} />
       ) : (
-        <Content>{loading ? "" : content}</Content>
+        <Content>{content}</Content>
       )}
 
       <FileArea>
@@ -51,6 +57,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100%;
   padding: 20px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -103,15 +110,5 @@ const NoFileText = styled.div`
 //     opacity: 0.7;
 //   }
 // `;
-
-const ErrorText = styled.div`
-  font-size: 15px;
-  font-weight: 600;
-  color: ${Xquare_colors.red[500]};
-  font-family: "Pretendard";
-  width: 100%;
-  text-align: center;
-  height: 480px;
-`;
 
 export default NoticeView;

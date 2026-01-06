@@ -11,6 +11,7 @@ import {
   Typography,
   Button_square,
   Xquare_colors,
+  ErrorMessage,
 } from "@xquare/user-interfaces";
 
 const SignupPage: React.FC = () => {
@@ -18,6 +19,7 @@ const SignupPage: React.FC = () => {
 
   // 현재 단계 상태
   const [step, setStep] = useState(1);
+  const [tokenError, setTokenError] = useState<string | null>(null);
 
   // 상태
   const [studentId, setStudentId] = useState("");
@@ -53,12 +55,17 @@ const SignupPage: React.FC = () => {
         setTokens(res.data.accessToken, res.data.refreshToken);
         // 토큰 자동 재발급 시작
         startTokenAutoReissue();
+        setTokenError(null);
         navigate("/");
-      }else {
-        console.error("[Auth-register] 토큰 가져오기 실패", error);
+      } else {
+        const tokenErrorMsg = "토큰 가져오기 실패: 응답에 토큰이 없습니다.";
+        console.error("[Auth-register]", tokenErrorMsg, error);
+        setTokenError(tokenErrorMsg);
       }
     } else {
-      console.error("[Auth-register] Sign up failed", error);
+      const registerErrorMsg = error || "회원가입 실패: 다시 시도해주세요.";
+      console.error("[Auth-register] Sign up failed", registerErrorMsg);
+      setTokenError(registerErrorMsg);
     }
   };
 
@@ -93,6 +100,7 @@ const SignupPage: React.FC = () => {
           <Typography size="10x" weight="extraBold" align="center">
             XQUARE SIGNUP
           </Typography>
+          {tokenError && <ErrorMessage message={tokenError} />}
 
           <Inputs className={isFading ? "fade-out" : "fade-in"}>
             {step === 1 && (
@@ -247,6 +255,7 @@ const Container = styled.div`
   min-height: 100vh;
   width: 100vw;
   background-color: ${Xquare_colors.white};
+  cursor: default;
 
   @media (max-width: 600px) {
     flex-direction: column;
@@ -260,6 +269,7 @@ const Left = styled.div`
   box-shadow: inset -4px 0 10px rgba(0, 0, 0, 0.35);
   align-items: center;
   justify-content: center;
+  cursor: default;
 
   @media (max-width: 600px) {
     width: 100%;

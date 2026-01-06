@@ -19,6 +19,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 export default FeedPage;

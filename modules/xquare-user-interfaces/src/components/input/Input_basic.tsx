@@ -28,6 +28,7 @@ const StyledInput = styled.input<{
   height: ${({ height }) => height || "50px"};
 
   border: none;
+  cursor: text;
 
   color: ${({ color }) => color || Xquare_colors.black};
   font-family: "Pretendard";
@@ -51,6 +52,7 @@ const StyledInput = styled.input<{
 
   &:disabled {
     background-color: ${Xquare_colors.white};
+    cursor: not-allowed;
   }
 `;
 

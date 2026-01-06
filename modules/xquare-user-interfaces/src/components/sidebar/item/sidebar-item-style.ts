@@ -21,6 +21,7 @@ export const SideBarMenuItem = styled.div<SideBarMenuItemProps>`
   display: flex;
   padding: ${ITEM_PADDING};
   width: 100%;
+  cursor: pointer;
 `;
 
 export const SideBarMenuItemWrapper = styled.div`
@@ -37,6 +38,7 @@ export const SideBarMenuItemLabel = styled.span<SideBarMenuItemLabelProps>`
   margin-right: ${LABEL_MARGIN_RIGHT};
   transition: color ${TRANSITION_DURATION} linear;
   width: 100%;
+  cursor: pointer;
 
   &:hover {
     color: ${Xquare_colors.white};

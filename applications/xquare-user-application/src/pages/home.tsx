@@ -16,6 +16,8 @@ import {
   Xquare_colors,
   Summary,
   Notice,
+  ErrorMessage,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
 import { getSelectedTeamId } from "@xquare/utils";
 
@@ -43,8 +45,11 @@ const HomePage = () => {
     return applications.map((app) => app.id);
   }, [applications]);
 
-  const { data: deploymentData, loading: deploymentLoading } =
-    useMultipleDeploymentSummaries(applicationIds);
+  const {
+    data: deploymentData,
+    loading: deploymentLoading,
+    error: deploymentError,
+  } = useMultipleDeploymentSummaries(applicationIds);
 
   console.log("[HomePage] deployment data state:", {
     selectedTeamId,
@@ -57,7 +62,6 @@ const HomePage = () => {
     const fetchUser = async () => {
       // TODO: 실제 API 호출 로직 구현
       const userData = {
-        username: "testuser",
         deployCount: 42,
         traffic: 1280,
       };
@@ -125,12 +129,17 @@ const HomePage = () => {
       <Helmet>
         <title>XQUARE | Home</title>
       </Helmet>
+      <LoadingOverlay isLoading={deploymentLoading && !!applicationIds} />
       <ContentsArea>
         <Title
           title={`Welcome, Back ${userName ?? (loading ? "Loading..." : "")}`}
           subTitle={"Deploy your service via xquare infra"}
         ></Title>
       </ContentsArea>
+
+      {deploymentError && applicationIds && (
+        <ErrorMessage message={deploymentError.message} />
+      )}
 
       <NoticeContent>
         <Menu>
@@ -152,7 +161,9 @@ const HomePage = () => {
           ))}
         </Menu>
 
-        <Contents>{tabContents[activeTab]}</Contents>
+        <RightSection>
+          <Contents>{tabContents[activeTab]}</Contents>
+        </RightSection>
       </NoticeContent>
 
       <HeroSection>
@@ -219,6 +230,7 @@ const Container = styled.div`
   height: 100vh;
   width: 100%;
   padding: 10px 40px;
+  cursor: default;
 `;
 
 const ContentsArea = styled.div`
@@ -226,6 +238,7 @@ const ContentsArea = styled.div`
   border-bottom: 2px solid ${Xquare_colors.gray[300]};
   width: 100%;
   margin-bottom: 15px;
+  cursor: default;
 `;
 
 const NoticeContent = styled.div`
@@ -244,6 +257,16 @@ const Menu = styled.div`
   width: 15%;
   height: 150px;
   border-right: 1px solid ${Xquare_colors.black};
+`;
+
+const RightSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+  height: 150px;
+  padding-left: 20px;
+  margin-top: 20px;
+  gap: 10px;
 `;
 
 const Tab = styled.div<{ active?: boolean }>`
@@ -276,10 +299,7 @@ const ClickableText = styled(Typography)`
 const Contents = styled.div`
   display: flex;
   flex-direction: column;
-  width: 85%;
-  height: 150px;
-  padding-left: 20px;
-  margin-top: 20px;
+  flex: 1;
 `;
 
 const Highlight = styled.span`

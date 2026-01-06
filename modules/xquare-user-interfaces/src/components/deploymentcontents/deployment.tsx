@@ -3,51 +3,24 @@ import styled from "@emotion/styled";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
 import { Input_basic, Input_record } from "../input";
+import { ErrorMessage } from "../errormessage";
 import type {
   ApplicationGitHubDetail,
   ApplicationBuildDetail,
   ApplicationConfigurationDetail,
   UpdateApplicationConfigurationRequest,
 } from "@xquare/utils";
-import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
-
-// 빌드 타입별 필수 필드 정의 (createapplication.tsx와 동일)
-type BuildField =
-  | "VERSION"
-  | "BUILD_COMMAND"
-  | "START_COMMAND"
-  | "INPUT_PATH"
-  | "OUTPUT_PATH"
-  | "WORKING_DIRECTORY";
-
-const REQUIRED_FIELDS: Record<string, BuildField[]> = {
-  gradle: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  node_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  react: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  vite: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  vue: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  next_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  go: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  rust: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  maven: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
-  django: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  flask: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
-  docker: ["INPUT_PATH", "WORKING_DIRECTORY"],
-};
-
-const needsField = (type: string, field: BuildField) => {
-  const t = (type ?? "").trim();
-  const set = REQUIRED_FIELDS[t];
-  return Array.isArray(set) ? set.includes(field) : false;
-};
-
-const needsVersion = (type: string) => needsField(type, "VERSION");
-const needsBuildCommand = (type: string) => needsField(type, "BUILD_COMMAND");
-const needsStartCommand = (type: string) => needsField(type, "START_COMMAND");
-const needsInputPath = (type: string) => needsField(type, "INPUT_PATH");
-const needsOutputPath = (type: string) => needsField(type, "OUTPUT_PATH");
-const needsWorkingDirectory = (type: string) =>
-  needsField(type, "WORKING_DIRECTORY");
+import {
+  getRepoInfo,
+  listBranches,
+  getLatestCommitSha,
+  needsVersion,
+  needsBuildCommand,
+  needsStartCommand,
+  needsInputPath,
+  needsOutputPath,
+  needsWorkingDirectory,
+} from "@xquare/utils";
 
 interface DeploymentContentsProps {
   applicationId?: number;
@@ -341,7 +314,6 @@ function DeploymentContents({
       const errorMessage =
         err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
       setBuildError(`저장에 실패했습니다: ${errorMessage}`);
-      // onSave는 호출하지 않음 - 에러가 발생했으므로 저장되지 않음
     }
   };
 
@@ -459,12 +431,12 @@ function DeploymentContents({
           />
         </InputArea>
 
-        <StatusRow>
-          {githubError && <StatusText color="red">{githubError}</StatusText>}
-          {githubMessage && !githubError && (
+        {githubError && <ErrorMessage message={githubError} />}
+        {githubMessage && !githubError && (
+          <StatusRow>
             <StatusText>{githubMessage}</StatusText>
-          )}
-        </StatusRow>
+          </StatusRow>
+        )}
 
         <TriggerPathsSection>
           <Typography size="5x" weight="semiBold" style={{ marginLeft: "0px" }}>
@@ -664,7 +636,7 @@ function DeploymentContents({
             <SaveBtn onClick={handleSaveBuild}>저장</SaveBtn>
           </SaveBox>
         )}
-        {buildError && <StatusText color="red">{buildError}</StatusText>}
+        {buildError && <ErrorMessage message={buildError} />}
       </ValueBox>
     </Container>
   );
@@ -760,6 +732,7 @@ const SelectBox = styled.select`
   font-size: 16px;
   color: ${Xquare_colors.gray[700]};
   padding: 0 8px;
+  cursor: pointer;
 
   &:focus {
     outline: none;
