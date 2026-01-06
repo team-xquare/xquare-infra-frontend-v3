@@ -20,7 +20,7 @@ $ turbo run dev "--filter=@xquare/user-application"
 `;
   const buildlog = ``;
 
-  const team = getSelectedTeam()?.name ?? "";
+  const team = getSelectedTeam()?.name;
 
   return (
     <Container>
@@ -46,13 +46,18 @@ $ turbo run dev "--filter=@xquare/user-application"
             whiteSpace: "pre-line",
           }}
         >
-          <a
-            href={`https://${team}-observability-dashboard.dsmhs.kr/`}
-            target="_blank"
-            style={{ color: "black", textDecoration: "none" }}
-          >
-            Grafana 대시보드 바로가기
-          </a>
+          {team ? (
+            <a
+              href={`https://${team}-observability-dashboard.dsmhs.kr/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "black", textDecoration: "none" }}
+            >
+              Grafana 대시보드 바로가기
+            </a>
+          ) : (
+            <span>팀을 선택한 후 Grafana 대시보드를 확인할 수 있습니다</span>
+          )}
         </p>
       </Unknown>
 
@@ -88,11 +93,10 @@ const Unknown = styled.div`
   height: 100%;
   padding: 20px;
   text-align: center;
-  z-index: 999;
+  z-index: 100;
 
   font-size: 18px;
-  opacity: 0.92;
-  background-color: ${Xquare_colors.white};
+  background-color: rgba(255, 255, 255, 0.92);
 
   display: flex;
   flex-direction: column;

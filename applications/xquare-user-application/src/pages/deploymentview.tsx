@@ -69,11 +69,9 @@ const DeploymentView = () => {
       if (success) {
         console.log("[DeploymentView] configuration saved");
         setEditable(false);
-      } else if (updateError) {
-        console.error("[DeploymentView] update error", updateError);
       }
     }
-  }, [applicationId, appDetail, updateConfig, updateError]);
+  }, [applicationId, appDetail, updateConfig]);
 
   const tabContents = [
     <SummaryContents

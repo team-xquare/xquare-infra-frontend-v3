@@ -111,7 +111,7 @@ export {
   needsInputPath,
   needsOutputPath,
   needsWorkingDirectory,
-} from "./src/build/fields";
+} from "./src/buildinput/fields";
 
 export {
   getEnvironmentVariables,

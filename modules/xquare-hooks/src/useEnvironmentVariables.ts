@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import {
   getEnvironmentVariables,
   type EnvironmentVariable,
+  addOrUpdateEnvironmentVariable,
+  deleteEnvironmentVariable,
 } from "@xquare/utils";
-import { addOrUpdateEnvironmentVariable } from "@xquare/utils";
-import { deleteEnvironmentVariable } from "@xquare/utils";
 
 interface UseEnvironmentVariablesResult {
   variables: EnvironmentVariable[];
@@ -19,8 +19,9 @@ export const useEnvironmentVariables = (
   applicationId?: number
 ): UseEnvironmentVariablesResult => {
   const [variables, setVariables] = useState<EnvironmentVariable[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingCount, setLoadingCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const loading = loadingCount > 0;
 
   const fetchVariables = useCallback(async () => {
     if (!applicationId) {
@@ -29,7 +30,7 @@ export const useEnvironmentVariables = (
       return;
     }
 
-    setLoading(true);
+    setLoadingCount((prev) => prev + 1);
     setError(null);
 
     try {
@@ -46,7 +47,7 @@ export const useEnvironmentVariables = (
       setError(message);
       setVariables([]);
     } finally {
-      setLoading(false);
+      setLoadingCount((prev) => Math.max(0, prev - 1));
     }
   }, [applicationId]);
 
@@ -62,7 +63,7 @@ export const useEnvironmentVariables = (
         return false;
       }
 
-      setLoading(true);
+      setLoadingCount((prev) => prev + 1);
       setError(null);
 
       try {
@@ -77,7 +78,7 @@ export const useEnvironmentVariables = (
         setError(message);
         return false;
       } finally {
-        setLoading(false);
+        setLoadingCount((prev) => Math.max(0, prev - 1));
       }
     },
     [applicationId, fetchVariables]
@@ -91,7 +92,7 @@ export const useEnvironmentVariables = (
         return false;
       }
 
-      setLoading(true);
+      setLoadingCount((prev) => prev + 1);
       setError(null);
 
       try {
@@ -106,7 +107,7 @@ export const useEnvironmentVariables = (
         setError(message);
         return false;
       } finally {
-        setLoading(false);
+        setLoadingCount((prev) => Math.max(0, prev - 1));
       }
     },
     [applicationId, fetchVariables]

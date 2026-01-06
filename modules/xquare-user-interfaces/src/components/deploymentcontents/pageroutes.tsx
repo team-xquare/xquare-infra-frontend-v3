@@ -61,6 +61,7 @@ export default function RoutesContents({
   }, [endpoints]);
 
   const handleKeyChange = (index: number, v: string) => {
+    setSaveError(null);
     setRoutes((prev) =>
       prev.map((s, i) => (i === index ? { ...s, url: v } : s))
     );
@@ -68,6 +69,7 @@ export default function RoutesContents({
   };
 
   const handleValueChange = (index: number, v: string) => {
+    setSaveError(null);
     setRoutes((prev) =>
       prev.map((s, i) => (i === index ? { ...s, port: Number(v) } : s))
     );
@@ -75,11 +77,13 @@ export default function RoutesContents({
   };
 
   const removeRoute = (index: number) => {
+    setSaveError(null);
     setRoutes((prev) => prev.filter((_, i) => i !== index));
     setIsDirty(true);
   };
 
   const addRoute = () => {
+    setSaveError(null);
     setRoutes((prev) => [...prev, { url: "", port: 0 }]);
     setIsDirty(true);
   };

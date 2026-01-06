@@ -157,6 +157,7 @@ function SummaryContents({ appDetail, loading, error }: SummaryContentsProps) {
                 <a
                   href={`https://${team}-observability-dashboard.dsmhs.kr/`}
                   target="_blank"
+                  rel="noopener noreferrer"
                   style={{ color: "black", textDecoration: "none" }}
                 >
                   Grafana 대시보드 바로가기

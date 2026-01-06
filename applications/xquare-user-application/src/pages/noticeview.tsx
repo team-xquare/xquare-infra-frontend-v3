@@ -38,9 +38,9 @@ const NoticeView = () => {
 
       {error ? (
         <ErrorMessage message={`공지 상세 조회 실패: ${error.message}`} />
-      ) : (
+      ) : !loading && content ? (
         <Content>{content}</Content>
-      )}
+      ) : null}
 
       <FileArea>
         <NoFileText>첨부된 파일이 없습니다.</NoFileText>

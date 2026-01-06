@@ -10,15 +10,15 @@ function Spinner({ size = "medium" }: SpinnerProps) {
 }
 
 const sizeMap = {
-  small: "24px",
-  medium: "48px",
-  large: "64px",
+  small: "25px",
+  medium: "50px",
+  large: "65px",
 };
 
 const StyledSpinner = styled.div<{ size?: "small" | "medium" | "large" }>`
   width: ${({ size }) => sizeMap[size || "medium"]};
   height: ${({ size }) => sizeMap[size || "medium"]};
-  border: 4px solid ${Xquare_colors.gray[200]};
+  border: 4px solid ${Xquare_colors.gray[300]};
   border-top-color: ${Xquare_colors.purple[500]};
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
