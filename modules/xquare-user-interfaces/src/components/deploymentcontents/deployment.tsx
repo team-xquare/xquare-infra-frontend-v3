@@ -7,6 +7,7 @@ import type {
   ApplicationGitHubDetail,
   ApplicationBuildDetail,
   ApplicationConfigurationDetail,
+  UpdateApplicationConfigurationRequest,
 } from "@xquare/utils";
 import { getRepoInfo, listBranches, getLatestCommitSha } from "@xquare/utils";
 
@@ -55,7 +56,10 @@ interface DeploymentContentsProps {
   github?: ApplicationGitHubDetail;
   build?: ApplicationBuildDetail;
   configuration?: ApplicationConfigurationDetail;
-  onUpdate: (applicationId: number, request: any) => Promise<boolean>;
+  onUpdate: (
+    applicationId: number,
+    request: UpdateApplicationConfigurationRequest
+  ) => Promise<boolean>;
 }
 
 function DeploymentContents({
@@ -755,13 +759,6 @@ const TriggerPathInputArea = styled.div`
   gap: 10px;
   width: 100%;
   padding: 3px 5px;
-`;
-
-const TriggerPathRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
 `;
 
 const DeleteBtn = styled.button`
