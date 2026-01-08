@@ -74,7 +74,7 @@ export const createAddon = async (
   }
 
   try {
-    const response = await fetchWithTimeout(`${API_BASE_URL}/api/v1/addons`, {
+    const response = await fetchWithTimeout(`${API_BASE_URL}/addons`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
