@@ -1,8 +1,12 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useCreateAddon } from "@xquare/hooks";
-import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
+import {
+  getSelectedTeamId,
+  getSelectedTeam,
+  SELECTED_TEAM_EVENT,
+} from "@xquare/utils";
 import {
   Title,
   Xquare_colors,
@@ -15,9 +19,37 @@ import {
 const CreateAddon = () => {
   useAuthGuard();
   const navigate = useNavigate();
-  const selectedTeamId = getSelectedTeamId();
-  const selectedTeam = getSelectedTeam();
-  const [teamName] = useState<string>(selectedTeam?.name ?? "");
+  const [teamId, setTeamId] = useState<number | undefined>(
+    getSelectedTeamId() ?? undefined
+  );
+  const [teamName, setTeamName] = useState<string>(
+    getSelectedTeam()?.name ?? ""
+  );
+
+  useEffect(() => {
+    const syncTeam = () => {
+      setTeamId(getSelectedTeamId() ?? undefined);
+      setTeamName(getSelectedTeam()?.name ?? "");
+    };
+
+    const handleSelectedTeamChanged: EventListener = () => syncTeam();
+    window.addEventListener(SELECTED_TEAM_EVENT, handleSelectedTeamChanged);
+
+    return () => {
+      window.removeEventListener(
+        SELECTED_TEAM_EVENT,
+        handleSelectedTeamChanged
+      );
+    };
+  }, []);
+
+  const parseTeamId = (): number | null => {
+    if (!teamId) return null;
+    const parsed = typeof teamId === "string" ? parseInt(teamId, 10) : teamId;
+    return Number.isNaN(parsed) ? null : parsed;
+  };
+
+  const selectedTeamId = parseTeamId();
 
   const { create, loading, error } = useCreateAddon({
     onSuccess: () => {
@@ -39,7 +71,14 @@ const CreateAddon = () => {
     storageGi.trim() !== "";
 
   const handleCreateAddon = async () => {
-    if (!isValid || selectedTeamId === null) return;
+    if (
+      !isValid ||
+      selectedTeamId === null ||
+      typeof selectedTeamId !== "number"
+    ) {
+      console.error("[CreateAddon] invalid teamId", { selectedTeamId });
+      return;
+    }
 
     try {
       await create({
