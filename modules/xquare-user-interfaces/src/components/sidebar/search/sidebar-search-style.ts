@@ -43,6 +43,10 @@ export const SideBarSearchInput = styled.input`
   width: 100%;
   cursor: text;
 
+  &:disabled {
+    cursor: not-allowed;
+  }
+
   &::placeholder {
     color: ${Xquare_colors.white};
     opacity: ${PLACEHOLDER_OPACITY};

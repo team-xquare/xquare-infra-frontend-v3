@@ -1,31 +1,65 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthGuard } from "@xquare/hooks";
+import { useAuthGuard, useCreateAddon } from "@xquare/hooks";
+import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
 import {
   Title,
   Xquare_colors,
   Typography,
   Input_basic,
   Button_square,
+  ErrorMessage,
 } from "@xquare/user-interfaces";
 
 const CreateAddon = () => {
   useAuthGuard();
   const navigate = useNavigate();
+  const selectedTeamId = getSelectedTeamId();
+  const selectedTeam = getSelectedTeam();
+  const [teamName] = useState<string>(selectedTeam?.name ?? "");
 
-  const [teamId, setTeamId] = useState("");
+  const { create, loading, error } = useCreateAddon({
+    onSuccess: () => {
+      navigate("/");
+    },
+    onError: (err) => {
+      console.error("Addon 생성 실패:", err);
+    },
+  });
+
   const [name, setName] = useState("");
   const [type, setType] = useState("mysql");
-  const [tier, setTier] = useState("nano");
   const [storageGi, setStorageGi] = useState("");
 
   const isValid =
-    teamId.trim() !== "" &&
+    selectedTeamId !== null &&
     name.trim() !== "" &&
     type.trim() !== "" &&
-    tier.trim() !== "" &&
     storageGi.trim() !== "";
+
+  const handleCreateAddon = async () => {
+    if (!isValid || selectedTeamId === null) return;
+
+    try {
+      await create({
+        teamId: selectedTeamId,
+        name,
+        type: type as
+          | "mysql"
+          | "postgres"
+          | "redis"
+          | "mongodb"
+          | "kafka"
+          | "rabbitmq"
+          | "elk"
+          | "debezium",
+        storageGi: Number(storageGi),
+      });
+    } catch (err) {
+      console.error("Addon 생성 중 오류:", err);
+    }
+  };
 
   return (
     <Container>
@@ -42,14 +76,15 @@ const CreateAddon = () => {
 
           <InputArea>
             <Typography size="5x" weight="semiBold">
-              Team ID
+              Team
             </Typography>
             <Input_basic
-              value={teamId}
-              onChange={(e) => setTeamId(e.target.value)}
-              placeholder="팀 ID를 입력하세요"
+              value={teamName}
+              onChange={() => {}}
+              placeholder="현재 선택된 팀"
               width="950px"
               height="35px"
+              disabled
             />
           </InputArea>
 
@@ -73,21 +108,13 @@ const CreateAddon = () => {
 
             <SelectBox value={type} onChange={(e) => setType(e.target.value)}>
               <option value="mysql">mysql</option>
-              <option value="redis">redis</option>
               <option value="postgres">postgres</option>
-            </SelectBox>
-          </InputArea>
-
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Tier
-            </Typography>
-
-            <SelectBox value={tier} onChange={(e) => setTier(e.target.value)}>
-              <option value="nano">nano</option>
-              <option value="micro">micro</option>
-              <option value="small">small</option>
-              <option value="medium">medium</option>
+              <option value="redis">redis</option>
+              <option value="mongodb">mongodb</option>
+              <option value="kafka">kafka</option>
+              <option value="rabbitmq">rabbitmq</option>
+              <option value="elk">elk</option>
+              <option value="debezium">debezium</option>
             </SelectBox>
           </InputArea>
 
@@ -118,14 +145,17 @@ const CreateAddon = () => {
           </Button_square>
 
           <Button_square
-            type="submit"
+            type="button"
             width="120px"
             height="50px"
-            disabled={!isValid}
+            disabled={!isValid || loading}
+            onClick={handleCreateAddon}
           >
-            생성
+            {loading ? "생성 중..." : "생성"}
           </Button_square>
         </ButtonGroup>
+
+        {error && <ErrorMessage message={error.message} />}
       </Contents>
     </Container>
   );
