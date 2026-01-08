@@ -46,6 +46,9 @@ export type { NoticeDetail } from "./src/notice/detail";
 export { getTeamAddons } from "./src/teams/addons";
 export type { TeamAddon } from "./src/teams/addons";
 
+export { createAddon } from "./src/addon/create";
+export type { CreateAddonRequest } from "./src/addon/create";
+
 export { getTeamApplications } from "./src/teams/applications";
 export type { TeamApplication } from "./src/teams/applications";
 

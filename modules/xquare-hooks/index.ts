@@ -8,6 +8,7 @@ export { useTeamApplications } from "./src/useTeamApplications";
 export { useTeams } from "./src/useTeams";
 export { useCreateTeam } from "./src/useCreateTeam";
 export { useCreateApplication } from "./src/useCreateApplication";
+export { useCreateAddon } from "./src/useCreateAddon";
 export { useApplicationDetail } from "./src/useApplicationDetail";
 export { useUpdateApplicationConfiguration } from "./src/useUpdateApplicationConfiguration";
 export {

@@ -22,7 +22,7 @@ function SidebarSearchComponent({
     (e: ChangeEvent<HTMLInputElement>) => {
       onSearch?.(e.target.value);
     },
-    [onSearch],
+    [onSearch]
   );
 
   return (
@@ -33,6 +33,7 @@ function SidebarSearchComponent({
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
+          disabled
         />
       </SideBarSearch>
     </SideBarDiv>
