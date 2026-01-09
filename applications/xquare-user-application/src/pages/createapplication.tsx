@@ -12,6 +12,7 @@ import {
   Button_square,
   Tooltip,
   ErrorMessage,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
 import {
   useAuthGuard,
@@ -540,13 +541,11 @@ const CreateApplication = () => {
             </div>
           </SectionHeader>
 
-          {githubToken && githubLoading && ownerTabs.length === 0 && (
-            <StatusRow>
-              <StatusText color={String(Xquare_colors.gray[400])}>
-                레포지토리 목록을 불러오는 중...
-              </StatusText>
-            </StatusRow>
-          )}
+          <LoadingOverlay
+            isLoading={
+              !!(githubToken && githubLoading && ownerTabs.length === 0)
+            }
+          />
 
           {githubToken && ownerTabs.length > 0 && (
             <InputAreaWithTabs>
