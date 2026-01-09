@@ -31,6 +31,19 @@ export interface RepositoriesByOrg {
   repositories: GithubRepository[];
 }
 
+export interface GithubInstallation {
+  id: number;
+  account: {
+    login: string;
+    id: number;
+    avatar_url: string;
+    type: string;
+  };
+  repository_selection: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export async function getCurrentUser(accessToken: string): Promise<GithubUser> {
   try {
     const res = await fetchWithTimeout("https://api.github.com/user", {
@@ -210,4 +223,88 @@ export async function listAllRepositoriesByOrg(
     }
     throw new Error("조직별 레포지토리 조회 중 오류가 발생했습니다.");
   }
+}
+
+export async function listUserInstallations(
+  accessToken: string
+): Promise<GithubInstallation[]> {
+  try {
+    const res = await fetchWithTimeout(
+      "https://api.github.com/user/installations",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("GitHub App 설치 목록을 불러오지 못했습니다.");
+    }
+
+    const data = await res.json();
+    return (data.installations || []) as GithubInstallation[];
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("GitHub App 설치 목록 조회 중 오류가 발생했습니다.");
+  }
+}
+
+export async function listInstallationRepositories(
+  accessToken: string,
+  installationId: number
+): Promise<GithubRepository[]> {
+  try {
+    const perPage = 100;
+    let page = 1;
+    const all: GithubRepository[] = [];
+
+    while (true) {
+      const url = `https://api.github.com/user/installations/${installationId}/repositories?per_page=${perPage}&page=${page}`;
+      const res = await fetchWithTimeout(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(
+          `설치 ID ${installationId}의 레포지토리를 불러오지 못했습니다.`
+        );
+      }
+
+      const data = await res.json();
+      const pageData = (data.repositories || []) as GithubRepository[];
+      all.push(...pageData);
+
+      if (pageData.length < perPage) break;
+      page += 1;
+    }
+
+    return all;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("설치된 앱의 레포지토리 조회 중 오류가 발생했습니다.");
+  }
+}
+
+export function getGithubAppInstallUrl(
+  appName: string,
+  redirectUri?: string
+): string {
+  const baseUrl = `https://github.com/apps/${appName}/installations/new`;
+  if (redirectUri) {
+    return `${baseUrl}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  }
+  return baseUrl;
 }

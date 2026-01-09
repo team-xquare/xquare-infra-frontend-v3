@@ -56,6 +56,9 @@ export {
   listUserOrganizations,
   listOrganizationRepositories,
   listAllRepositoriesByOrg,
+  listUserInstallations,
+  listInstallationRepositories,
+  getGithubAppInstallUrl,
 } from "./src/githubapp/repositories";
 export type {
   GithubTokenRequest,
@@ -67,6 +70,7 @@ export type {
   GithubOrganization,
   GithubUser,
   RepositoriesByOrg,
+  GithubInstallation,
 } from "./src/githubapp/repositories";
 
 export { getTeamApplications } from "./src/teams/applications";

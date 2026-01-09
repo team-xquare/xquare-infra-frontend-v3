@@ -25,12 +25,15 @@ import type {
   ApplicationBuild,
   GithubTokenData,
   GithubRepository,
+  GithubInstallation,
 } from "@xquare/utils";
 import {
   getRepoInfo,
   listBranches,
   getLatestCommitSha,
-  listUserRepositories,
+  listUserInstallations,
+  listInstallationRepositories,
+  getGithubAppInstallUrl,
   needsVersion,
   needsBuildCommand,
   needsStartCommand,
@@ -82,6 +85,9 @@ const CreateApplication = () => {
     { login: string; avatarUrl?: string }[]
   >([]);
   const [selectedOwner, setSelectedOwner] = useState("");
+  const [installations, setInstallations] = useState<GithubInstallation[]>([]);
+  const [, setSelectedInstallation] =
+    useState<GithubInstallation | null>(null);
   const [repoPage, setRepoPage] = useState(1);
   const REPOS_PER_PAGE = 12;
   const [branch, setBranch] = useState("");
@@ -393,42 +399,88 @@ const CreateApplication = () => {
             setGithubToken(response.data);
             setGithubMessage("GitHub 연동이 완료되었습니다.");
 
-            // GitHub 레포지토리 전체 로드 후 owner별 탭 구성
+            // GitHub App 설치 목록 로드
             try {
-              const repos = await listUserRepositories(
+              const installs = await listUserInstallations(
                 response.data.accessToken
               );
-              setAllRepositories(repos);
-
-              const ownerMap = new Map<string, string | undefined>();
-              repos.forEach((repo) => {
-                if (!ownerMap.has(repo.owner.login)) {
-                  ownerMap.set(repo.owner.login, repo.owner.avatar_url);
-                }
-              });
-
-              const owners = Array.from(ownerMap.entries()).map(
-                ([login, avatarUrl]) => ({ login, avatarUrl })
+              setInstallations(installs);
+              console.log(
+                "[CreateApplication] Installations loaded:",
+                installs.length
               );
-              setOwnerTabs(owners);
-              setSelectedOwner(owners[0]?.login ?? "");
 
-              setRepoName("");
-              setRepoOwner("");
-              setBranch("");
-              setCommitHash("");
-              setGithubMessage(null);
+              // 첫 번째 installation이 있으면 자동으로 레포지토리 로드
+              if (installs.length > 0) {
+                const firstInstall = installs[0];
+                setSelectedInstallation(firstInstall);
+                setInstallationId(String(firstInstall.id));
 
-              console.log("[CreateApplication] Owners loaded:", owners.length);
-            } catch (repoErr) {
+                try {
+                  // 모든 installations의 레포지토리 로드
+                  const allRepos: GithubRepository[] = [];
+
+                  for (const install of installs) {
+                    try {
+                      const repos = await listInstallationRepositories(
+                        response.data.accessToken,
+                        install.id
+                      );
+                      allRepos.push(...repos);
+                      console.log(
+                        `[CreateApplication] Loaded ${repos.length} repos from ${install.account.login}`
+                      );
+                    } catch (repoErr) {
+                      console.error(
+                        `[CreateApplication] Failed to load repos for installation ${install.id}`,
+                        repoErr
+                      );
+                    }
+                  }
+
+                  setAllRepositories(allRepos);
+
+                  // owner 탭 업데이트
+                  const ownerMap = new Map<string, string | undefined>();
+                  allRepos.forEach((repo) => {
+                    if (!ownerMap.has(repo.owner.login)) {
+                      ownerMap.set(repo.owner.login, repo.owner.avatar_url);
+                    }
+                  });
+
+                  const owners = Array.from(ownerMap.entries()).map(
+                    ([login, avatarUrl]) => ({ login, avatarUrl })
+                  );
+                  setOwnerTabs(owners);
+                  setSelectedOwner(owners[0]?.login ?? "");
+                  setGithubMessage(
+                    `${allRepos.length}개의 레포지토리를 불러왔습니다.`
+                  );
+                  console.log(
+                    "[CreateApplication] Total repositories loaded:",
+                    allRepos.length
+                  );
+                } catch (repoErr) {
+                  console.error(
+                    "[CreateApplication] Failed to load installation repos",
+                    repoErr
+                  );
+                  setGithubError(
+                    repoErr instanceof Error
+                      ? repoErr.message
+                      : "레포지토리 목록을 불러오지 못했습니다."
+                  );
+                }
+              }
+            } catch (installErr) {
               console.error(
-                "[CreateApplication] Failed to load owners",
-                repoErr
+                "[CreateApplication] Failed to load installations",
+                installErr
               );
               setGithubError(
-                repoErr instanceof Error
-                  ? repoErr.message
-                  : "레포지토리 목록을 불러오지 못했습니다."
+                installErr instanceof Error
+                  ? installErr.message
+                  : "설치 목록을 불러오지 못했습니다."
               );
             }
           } else {
@@ -499,45 +551,65 @@ const CreateApplication = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              marginBottom: "20px",
             }}
           >
             <Typography size="5x" weight="bold">
               Step1. Github Repository
             </Typography>
-            <div>
-              {githubToken ? (
-                <div
-                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              {githubToken && installations.length > 0 && (
+                <span
+                  style={{
+                    fontSize: "14px",
+                    color: String(Xquare_colors.gray[500]),
+                  }}
                 >
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      color: String(Xquare_colors.gray[400]),
-                    }}
-                  >
-                    연동됨
-                  </span>
-                  <Button_square
-                    type="button"
-                    width="120px"
-                    height="32px"
-                    onClick={handleGithubOAuth}
-                    disabled={tokenLoading}
-                  >
-                    재연동
-                  </Button_square>
-                </div>
-              ) : (
+                  {installations.length}개 앱 연결됨
+                </span>
+              )}
+              <Tooltip
+                content="GitHub App이 설치된 Organization의 Repository를 불러옵니다. 설치 후 다시 불러오기를 눌러주세요."
+                position="bottom"
+              >
                 <Button_square
                   type="button"
-                  width="150px"
-                  height="32px"
-                  onClick={handleGithubOAuth}
+                  width="100px"
+                  height="36px"
+                  onClick={() => {
+                    handleGithubOAuth();
+                  }}
                   disabled={tokenLoading}
                 >
-                  {tokenLoading ? "연동 중..." : "GitHub 연동하기"}
+                  불러오기
                 </Button_square>
-              )}
+              </Tooltip>
+              <Tooltip
+                content="앱이 설치된 organization에 한해 불러올 수 있습니다. organization이 안보이면, App을 설치해 주세요."
+                position="left"
+              >
+                <Button_square
+                  type="button"
+                  width="120px"
+                  height="36px"
+                  onClick={() => {
+                    const appSlug = import.meta.env.VITE_GITHUB_APP_SLUG;
+                  if (!appSlug) {
+                    setGithubError(
+                      "GitHub App 슬러그가 설정되지 않았습니다. 관리자에게 문의하세요."
+                    );
+                    return;
+                  }
+                  const installUrl = getGithubAppInstallUrl(
+                    appSlug,
+                    window.location.origin + "/deployment/createapplication"
+                  );
+                  window.open(installUrl, "_blank");
+                }}
+              >
+                + 앱 추가
+              </Button_square>
+              </Tooltip>
             </div>
           </SectionHeader>
 
