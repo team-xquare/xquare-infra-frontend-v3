@@ -81,6 +81,15 @@ export type { Team, TeamMember } from "./src/teams/list";
 export { createTeam } from "./src/teams/create";
 export type { CreateTeamRequest, CreateTeamMember } from "./src/teams/create";
 
+export { updateTeam } from "./src/teams/update";
+export type { UpdateTeamRequest } from "./src/teams/update";
+
+export { updateTeamMembers } from "./src/teams/members";
+export type {
+  UpdateTeamMembersRequest,
+  TeamMemberUpdate,
+} from "./src/teams/members";
+
 export {
   saveSelectedTeam,
   getSelectedTeam,

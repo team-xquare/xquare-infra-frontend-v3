@@ -7,6 +7,8 @@ export { useTeamAddons } from "./src/useTeamAddons";
 export { useTeamApplications } from "./src/useTeamApplications";
 export { useTeams } from "./src/useTeams";
 export { useCreateTeam } from "./src/useCreateTeam";
+export { useUpdateTeam } from "./src/useUpdateTeam";
+export { useUpdateTeamMembers } from "./src/useUpdateTeamMembers";
 export { useCreateApplication } from "./src/useCreateApplication";
 export { useCreateAddon } from "./src/useCreateAddon";
 export { useApplicationDetail } from "./src/useApplicationDetail";
