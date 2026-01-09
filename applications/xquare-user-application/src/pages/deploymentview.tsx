@@ -1,6 +1,7 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import styled from "@emotion/styled";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
   Title,
@@ -25,6 +26,10 @@ const DeploymentView = () => {
   useAuthGuard();
   const { id: appIdParam } = useParams<{ id: string }>();
   const applicationId = appIdParam ? parseInt(appIdParam, 10) : undefined;
+
+  useEffect(() => {
+    document.title = "XQUARE | Deployment Detail";
+  }, []);
 
   // 애플리케이션 상세 정보 조회
   const {
@@ -144,6 +149,9 @@ const DeploymentView = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Deployment Detail</title>
+      </Helmet>
       <LoadingOverlay isLoading={appLoading} />
       <ContentsArea>
         <Title title={`${servicename}`} subTitle={`${servicedesc}`}></Title>

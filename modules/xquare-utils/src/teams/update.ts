@@ -1,5 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
+import { validateTeamName } from "./create";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,6 +18,12 @@ export const updateTeam = async (
   teamId: number,
   request: UpdateTeamRequest
 ): Promise<void> => {
+  // 팀 이름 검증
+  const validation = validateTeamName(request.name);
+  if (!validation.valid) {
+    throw new Error(validation.error);
+  }
+
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");
   }

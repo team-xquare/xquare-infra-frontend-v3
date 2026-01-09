@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useCreateAddon } from "@xquare/hooks";
 import {
@@ -25,6 +26,10 @@ const CreateAddon = () => {
   const [teamName, setTeamName] = useState<string>(
     getSelectedTeam()?.name ?? ""
   );
+
+  useEffect(() => {
+    document.title = "XQUARE | Create Addon";
+  }, []);
 
   useEffect(() => {
     const syncTeam = () => {
@@ -102,6 +107,9 @@ const CreateAddon = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Create Addon</title>
+      </Helmet>
       <ContentsArea>
         <Title title="Addon 생성" subTitle="Create a new addon for XQUARE" />
       </ContentsArea>
@@ -110,7 +118,7 @@ const CreateAddon = () => {
         {/* Step0 */}
         <ValueBox>
           <Typography size="5x" weight="bold">
-            Step0. 기본 정보
+            Step0. Write Addon Information
           </Typography>
 
           <InputArea>
@@ -139,23 +147,80 @@ const CreateAddon = () => {
               height="35px"
             />
           </InputArea>
+        </ValueBox>
 
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              DB Type
-            </Typography>
+        {/* Step1 */}
+        <ValueBox>
+          <Typography size="5x" weight="bold">
+            Step1. Select Addon Type
+          </Typography>
 
-            <SelectBox value={type} onChange={(e) => setType(e.target.value)}>
-              <option value="mysql">mysql</option>
-              <option value="postgres">postgres</option>
-              <option value="redis">redis</option>
-              <option value="mongodb">mongodb</option>
-              <option value="kafka">kafka</option>
-              <option value="rabbitmq">rabbitmq</option>
-              <option value="elk">elk</option>
-              <option value="debezium">debezium</option>
-            </SelectBox>
-          </InputArea>
+          <TypeSelectionArea>
+            <TypeGrid>
+              {[
+                {
+                  value: "mysql",
+                  label: "MySQL",
+                  description: "Relational database management system",
+                },
+                {
+                  value: "postgres",
+                  label: "PostgreSQL",
+                  description: "Advanced open-source Database",
+                },
+                {
+                  value: "redis",
+                  label: "Redis",
+                  description: "In-memory data store for caching",
+                },
+                {
+                  value: "mongodb",
+                  label: "MongoDB",
+                  description: "NoSQL document Database",
+                },
+                {
+                  value: "kafka",
+                  label: "Kafka",
+                  description: "Distributed event streaming platform",
+                },
+                {
+                  value: "rabbitmq",
+                  label: "RabbitMQ",
+                  description: "Message Broker for async communication",
+                },
+                { value: "elk", label: "ELK", description: "Elasticsearch, Logstash, Kibana" },
+                {
+                  value: "debezium",
+                  label: "Debezium",
+                  description: "Change data Capture Platform",
+                },
+              ].map((option) => (
+                <TypeCard
+                  key={option.value}
+                  selected={type === option.value}
+                  onClick={() => setType(option.value)}
+                >
+                  <Typography size="5x" weight="bold" color="inherit">
+                    {option.label}
+                  </Typography>
+                  <Typography
+                    size="3x"
+                    weight="regular"
+                    color={String(Xquare_colors.gray[400])}
+                  >
+                    {option.description}
+                  </Typography>
+                </TypeCard>
+              ))}
+            </TypeGrid>
+          </TypeSelectionArea>
+        </ValueBox>
+
+        {/* Step2 */}
+        <ValueBox>
+          <Typography size="5x" weight="bold">
+            Step2. Write Configuration
+          </Typography>
 
           <InputArea>
             <Typography size="5x" weight="semiBold">
@@ -201,8 +266,6 @@ const CreateAddon = () => {
 };
 
 export default CreateAddon;
-
-// --- Styled Components (기존과 동일) ---
 
 const Container = styled.div`
   display: flex;
@@ -259,17 +322,38 @@ const ButtonGroup = styled.div`
   margin-top: 2rem;
 `;
 
-const SelectBox = styled.select`
-  width: 300px;
-  height: 35px;
-  padding: 0 10px;
-  border-radius: 6px;
-  background-color: white;
-  outline: none;
-  border: none;
-  font-family: "Pretendard";
-  font-size: 17px;
-  font-weight: 500;
-  text-align: right;
-  color: ${Xquare_colors.gray[500]};
+const TypeSelectionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+`;
+
+const TypeGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  width: 100%;
+`;
+
+const TypeCard = styled.div<{ selected: boolean }>`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid
+    ${({ selected }) =>
+      selected ? Xquare_colors.purple[400] : Xquare_colors.gray[300]};
+  background-color: ${Xquare_colors.white};
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: ${Xquare_colors.purple[400]};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  color: ${({ selected }) =>
+    selected ? Xquare_colors.purple[500] : Xquare_colors.gray[700]};
 `;

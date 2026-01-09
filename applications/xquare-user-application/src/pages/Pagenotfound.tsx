@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Xquare_colors } from "@xquare/user-interfaces";
 
@@ -13,6 +14,10 @@ export default function NotFound() {
 
   // 이동까지 남은 시간 (초)
   const [count, setCount] = useState(2); // 2초 → 0되면 이동
+
+  useEffect(() => {
+    document.title = "XQUARE | Not Found";
+  }, []);
 
   useEffect(() => {
     // 1초마다 countdown 감소
@@ -30,76 +35,81 @@ export default function NotFound() {
   }, [navigate]);
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        padding: "0 20px",
-        backgroundColor: "#0d1117",
-        textAlign: "center",
-      }}
-    >
-      <h1
+    <>
+      <Helmet>
+        <title>XQUARE | Not Found</title>
+      </Helmet>
+      <div
         style={{
-          fontSize: "45px",
-          fontWeight: 800,
-          marginBottom: "17px",
-          color: String(Xquare_colors.white),
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "0 20px",
+          backgroundColor: "#0d1117",
+          textAlign: "center",
         }}
       >
-        XQUARE
-      </h1>
+        <h1
+          style={{
+            fontSize: "45px",
+            fontWeight: 800,
+            marginBottom: "17px",
+            color: String(Xquare_colors.white),
+          }}
+        >
+          XQUARE
+        </h1>
 
-      <h1
-        style={{
-          fontSize: "130px",
-          fontWeight: 800,
-          marginBottom: "18px",
-          color: String(Xquare_colors.purple[400]),
-        }}
-      >
-        404
-      </h1>
+        <h1
+          style={{
+            fontSize: "130px",
+            fontWeight: 800,
+            marginBottom: "18px",
+            color: String(Xquare_colors.purple[400]),
+          }}
+        >
+          404
+        </h1>
 
-      <p
-        style={{
-          fontSize: "27px",
-          color: String(Xquare_colors.white),
-          fontWeight: 700,
-          maxWidth: "520px",
-          lineHeight: "1.4",
-          whiteSpace: "pre-line",
-        }}
-      >
-        {`페이지를 찾을 수 없습니다.`}
-      </p>
+        <p
+          style={{
+            fontSize: "27px",
+            color: String(Xquare_colors.white),
+            fontWeight: 700,
+            maxWidth: "520px",
+            lineHeight: "1.4",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {`페이지를 찾을 수 없습니다.`}
+        </p>
 
-      <p
-        style={{
-          fontSize: "19px",
-          fontWeight: 500,
-          color: String(Xquare_colors.gray[500]),
-          lineHeight: "1.6",
-        }}
-      >
-        {`요청하신 페이지(${location.pathname})는 존재하지 않는 페이지 입니다.`}
-      </p>
+        <p
+          style={{
+            fontSize: "19px",
+            fontWeight: 500,
+            color: String(Xquare_colors.gray[500]),
+            lineHeight: "1.6",
+          }}
+        >
+          {`요청하신 페이지(${location.pathname})는 존재하지 않는 페이지 입니다.`}
+        </p>
 
-      <p
-        style={{
-          fontSize: "19px",
-          fontWeight: 500,
-          color: String(Xquare_colors.gray[500]),
-          lineHeight: "1.6",
-        }}
-      >
-        {count > 0
-          ? `홈으로 이동하기까지 ${count}초 남았습니다`
-          : "잠시만 기다려 주세요..."}
-      </p>
-    </div>
+        <p
+          style={{
+            fontSize: "19px",
+            fontWeight: 500,
+            color: String(Xquare_colors.gray[500]),
+            lineHeight: "1.6",
+          }}
+        >
+          {count > 0
+            ? `홈으로 이동하기까지 ${count}초 남았습니다`
+            : "잠시만 기다려 주세요..."}
+        </p>
+      </div>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { Helmet } from "react-helmet-async";
 import {
@@ -19,6 +19,10 @@ import { getSelectedTeam } from "@xquare/utils";
 
 export default function TeamPage() {
   useAuthGuard();
+
+  useEffect(() => {
+    document.title = "XQUARE | Team";
+  }, []);
 
   const selectedTeam = useMemo(() => getSelectedTeam(), []);
 
@@ -54,14 +58,32 @@ export default function TeamPage() {
         return;
       }
 
-      if (!teamName.trim()) {
+      const trimmedName = teamName.trim();
+
+      if (!trimmedName) {
         setInfoError("팀 이름을 입력해주세요.");
+        return;
+      }
+
+      if (trimmedName.length < 3) {
+        setInfoError("팀 이름은 최소 3자 이상이어야 합니다.");
+        return;
+      }
+
+      if (trimmedName.length > 45) {
+        setInfoError("팀 이름은 최대 45자까지 가능합니다.");
+        return;
+      }
+
+      const lowercasePattern = /^[a-z]+$/;
+      if (!lowercasePattern.test(trimmedName)) {
+        setInfoError("팀 이름은 알파벳 소문자만 사용 가능합니다.");
         return;
       }
 
       try {
         await updateTeam(selectedTeam.id, {
-          name: teamName,
+          name: trimmedName,
           type: teamType,
         });
         setInfoSuccess("팀 정보가 성공적으로 수정되었습니다.");

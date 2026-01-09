@@ -1,9 +1,16 @@
 import styled from "@emotion/styled";
+import { Helmet } from "react-helmet-async";
 import { Typography, Xquare_colors } from "@xquare/user-interfaces";
 import { useAuthGuard } from "@xquare/hooks";
+import { useEffect } from "react";
 
 const FeedView = () => {
   useAuthGuard();
+
+  useEffect(() => {
+    document.title = "XQUARE | Feed Detail";
+  }, []);
+
   const title = "피드 제목";
   const date = "2024-06-10";
   const content = `피드 내용이 여기에 표시됩니다. 피드 내용이 여기에 표시됩니다. 피드 내용이 여기에 표시됩니다.`;
@@ -15,6 +22,9 @@ const FeedView = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Feed Detail</title>
+      </Helmet>
       <ContentsArea>
         <Typography size="8x" weight="semiBold">
           {title}
