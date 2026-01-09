@@ -25,6 +25,7 @@ export const useEnvironmentVariables = (
 
   useEffect(() => {
     let cancelled = false;
+    let incrementedCounter = false;
 
     const fetchVariables = async () => {
       if (!applicationId) {
@@ -39,6 +40,7 @@ export const useEnvironmentVariables = (
 
       if (!cancelled) {
         setLoadingCount((prev) => prev + 1);
+        incrementedCounter = true;
         setError(null);
       }
 
@@ -62,7 +64,8 @@ export const useEnvironmentVariables = (
           setVariables([]);
         }
       } finally {
-        if (!cancelled) {
+        // Always decrement if we incremented, regardless of cancelled state
+        if (incrementedCounter) {
           setLoadingCount((prev) => Math.max(0, prev - 1));
         }
       }
@@ -72,6 +75,11 @@ export const useEnvironmentVariables = (
 
     return () => {
       cancelled = true;
+      // Decrement if we incremented but didn't reach finally yet
+      if (incrementedCounter) {
+        setLoadingCount((prev) => Math.max(0, prev - 1));
+        incrementedCounter = false;
+      }
     };
   }, [applicationId]);
 

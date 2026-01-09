@@ -356,7 +356,8 @@ const CreateApplication = () => {
       return;
     }
 
-    const redirectUri = `http://localhost:5173/github/callback`;
+    const baseUrl = import.meta.env.VITE_FRONTE_URL;
+    const redirectUri = `${baseUrl}/github/callback`;
     const scope = "repo,read:user";
     const state = Math.random().toString(36).substring(7);
 
@@ -494,13 +495,19 @@ const CreateApplication = () => {
           );
         } finally {
           setGithubLoading(false);
+          window.removeEventListener("message", handleMessage);
         }
-
-        window.removeEventListener("message", handleMessage);
       }
     };
 
     window.addEventListener("message", handleMessage);
+
+    const checkPopup = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkPopup);
+        window.removeEventListener("message", handleMessage);
+      }
+    }, 1000);
   };
 
   return (

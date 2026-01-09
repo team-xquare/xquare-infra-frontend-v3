@@ -101,24 +101,33 @@ export async function listOrganizationRepositories(
   orgName: string
 ): Promise<GithubRepository[]> {
   try {
-    const res = await fetchWithTimeout(
-      `https://api.github.com/orgs/${orgName}/repos`,
-      {
+    const perPage = 100;
+    let page = 1;
+    const all: GithubRepository[] = [];
+
+    while (true) {
+      const url = `https://api.github.com/orgs/${orgName}/repos?per_page=${perPage}&page=${page}`;
+      const res = await fetchWithTimeout(url, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
         },
-      }
-    );
+      });
 
-    if (!res.ok) {
-      throw new Error(`${orgName} 조직의 레포지토리를 불러오지 못했습니다.`);
+      if (!res.ok) {
+        throw new Error(`${orgName} 조직의 레포지토리를 불러오지 못했습니다.`);
+      }
+
+      const pageData = (await res.json()) as GithubRepository[];
+      all.push(...pageData);
+
+      if (pageData.length < perPage) break;
+      page += 1;
     }
 
-    const data = (await res.json()) as GithubRepository[];
-    return data;
+    return all;
   } catch (error) {
     if (error instanceof Error) {
       throw error;
