@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useTeamAddons } from "@xquare/hooks";
 import { getSelectedTeamId } from "@xquare/utils";
@@ -18,6 +19,10 @@ function AddonPage() {
   const [teamId, setTeamId] = useState<number | undefined>(
     () => getSelectedTeamId() ?? undefined
   );
+
+  useEffect(() => {
+    document.title = "XQUARE | Addon";
+  }, []);
 
   useEffect(() => {
     const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
@@ -52,6 +57,9 @@ function AddonPage() {
   };
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Addon</title>
+      </Helmet>
       <LoadingOverlay isLoading={loading && !!teamId} />
       <ContentsArea>
         <Title

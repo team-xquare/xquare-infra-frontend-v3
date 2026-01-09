@@ -29,6 +29,10 @@ const HomePage = () => {
   const [traffic, setTraffic] = useState<number>(0);
   const { userName, loading } = useUserName();
 
+  useEffect(() => {
+    document.title = "XQUARE";
+  }, []);
+
   const { data: teams } = useTeams();
 
   const selectedTeamId = useMemo(() => {
@@ -125,7 +129,7 @@ const HomePage = () => {
   return (
     <Container>
       <Helmet>
-        <title>XQUARE | Home</title>
+        <title>XQUARE</title>
       </Helmet>
       <LoadingOverlay isLoading={deploymentLoading && !!applicationIds} />
       <ContentsArea>

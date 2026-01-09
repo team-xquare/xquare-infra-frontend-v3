@@ -1,11 +1,21 @@
 import styled from "@emotion/styled";
+import { Helmet } from "react-helmet-async";
 import { Feed } from "@xquare/user-interfaces";
 import { useAuthGuard } from "@xquare/hooks";
+import { useEffect } from "react";
 
 const FeedPage = () => {
   useAuthGuard();
+
+  useEffect(() => {
+    document.title = "XQUARE | Feed";
+  }, []);
+
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Feed</title>
+      </Helmet>
       <Feed page={3} />
     </Container>
   );

@@ -1,11 +1,21 @@
 import styled from "@emotion/styled";
+import { Helmet } from "react-helmet-async";
 import { Notice } from "@xquare/user-interfaces";
 import { useAuthGuard } from "@xquare/hooks";
+import { useEffect } from "react";
 
 const NoticePage = () => {
   useAuthGuard();
+
+  useEffect(() => {
+    document.title = "XQUARE | Notice";
+  }, []);
+
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Notice</title>
+      </Helmet>
       <Notice page={3} />
     </Container>
   );

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useCreateAddon } from "@xquare/hooks";
 import {
@@ -25,6 +26,10 @@ const CreateAddon = () => {
   const [teamName, setTeamName] = useState<string>(
     getSelectedTeam()?.name ?? ""
   );
+
+  useEffect(() => {
+    document.title = "XQUARE | Create Addon";
+  }, []);
 
   useEffect(() => {
     const syncTeam = () => {
@@ -102,6 +107,9 @@ const CreateAddon = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Create Addon</title>
+      </Helmet>
       <ContentsArea>
         <Title title="Addon 생성" subTitle="Create a new addon for XQUARE" />
       </ContentsArea>

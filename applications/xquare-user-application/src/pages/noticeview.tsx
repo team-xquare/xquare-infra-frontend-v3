@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { Helmet } from "react-helmet-async";
 import {
   Typography,
   Xquare_colors,
@@ -7,11 +8,16 @@ import {
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useNoticeDetail } from "@xquare/hooks";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const NoticeView = () => {
   useAuthGuard();
   const { id } = useParams();
   const noticeId = Number(id);
+
+  useEffect(() => {
+    document.title = "XQUARE | Notice Detail";
+  }, []);
   const { data, loading, error } = useNoticeDetail(
     Number.isNaN(noticeId) ? undefined : noticeId
   );
@@ -24,6 +30,9 @@ const NoticeView = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Notice Detail</title>
+      </Helmet>
       <LoadingOverlay isLoading={loading} />
       <ContentsArea>
         <Typography size="8x" weight="semiBold">

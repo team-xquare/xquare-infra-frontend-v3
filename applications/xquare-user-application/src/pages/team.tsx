@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { Helmet } from "react-helmet-async";
 import {
@@ -19,6 +19,10 @@ import { getSelectedTeam } from "@xquare/utils";
 
 export default function TeamPage() {
   useAuthGuard();
+
+  useEffect(() => {
+    document.title = "XQUARE | Team";
+  }, []);
 
   const selectedTeam = useMemo(() => getSelectedTeam(), []);
 

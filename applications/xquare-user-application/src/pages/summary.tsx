@@ -1,4 +1,6 @@
 import styled from "@emotion/styled";
+import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
 import { Summary } from "@xquare/user-interfaces";
 import {
   useAuthGuard,
@@ -11,6 +13,10 @@ import { useMemo } from "react";
 
 const SummaryPage = () => {
   useAuthGuard();
+
+  useEffect(() => {
+    document.title = "XQUARE | Summary";
+  }, []);
 
   const { data: teams } = useTeams();
 
@@ -33,6 +39,9 @@ const SummaryPage = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Summary</title>
+      </Helmet>
       <Summary
         page={3}
         deploymentData={deploymentData}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
@@ -20,6 +21,10 @@ const DeploymentHome = () => {
   const [teamId, setTeamId] = useState<number | undefined>(
     getSelectedTeamId() ?? undefined
   );
+
+  useEffect(() => {
+    document.title = "XQUARE | Deployment";
+  }, []);
 
   useEffect(() => {
     const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
@@ -66,6 +71,9 @@ const DeploymentHome = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Deployment</title>
+      </Helmet>
       <LoadingOverlay isLoading={loading && !!teamId} />
       <ContentsArea>
         <Title

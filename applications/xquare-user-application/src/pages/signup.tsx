@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useRegister } from "@xquare/hooks"; // 훅 import
 import type { RegisterRequest } from "@xquare/utils"; // 타입 import
@@ -16,6 +17,10 @@ import {
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "XQUARE | Sign Up";
+  }, []);
 
   // 현재 단계 상태
   const [step, setStep] = useState(1);
@@ -91,6 +96,9 @@ const SignupPage: React.FC = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Sign Up</title>
+      </Helmet>
       <Left>
         <LogoImg src={Logo} alt="Xquare logo" />
       </Left>

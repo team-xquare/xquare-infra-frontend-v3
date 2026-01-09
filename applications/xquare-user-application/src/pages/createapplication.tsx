@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import type { FormEvent } from "react";
+import { Helmet } from "react-helmet-async";
 import { InfoIcon } from "@xquare/user-interfaces";
 import { useNavigate } from "react-router-dom";
 import {
@@ -51,6 +52,11 @@ function isAllowedDomain(value: string): boolean {
 const CreateApplication = () => {
   useAuthGuard();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "XQUARE | Create Application";
+  }, []);
+
   const {
     create,
     loading: creating,
@@ -309,6 +315,9 @@ const CreateApplication = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Create Application</title>
+      </Helmet>
       <ContentsArea>
         <Title
           title={`Application 생성`}

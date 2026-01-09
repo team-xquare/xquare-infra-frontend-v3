@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
@@ -19,6 +20,10 @@ const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [tokenError, setTokenError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "XQUARE | Login";
+  }, []);
 
   const { login, loading, error } = useLogin();
 
@@ -78,6 +83,9 @@ const LoginPage: React.FC = () => {
 
   return (
     <Container>
+      <Helmet>
+        <title>XQUARE | Login</title>
+      </Helmet>
       <Left>
         <LogoImg src={Logo} alt="Xquare logo" />
       </Left>
