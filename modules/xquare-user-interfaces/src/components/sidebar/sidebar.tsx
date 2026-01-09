@@ -11,6 +11,8 @@ import {
   SidebarNavContainer,
   SidebarNavContent,
   SidebarNavItemWrapper,
+  SubItemsContainer,
+  SubItem,
 } from "./sidebar-style";
 
 interface SidebarNavItem {
@@ -28,9 +30,11 @@ interface SidebarProps {
   teams?: Team[];
   teamsLoading?: boolean;
   teamsError?: Error | null;
+  userRole?: "admin" | "member";
   onNavItemClick: (itemId: string) => void;
   onSearch?: (value: string) => void;
   onTeamCreated?: () => void;
+  onTeamUpdated?: () => void;
 }
 
 function Sidebar({
@@ -41,9 +45,11 @@ function Sidebar({
   teams,
   teamsLoading,
   teamsError,
+  userRole = "member",
   onNavItemClick,
   onSearch,
   onTeamCreated,
+  onTeamUpdated,
 }: SidebarProps) {
   const location = useLocation();
 
@@ -89,6 +95,19 @@ function Sidebar({
                   isActive={isMainItemActive(item.id)}
                   onClick={() => handleMainItemClick(item.id)}
                 />
+                {item.subItems && item.subItems.length > 0 && (
+                  <SubItemsContainer>
+                    {item.subItems.map((subItem) => (
+                      <SubItem
+                        key={subItem.id}
+                        isActive={activeItemId === subItem.id}
+                        onClick={() => onNavItemClick(subItem.id)}
+                      >
+                        {subItem.label}
+                      </SubItem>
+                    ))}
+                  </SubItemsContainer>
+                )}
               </SidebarNavItemWrapper>
             ))}
           </SidebarNavContainer>
@@ -100,7 +119,9 @@ function Sidebar({
         teams={teams}
         teamsLoading={teamsLoading}
         teamsError={teamsError}
+        userRole={userRole}
         onTeamCreated={onTeamCreated}
+        onTeamUpdated={onTeamUpdated}
       />
     </SidebarContainer>
   );

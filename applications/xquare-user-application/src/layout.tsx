@@ -27,10 +27,11 @@ function Layout({
   const navItems = React.useMemo(
     () => [
       { id: "home", label: "HOME", path: "/" },
+      { id: "notice", label: "NOTICE", path: "/notice" },
       { id: "deployment", label: "DEPLOYMENT", path: "/deployment" },
       { id: "addons", label: "ADDONS", path: "/addons" },
       { id: "summary", label: "SUMMARY", path: "/summary" },
-      { id: "notice", label: "NOTICE", path: "/notice" },
+      { id: "team", label: "TEAM", path: "/team" },
       // { id: "feed", label: "FEED", path: "/feed" },
     ],
     []
@@ -43,6 +44,7 @@ function Layout({
       addons: "/addons",
       summary: "/summary",
       notice: "/notice",
+      team: "/team",
       // feed: "/feed",
     };
 
@@ -61,9 +63,11 @@ function Layout({
         teams={teams ?? []}
         teamsLoading={teamsLoading}
         teamsError={teamsError}
+        userRole="admin"
         onNavItemClick={handleNavItemClick}
         onSearch={onSearch}
         onTeamCreated={refetchTeams}
+        onTeamUpdated={refetchTeams}
       />
       <Page>{children}</Page>
     </Container>

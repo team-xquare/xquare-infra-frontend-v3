@@ -60,7 +60,6 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      // TODO: 실제 API 호출 로직 구현
       const userData = {
         deployCount: 42,
         traffic: 1280,
@@ -114,8 +113,7 @@ const HomePage = () => {
     <TabContentWrapper key="status">
       <TextGroup>
         <Typography size="5x" weight="semiBold">
-          XQUARE를 통하여 시간당<Highlight>{traffic}</Highlight>개의 요청을
-          처리하고 있어요.
+          XQUARE를 통하여 <Highlight>{traffic}</Highlight>일을 서비스 하고 있습니다.
         </Typography>
         <Typography size="4x" weight="medium">
           XQUARE 인프라를 통해 안정적인 서비스 운영이 가능합니다.

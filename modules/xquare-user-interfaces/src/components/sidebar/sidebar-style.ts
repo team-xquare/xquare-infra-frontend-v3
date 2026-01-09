@@ -47,3 +47,38 @@ export const SidebarNavContainer = styled.nav`
   padding: ${NAV_PADDING};
   width: ${SIDEBAR_WIDTH};
 `;
+
+export const SubItemsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 8px;
+  margin-left: 16px;
+  gap: 6px;
+`;
+
+interface SubItemProps {
+  isActive?: boolean;
+}
+
+export const SubItem = styled.button<SubItemProps>`
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: ${(props) =>
+    props.isActive ? Xquare_colors.purple[600] : "transparent"};
+  color: ${(props) =>
+    props.isActive ? Xquare_colors.white : Xquare_colors.gray[100]};
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+
+  &:hover {
+    background-color: ${Xquare_colors.purple[600]};
+    color: ${Xquare_colors.white};
+  }
+`;

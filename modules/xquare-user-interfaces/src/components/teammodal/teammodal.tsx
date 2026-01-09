@@ -1,8 +1,10 @@
 import { createPortal } from "react-dom";
 import styled from "@emotion/styled";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Xquare_colors from "../../styles";
 import { saveSelectedTeam, type Team } from "@xquare/utils";
+import { useCreateTeam } from "@xquare/hooks";
+import type { CreateTeamRequest } from "@xquare/utils";
 
 interface TeamModalProps {
   teams?: Team[];
@@ -10,7 +12,7 @@ interface TeamModalProps {
   error?: Error | null;
   onSelectTeam: (teamName: string, teamId: number) => void;
   onClose: () => void;
-  onCreateTeam?: () => void;
+  onTeamCreated?: () => void;
 }
 
 export const TeamModal = ({
@@ -19,59 +21,153 @@ export const TeamModal = ({
   error,
   onSelectTeam,
   onClose,
-  onCreateTeam,
+  onTeamCreated,
 }: TeamModalProps) => {
+  const [activeTab, setActiveTab] = useState<"select" | "create">("select");
+  const [teamName, setTeamName] = useState("");
+  const [teamType, setTeamType] = useState<"club" | "team" | "individual">(
+    "team"
+  );
+  const {
+    create: createTeam,
+    loading: isCreating,
+    error: createError,
+  } = useCreateTeam();
+
   const handleBackgroundClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (e.target === e.currentTarget) onClose();
+      if (e.target === e.currentTarget && !isCreating) onClose();
     },
-    [onClose]
+    [onClose, isCreating]
+  );
+
+  const handleCreateTeam = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!teamName.trim()) {
+        alert("팀 이름을 입력해주세요.");
+        return;
+      }
+
+      const request: CreateTeamRequest = {
+        name: teamName.trim(),
+        type: teamType,
+        initialMembers: [],
+      };
+
+      const teamId = await createTeam(request);
+      if (teamId) {
+        setTeamName("");
+        setTeamType("team");
+        setActiveTab("select");
+        if (onTeamCreated) {
+          onTeamCreated();
+        }
+      }
+    },
+    [teamName, teamType, createTeam, onTeamCreated]
   );
 
   return createPortal(
     <ModalBackground onClick={handleBackgroundClick}>
       <ModalContent>
-        <Title>프로젝트 선택</Title>
+        <TabContainer>
+          <Tab
+            active={activeTab === "select"}
+            onClick={() => setActiveTab("select")}
+          >
+            팀 선택
+          </Tab>
+          <Tab
+            active={activeTab === "create"}
+            onClick={() => setActiveTab("create")}
+          >
+            팀 생성
+          </Tab>
+        </TabContainer>
 
-        {error && <ErrorText>팀 목록을 불러올 수 없습니다.</ErrorText>}
+        {activeTab === "select" && (
+          <>
+            {error && <ErrorText>팀 목록을 불러올 수 없습니다.</ErrorText>}
 
-        <TeamList>
-          {!loading && !error && teams?.length === 0 && (
-            <EmptyText>소속된 팀이 없습니다.</EmptyText>
-          )}
-          {teams?.map((team: Team) => (
-            <TeamItem
-              key={team.id}
-              onClick={() => {
-                console.log("[TeamModal] 팀 선택됨:", team);
-                saveSelectedTeam({
-                  id: team.id,
-                  name: team.name,
-                  type: team.type,
-                });
-                console.log(
-                  "[TeamModal] onSelectTeam 콜백 호출:",
-                  team.name,
-                  team.id
-                );
-                onSelectTeam(team.name, team.id);
-                onClose();
-              }}
-            >
-              <TeamName>{team.name}</TeamName>
-              <TeamType>{team.type}</TeamType>
-            </TeamItem>
-          ))}
+            <TeamList>
+              {!loading && !error && teams?.length === 0 && (
+                <EmptyText>소속된 팀이 없습니다.</EmptyText>
+              )}
+              {teams?.map((team: Team) => (
+                <TeamItem
+                  key={team.id}
+                  onClick={() => {
+                    saveSelectedTeam({
+                      id: team.id,
+                      name: team.name,
+                      type: team.type,
+                    });
+                    onSelectTeam(team.name, team.id);
+                    onClose();
+                  }}
+                >
+                  <TeamName>{team.name}</TeamName>
+                  <TeamType>{team.type}</TeamType>
+                </TeamItem>
+              ))}
+            </TeamList>
 
-          {onCreateTeam && (
-            <CreateTeamItem onClick={onCreateTeam}>
-              <PlusIcon>+</PlusIcon>
-              <CreateTeamText>새 팀 만들기</CreateTeamText>
-            </CreateTeamItem>
-          )}
-        </TeamList>
+            <FooterContainer>
+              <CloseButton onClick={onClose}>닫기</CloseButton>
+            </FooterContainer>
+          </>
+        )}
 
-        <CloseButton onClick={onClose}>닫기</CloseButton>
+        {activeTab === "create" && (
+          <>
+            <CreateForm onSubmit={handleCreateTeam}>
+              <FormGroup>
+                <Label>팀 이름 *</Label>
+                <Input
+                  type="text"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  placeholder="팀 이름을 입력하세요"
+                  disabled={isCreating}
+                  autoFocus
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <Label>팀 유형 *</Label>
+                <Select
+                  value={teamType}
+                  onChange={(e) =>
+                    setTeamType(
+                      e.target.value as "club" | "team" | "individual"
+                    )
+                  }
+                  disabled={isCreating}
+                >
+                  <option value="team">팀</option>
+                  <option value="club">동아리</option>
+                  <option value="individual">개인</option>
+                </Select>
+              </FormGroup>
+
+              {createError && <ErrorText>{createError.message}</ErrorText>}
+
+              <ButtonGroup>
+                <CancelButton
+                  type="button"
+                  onClick={onClose}
+                  disabled={isCreating}
+                >
+                  취소
+                </CancelButton>
+                <SubmitButton type="submit" disabled={isCreating}>
+                  {isCreating ? "생성 중..." : "생성"}
+                </SubmitButton>
+              </ButtonGroup>
+            </CreateForm>
+          </>
+        )}
       </ModalContent>
     </ModalBackground>,
     document.body
@@ -91,9 +187,9 @@ const ModalBackground = styled.div`
 `;
 
 const ModalContent = styled.div`
-  width: 300px;
+  width: 380px;
   background: #ffffff;
-  padding: 24px;
+  padding: 28px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -114,13 +210,31 @@ const ModalContent = styled.div`
   }
 `;
 
-const Title = styled.h3`
-  margin: 0;
-  text-align: center;
-  font-size: 18px;
+const TabContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 4px;
+  background: #f5f5f5;
+  border-radius: 12px;
+`;
+
+const Tab = styled.button<{ active: boolean }>`
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
-  color: ${Xquare_colors.purple[400]};
-  cursor: default;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: ${(props) =>
+    props.active ? Xquare_colors.purple[400] : "transparent"};
+  color: ${(props) => (props.active ? "#ffffff" : "#666666")};
+
+  &:hover {
+    background: ${(props) =>
+      props.active ? Xquare_colors.purple[500] : "#e8e8e8"};
+  }
 `;
 
 const TeamList = styled.ul`
@@ -132,7 +246,7 @@ const TeamList = styled.ul`
   gap: 10px;
 `;
 
-const TeamItem = styled.li`
+const TeamItem = styled.div`
   padding: 14px 16px;
   border-radius: 12px;
   background: #f8f5ff;
@@ -159,48 +273,13 @@ const TeamItem = styled.li`
 const TeamName = styled.span`
   font-weight: 600;
   cursor: default;
+  flex: 1;
 `;
 
 const TeamType = styled.span`
   font-size: 12px;
   color: ${Xquare_colors.gray[500]};
   text-transform: uppercase;
-  cursor: default;
-`;
-
-const CreateTeamItem = styled.li`
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #fff;
-  border: 1.5px dashed ${Xquare_colors.purple[300]};
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.18s;
-  color: ${Xquare_colors.purple[400]};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-
-  &:hover {
-    background: #f8f5ff;
-    border-color: ${Xquare_colors.purple[400]};
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
-const PlusIcon = styled.span`
-  font-size: 20px;
-  font-weight: bold;
-  cursor: default;
-`;
-
-const CreateTeamText = styled.span`
-  font-weight: 600;
   cursor: default;
 `;
 
@@ -220,11 +299,122 @@ const EmptyText = styled.p`
   cursor: default;
 `;
 
-const CloseButton = styled.button`
+const FooterContainer = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const CreateForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Label = styled.label`
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+`;
+
+const Input = styled.input`
+  padding: 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: ${Xquare_colors.purple[400]};
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+  }
+`;
+
+const Select = styled.select`
+  padding: 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: ${Xquare_colors.purple[400]};
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+`;
+
+const CancelButton = styled.button`
+  flex: 1;
+  padding: 12px 0;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #666666;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  transition: 0.18s;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const SubmitButton = styled.button`
+  flex: 1;
   padding: 12px 0;
   border: none;
   border-radius: 12px;
   background: ${Xquare_colors.purple[400]};
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.18s;
+
+  &:hover {
+    background: ${Xquare_colors.purple[500]};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const CloseButton = styled.button`
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  background: ${Xquare_colors.gray[300]};
   color: #fff;
   cursor: pointer;
   font-size: 15px;
@@ -232,7 +422,7 @@ const CloseButton = styled.button`
   transition: 0.18s;
 
   &:hover {
-    background: #6c28d9;
+    background: ${Xquare_colors.gray[400]};
   }
 
   &:active {

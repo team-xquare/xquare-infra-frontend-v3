@@ -19,6 +19,7 @@ import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
 import CreateApplication from "./pages/createapplication";
 import CreateAddon from "./pages/createaddon";
+import TeamPage from "./pages/team";
 import NotFound from "./pages/Pagenotfound";
 
 const art = `
@@ -134,6 +135,15 @@ function App() {
           element={
             <Layout>
               <NoticeView />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/team"
+          element={
+            <Layout>
+              <TeamPage />
             </Layout>
           }
         />

@@ -7,7 +7,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { memo, useCallback, useState } from "react";
 import { TeamModal } from "../../teammodal";
-import { CreateTeamModal } from "./create-team-modal";
 import {
   SideBarFooter,
   SideBarFooterDiv,
@@ -34,7 +33,6 @@ function SidebarFooterComponent({
 }: SidebarFooterProps) {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
 
   // 사용자가 명시적으로 팀을 선택했는지 추적
   const [isUserSelectedTeam, setIsUserSelectedTeam] = useState(() => {
@@ -58,17 +56,10 @@ function SidebarFooterComponent({
     navigate("/login");
   }, [navigate]);
 
-  const handleOpenCreateModal = useCallback(() => {
+  const handleOpenTeamManager = useCallback(() => {
     setModalOpen(false);
-    setCreateModalOpen(true);
-  }, []);
-
-  const handleTeamCreated = useCallback(() => {
-    setCreateModalOpen(false);
-    if (onTeamCreated) {
-      onTeamCreated();
-    }
-  }, [onTeamCreated]);
+    navigate("/teams");
+  }, [navigate]);
 
   // 팀 선택 처리: 팀 이름과 ID를 모두 업데이트하고 스토리지에 저장
   const handleTeamSelect = useCallback((teamName: string, teamId: number) => {
@@ -112,14 +103,7 @@ function SidebarFooterComponent({
           error={teamsError}
           onSelectTeam={handleTeamSelect}
           onClose={() => setModalOpen(false)}
-          onCreateTeam={handleOpenCreateModal}
-        />
-      )}
-
-      {createModalOpen && (
-        <CreateTeamModal
-          onClose={() => setCreateModalOpen(false)}
-          onSuccess={handleTeamCreated}
+          onTeamCreated={onTeamCreated}
         />
       )}
     </>
