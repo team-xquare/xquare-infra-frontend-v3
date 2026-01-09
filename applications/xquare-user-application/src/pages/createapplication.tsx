@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { Helmet } from "react-helmet-async";
 import { InfoIcon } from "@xquare/user-interfaces";
 import { useNavigate } from "react-router-dom";
 import {
@@ -66,11 +65,6 @@ function isAllowedDomain(value: string): boolean {
 const CreateApplication = () => {
   useAuthGuard();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    document.title = "XQUARE | Create Application";
-  }, []);
-
   const {
     create,
     loading: creating,
@@ -362,7 +356,7 @@ const CreateApplication = () => {
       return;
     }
 
-    const baseUrl = import.meta.env.VITE_FRONTE_URL;
+    const baseUrl = import.meta.env.VITE_FRONTEND_URL;
     const redirectUri = `${baseUrl}/github/callback`;
     const scope = "repo,read:user";
     const state = Math.random().toString(36).substring(7);
@@ -518,9 +512,6 @@ const CreateApplication = () => {
 
   return (
     <Container>
-      <Helmet>
-        <title>XQUARE | Create Application</title>
-      </Helmet>
       <ContentsArea>
         <Title
           title={`Application 생성`}
@@ -736,48 +727,6 @@ const CreateApplication = () => {
                   color: String(Xquare_colors.gray[800]),
                   fontWeight: "500",
                 }}
-                placeholder="Repository Name"
-                width="100%"
-                height="35px"
-              />
-            </InlineInputs>
-          </InputArea>
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Repository Owner
-            </Typography>
-            <Input_basic
-              value={repoOwner}
-              onChange={(e) => {
-                setRepoOwner(e.target.value);
-              }}
-              placeholder="Repository Owner"
-              width="800px"
-              height="35px"
-            />
-          </InputArea>
-          <div
-            style={{
-              margin: "0.5rem",
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Tooltip
-              content="Owner와 Repository의 GitHub 정보를 불러옵니다.
-              브랜치 목록과 최신 커밋 해시가 자동으로 채워집니다."
-              position="left"
-            >
-              <Button_square
-                type="button"
-                width="200px"
-                height="40px"
-                onClick={handleFetchGithub}
-                disabled={
-                  githubLoading || !repoOwner.trim() || !repoName.trim()
-                }
               >
                 {repoOwner && repoName ? `${repoOwner}/${repoName}` : ""}
               </span>
