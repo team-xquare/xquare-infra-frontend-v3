@@ -2,6 +2,8 @@ export { useRegister } from "./src/useRegister";
 export { useLogin } from "./src/useLogin";
 export { useAuthGuard } from "./src/useAuthGuard";
 export { useUserName } from "./src/useUserName";
+export { useGithubToken } from "./src/useGithubToken";
+export { useGithubInstallations } from "./src/useGithubInstallations";
 export { useNoticeDetail } from "./src/useNoticeDetail";
 export { useTeamAddons } from "./src/useTeamAddons";
 export { useTeamApplications } from "./src/useTeamApplications";
