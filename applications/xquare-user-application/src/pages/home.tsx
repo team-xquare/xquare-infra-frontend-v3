@@ -65,8 +65,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const userData = {
-        deployCount: 42,
-        traffic: 1280,
+        deployCount: 0,
+        traffic: 0,
       };
       setDeployCount(userData.deployCount);
       setTraffic(userData.traffic);
@@ -117,7 +117,7 @@ const HomePage = () => {
     <TabContentWrapper key="status">
       <TextGroup>
         <Typography size="5x" weight="semiBold">
-          XQUARE를 통하여 <Highlight>{traffic}</Highlight>일을 서비스 하고 있습니다.
+          XQUARE를 통하여 <Highlight>{traffic}</Highlight>일 동안 서비스 되고 있어요.
         </Typography>
         <Typography size="4x" weight="medium">
           XQUARE 인프라를 통해 안정적인 서비스 운영이 가능합니다.

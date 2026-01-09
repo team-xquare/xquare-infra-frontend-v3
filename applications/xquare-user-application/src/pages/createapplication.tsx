@@ -389,7 +389,7 @@ const CreateApplication = () => {
                 setRepoOwner(e.target.value);
               }}
               placeholder="Repository Owner"
-              width="950px"
+              width="800px"
               height="35px"
             />
           </InputArea>

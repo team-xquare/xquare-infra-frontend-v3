@@ -131,7 +131,10 @@ export const TeamModal = ({
                 <Input
                   type="text"
                   value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value.toLowerCase();
+                    setTeamName(value);
+                  }}
                   placeholder="팀 이름을 입력하세요"
                   disabled={isCreating}
                   autoFocus
