@@ -23,9 +23,63 @@ export const useEnvironmentVariables = (
   const [error, setError] = useState<string | null>(null);
   const loading = loadingCount > 0;
 
-  const fetchVariables = useCallback(async () => {
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchVariables = async () => {
+      if (!applicationId) {
+        console.log(
+          "[useEnvironmentVariables] no applicationId, skipping fetch"
+        );
+        if (!cancelled) {
+          setVariables([]);
+        }
+        return;
+      }
+
+      if (!cancelled) {
+        setLoadingCount((prev) => prev + 1);
+        setError(null);
+      }
+
+      try {
+        const data = await getEnvironmentVariables(applicationId);
+        if (!cancelled) {
+          setVariables(data);
+          console.log("[useEnvironmentVariables] fetch success", {
+            applicationId,
+            count: data.length,
+          });
+        }
+      } catch (err) {
+        if (!cancelled) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : "환경변수를 불러오지 못했습니다";
+          console.error("[useEnvironmentVariables] fetch error", err);
+          setError(message);
+          setVariables([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingCount((prev) => Math.max(0, prev - 1));
+        }
+      }
+    };
+
+    fetchVariables();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applicationId]);
+
+  const refetch = useCallback(async () => {
     if (!applicationId) {
-      console.log("[useEnvironmentVariables] no applicationId, skipping fetch");
+      console.log(
+        "[useEnvironmentVariables] no applicationId, skipping refetch"
+      );
       setVariables([]);
       return;
     }
@@ -36,24 +90,20 @@ export const useEnvironmentVariables = (
     try {
       const data = await getEnvironmentVariables(applicationId);
       setVariables(data);
-      console.log("[useEnvironmentVariables] fetch success", {
+      console.log("[useEnvironmentVariables] refetch success", {
         applicationId,
         count: data.length,
       });
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "환경변수를 불러오지 못했습니다";
-      console.error("[useEnvironmentVariables] fetch error", err);
+      console.error("[useEnvironmentVariables] refetch error", err);
       setError(message);
       setVariables([]);
     } finally {
       setLoadingCount((prev) => Math.max(0, prev - 1));
     }
   }, [applicationId]);
-
-  useEffect(() => {
-    fetchVariables();
-  }, [fetchVariables]);
 
   const addOrUpdate = useCallback(
     async (name: string, value: string): Promise<boolean> => {
@@ -69,7 +119,7 @@ export const useEnvironmentVariables = (
       try {
         await addOrUpdateEnvironmentVariable(applicationId, { name, value });
         console.log("[useEnvironmentVariables] addOrUpdate success", { name });
-        await fetchVariables();
+        await refetch();
         return true;
       } catch (err) {
         const message =
@@ -81,7 +131,7 @@ export const useEnvironmentVariables = (
         setLoadingCount((prev) => Math.max(0, prev - 1));
       }
     },
-    [applicationId, fetchVariables]
+    [applicationId, refetch]
   );
 
   const remove = useCallback(
@@ -98,7 +148,7 @@ export const useEnvironmentVariables = (
       try {
         await deleteEnvironmentVariable(applicationId, name);
         console.log("[useEnvironmentVariables] remove success", { name });
-        await fetchVariables();
+        await refetch();
         return true;
       } catch (err) {
         const message =
@@ -110,14 +160,14 @@ export const useEnvironmentVariables = (
         setLoadingCount((prev) => Math.max(0, prev - 1));
       }
     },
-    [applicationId, fetchVariables]
+    [applicationId, refetch]
   );
 
   return {
     variables,
     loading,
     error,
-    refetch: fetchVariables,
+    refetch,
     addOrUpdate,
     remove,
   };
