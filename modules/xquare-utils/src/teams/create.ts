@@ -14,6 +14,34 @@ export interface CreateTeamRequest {
   initialMembers: CreateTeamMember[];
 }
 
+/**
+ * 팀 이름 검증 함수
+ * - 3~45자
+ * - 알파벳 소문자만 허용
+ */
+export function validateTeamName(name: string): { valid: boolean; error?: string } {
+  if (!name || name.trim().length === 0) {
+    return { valid: false, error: "팀 이름을 입력해주세요." };
+  }
+
+  const trimmedName = name.trim();
+
+  if (trimmedName.length < 3) {
+    return { valid: false, error: "팀 이름은 최소 3자 이상이어야 합니다." };
+  }
+
+  if (trimmedName.length > 45) {
+    return { valid: false, error: "팀 이름은 최대 45자까지 가능합니다." };
+  }
+
+  const lowercasePattern = /^[a-z]+$/;
+  if (!lowercasePattern.test(trimmedName)) {
+    return { valid: false, error: "팀 이름은 알파벳 소문자만 사용 가능합니다." };
+  }
+
+  return { valid: true };
+}
+
 interface CreateTeamApiResponse {
   success: boolean;
   data: {
@@ -29,6 +57,12 @@ interface CreateTeamApiResponse {
 export const createTeam = async (
   request: CreateTeamRequest
 ): Promise<number> => {
+  // 팀 이름 검증
+  const validation = validateTeamName(request.name);
+  if (!validation.valid) {
+    throw new Error(validation.error);
+  }
+
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");
   }

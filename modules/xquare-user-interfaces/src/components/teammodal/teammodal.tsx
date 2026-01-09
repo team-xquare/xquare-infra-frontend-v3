@@ -47,13 +47,31 @@ export const TeamModal = ({
       e.preventDefault();
       setValidationError(null);
 
-      if (!teamName.trim()) {
+      const trimmedName = teamName.trim();
+
+      if (!trimmedName) {
         setValidationError("팀 이름을 입력해주세요.");
         return;
       }
 
+      if (trimmedName.length < 3) {
+        setValidationError("팀 이름은 최소 3자 이상이어야 합니다.");
+        return;
+      }
+
+      if (trimmedName.length > 45) {
+        setValidationError("팀 이름은 최대 45자까지 가능합니다.");
+        return;
+      }
+
+      const lowercasePattern = /^[a-z]+$/;
+      if (!lowercasePattern.test(trimmedName)) {
+        setValidationError("팀 이름은 알파벳 소문자만 사용 가능합니다.");
+        return;
+      }
+
       const request: CreateTeamRequest = {
-        name: teamName.trim(),
+        name: trimmedName,
         type: teamType,
         initialMembers: [],
       };
@@ -131,10 +149,7 @@ export const TeamModal = ({
                 <Input
                   type="text"
                   value={teamName}
-                  onChange={(e) => {
-                    const value = e.target.value.toLowerCase();
-                    setTeamName(value);
-                  }}
+                  onChange={(e) => setTeamName(e.target.value)}
                   placeholder="팀 이름을 입력하세요"
                   disabled={isCreating}
                   autoFocus

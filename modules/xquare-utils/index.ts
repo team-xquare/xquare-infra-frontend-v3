@@ -78,7 +78,7 @@ export {
 export { getTeams } from "./src/teams/list";
 export type { Team, TeamMember } from "./src/teams/list";
 
-export { createTeam } from "./src/teams/create";
+export { createTeam, validateTeamName } from "./src/teams/create";
 export type { CreateTeamRequest, CreateTeamMember } from "./src/teams/create";
 
 export { updateTeam } from "./src/teams/update";
