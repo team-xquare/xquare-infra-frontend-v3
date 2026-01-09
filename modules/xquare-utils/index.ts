@@ -32,6 +32,8 @@ export {
   getCachedUserName,
   USERNAME_CACHE_KEY,
 } from "./src/user/check";
+export { searchUsersByName } from "./src/user/search";
+export type { UserSearchResult } from "./src/user/search";
 
 export { formatDate } from "./src/formatDate";
 

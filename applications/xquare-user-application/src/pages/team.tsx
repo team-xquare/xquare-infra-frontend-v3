@@ -14,15 +14,13 @@ import {
   useAuthGuard,
   useUpdateTeam,
   useUpdateTeamMembers,
+  useSearchUsers,
 } from "@xquare/hooks";
-import { getSelectedTeam } from "@xquare/utils";
+import { getSelectedTeam, checkUser } from "@xquare/utils";
+import type { UserSearchResult } from "@xquare/utils";
 
 export default function TeamPage() {
   useAuthGuard();
-
-  useEffect(() => {
-    document.title = "XQUARE | Team";
-  }, []);
 
   const selectedTeam = useMemo(() => getSelectedTeam(), []);
 
@@ -35,13 +33,39 @@ export default function TeamPage() {
   const [infoSuccess, setInfoSuccess] = useState<string | null>(null);
 
   // Team Members State
-  const [memberUserId, setMemberUserId] = useState("");
+  const [searchName, setSearchName] = useState("");
   const [memberRole, setMemberRole] = useState<"admin" | "member">("member");
   const [teamMembers, setTeamMembers] = useState<
-    Array<{ id: number; role: "admin" | "member" }>
+    Array<{
+      id: number;
+      role: "admin" | "member";
+      name?: string;
+      username?: string;
+      email?: string;
+      studentNumber?: number;
+    }>
   >([]);
   const [membersError, setMembersError] = useState<string | null>(null);
   const [membersSuccess, setMembersSuccess] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const {
+    search,
+    results: searchResults,
+    loading: searching,
+    error: searchError,
+  } = useSearchUsers();
+
+  useEffect(() => {
+    document.title = "XQUARE | Team";
+  }, []);
+
+  useEffect(() => {
+    checkUser()
+      .then((me) => setCurrentUserId(me.id))
+      .catch((err) => {
+        console.error("[TeamPage] 현재 사용자 조회 실패", err);
+      });
+  }, []);
 
   const { mutate: updateTeam, loading: isUpdatingTeam } = useUpdateTeam();
   const { mutate: updateTeamMembers, loading: isUpdatingMembers } =
@@ -96,29 +120,65 @@ export default function TeamPage() {
     [selectedTeam, teamName, teamType, updateTeam]
   );
 
-  const handleAddMember = useCallback(() => {
+  const handleSearchUsers = useCallback(async () => {
     setMembersError(null);
+    setMembersSuccess(null);
 
-    if (!memberUserId.trim()) {
-      setMembersError("사용자 ID를 입력해주세요.");
+    const trimmed = searchName.trim();
+    if (!trimmed) {
+      setMembersError("검색할 이름을 입력해주세요.");
       return;
     }
 
-    const userId = Number(memberUserId);
-    if (isNaN(userId)) {
-      setMembersError("유효한 사용자 ID를 입력해주세요.");
-      return;
+    try {
+      await search(trimmed);
+    } catch (err) {
+      setMembersError(
+        err instanceof Error ? err.message : "유저 검색에 실패했습니다."
+      );
     }
+  }, [search, searchName]);
 
-    if (teamMembers.some((m) => m.id === userId)) {
-      setMembersError("이미 추가된 사용자입니다.");
-      return;
-    }
+  useEffect(() => {
+    const trimmed = searchName.trim();
+    if (!trimmed) return;
 
-    setTeamMembers((prev) => [...prev, { id: userId, role: memberRole }]);
-    setMemberUserId("");
-    setMemberRole("member");
-  }, [memberUserId, memberRole, teamMembers]);
+    const timer = setTimeout(() => {
+      handleSearchUsers();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [handleSearchUsers, searchName]);
+
+  const handleAddMember = useCallback(
+    (user: UserSearchResult) => {
+      setMembersError(null);
+      setMembersSuccess(null);
+
+      if (currentUserId !== null && user.id === currentUserId) {
+        setMembersError("본인은 추가할 수 없습니다.");
+        return;
+      }
+
+      if (teamMembers.some((m) => m.id === user.id)) {
+        setMembersError("이미 추가된 사용자입니다.");
+        return;
+      }
+
+      setTeamMembers((prev) => [
+        ...prev,
+        {
+          id: user.id,
+          role: memberRole,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          studentNumber: user.studentNumber,
+        },
+      ]);
+    },
+    [currentUserId, memberRole, teamMembers]
+  );
 
   const handleRemoveMember = useCallback((userId: number) => {
     setTeamMembers((prev) => prev.filter((m) => m.id !== userId));
@@ -142,7 +202,7 @@ export default function TeamPage() {
 
       try {
         await updateTeamMembers(selectedTeam.id, {
-          members: teamMembers,
+          members: teamMembers.map((m) => ({ id: m.id, role: m.role })),
         });
         setTeamMembers([]);
         setMembersSuccess("팀원이 성공적으로 추가되었습니다.");
@@ -184,7 +244,7 @@ export default function TeamPage() {
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                     placeholder="팀 이름을 입력하세요"
-                    disabled={isUpdatingTeam}
+                    disabled={true}
                     width="300px"
                     height="35px"
                   />
@@ -232,16 +292,22 @@ export default function TeamPage() {
 
               <form onSubmit={handleSubmitMembers}>
                 <FormGroup>
-                  <Label>팀원 추가</Label>
+                  <Label>팀원 검색</Label>
                   <InputRow>
-                    <StyledInput
-                      placeholder="사용자 ID를 입력하세요"
-                      value={memberUserId}
-                      onChange={(e) => setMemberUserId(e.target.value)}
-                      disabled={isUpdatingMembers}
+                    <Input_basic
+                      placeholder="사용자 이름을 입력하세요"
+                      value={searchName}
+                      onChange={(e) => {
+                        setSearchName(e.target.value);
+                        setMembersError(null);
+                        setMembersSuccess(null);
+                      }}
+                      disabled={isUpdatingMembers || searching}
+                      width="200px"
                     />
-                    <InlineText>님을</InlineText>
-                    <Select
+
+                    <InlineText>을(를)</InlineText>
+                    <RoleSelect
                       value={memberRole}
                       onChange={(e) =>
                         setMemberRole(e.target.value as "admin" | "member")
@@ -250,19 +316,45 @@ export default function TeamPage() {
                     >
                       <option value="member">멤버</option>
                       <option value="admin">관리자</option>
-                    </Select>
-                    <InlineText>역할로</InlineText>
-                    <Button_square
-                      onClick={handleAddMember}
-                      disabled={isUpdatingMembers}
-                      type="button"
-                      width="80px"
-                      height="42px"
-                    >
-                      추가
-                    </Button_square>
+                    </RoleSelect>
+                    <InlineText>역할로 추가</InlineText>
                   </InputRow>
                 </FormGroup>
+
+                {searchResults.length > 0 && (
+                  <FormGroup>
+                    <Label>검색 결과 ({searchResults.length}명)</Label>
+                    <SearchResultsList>
+                      {searchResults.map((user) => (
+                        <SearchResultItem key={user.id}>
+                          <SearchResultInfo>
+                            <SearchResultName>
+                              {user.name} ({user.username})
+                            </SearchResultName>
+                            <SearchResultMeta>
+                              {user.email} · 학번 {user.studentNumber}
+                            </SearchResultMeta>
+                          </SearchResultInfo>
+                          <Button_square
+                            onClick={() => handleAddMember(user)}
+                            disabled={
+                              isUpdatingMembers ||
+                              (currentUserId !== null &&
+                                user.id === currentUserId)
+                            }
+                            type="button"
+                            width="80px"
+                            height="40px"
+                          >
+                            추가
+                          </Button_square>
+                        </SearchResultItem>
+                      ))}
+                    </SearchResultsList>
+                  </FormGroup>
+                )}
+
+                {searchError && <ErrorMessage message={searchError.message} />}
 
                 {teamMembers.length > 0 && (
                   <FormGroup>
@@ -271,7 +363,16 @@ export default function TeamPage() {
                       {teamMembers.map((member) => (
                         <MemberItem key={member.id}>
                           <MemberInfo>
-                            <MemberUserId>사용자 ID: {member.id}</MemberUserId>
+                            <MemberName>
+                              {member.name ?? "이름 없음"} (
+                              {member.username ?? member.id})
+                            </MemberName>
+                            <MemberMeta>
+                              {member.email ?? "이메일 없음"}
+                              {member.studentNumber !== undefined
+                                ? ` · 학번 ${member.studentNumber}`
+                                : ""}
+                            </MemberMeta>
                             <MemberRole>
                               역할:{" "}
                               {member.role === "admin" ? "관리자" : "멤버"}
@@ -416,19 +517,18 @@ const InputRow = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
-  flex-wrap: nowrap;
-`;
-
-const StyledInput = styled(Input_basic)`
-  flex: 1;
-  min-width: 0;
+  flex-wrap: wrap;
 `;
 
 const InlineText = styled.span`
   color: ${Xquare_colors.gray[500]};
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
   white-space: nowrap;
+`;
+
+const RoleSelect = styled(Select)`
+  min-width: 120px;
 `;
 
 const MembersList = styled.div`
@@ -454,14 +554,53 @@ const MemberInfo = styled.div`
   gap: 4px;
 `;
 
-const MemberUserId = styled.span`
+const MemberName = styled.span`
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #000000;
+`;
+
+const MemberMeta = styled.span`
+  font-size: 12px;
+  color: ${Xquare_colors.gray[500]};
 `;
 
 const MemberRole = styled.span`
   font-size: 13px;
+  color: ${Xquare_colors.gray[600]};
+`;
+
+const SearchResultsList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const SearchResultItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1px solid ${Xquare_colors.gray[300]};
+  border-radius: 8px;
+  background: #ffffff;
+  gap: 12px;
+`;
+
+const SearchResultInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const SearchResultName = styled.span`
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+`;
+
+const SearchResultMeta = styled.span`
+  font-size: 12px;
   color: ${Xquare_colors.gray[500]};
 `;
 
