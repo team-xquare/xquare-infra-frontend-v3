@@ -49,6 +49,30 @@ export type { TeamAddon } from "./src/teams/addons";
 export { createAddon } from "./src/addon/create";
 export type { CreateAddonRequest } from "./src/addon/create";
 
+export { exchangeGithubToken } from "./src/githubapp/token";
+export {
+  getCurrentUser,
+  listUserRepositories,
+  listUserOrganizations,
+  listOrganizationRepositories,
+  listAllRepositoriesByOrg,
+  listUserInstallations,
+  listInstallationRepositories,
+  getGithubAppInstallUrl,
+} from "./src/githubapp/repositories";
+export type {
+  GithubTokenRequest,
+  GithubTokenData,
+  GithubTokenResponse,
+} from "./src/githubapp/types";
+export type {
+  GithubRepository,
+  GithubOrganization,
+  GithubUser,
+  RepositoriesByOrg,
+  GithubInstallation,
+} from "./src/githubapp/repositories";
+
 export { getTeamApplications } from "./src/teams/applications";
 export type { TeamApplication } from "./src/teams/applications";
 

@@ -12,14 +12,28 @@ import {
   Button_square,
   Tooltip,
   ErrorMessage,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
-import { useAuthGuard, useCreateApplication } from "@xquare/hooks";
+import {
+  useAuthGuard,
+  useCreateApplication,
+  useGithubToken,
+} from "@xquare/hooks";
 import { getSelectedTeamId, getSelectedTeam } from "@xquare/utils";
-import type { CreateApplicationRequest, ApplicationBuild } from "@xquare/utils";
+import type {
+  CreateApplicationRequest,
+  ApplicationBuild,
+  GithubTokenData,
+  GithubRepository,
+  GithubInstallation,
+} from "@xquare/utils";
 import {
   getRepoInfo,
   listBranches,
   getLatestCommitSha,
+  listUserInstallations,
+  listInstallationRepositories,
+  getGithubAppInstallUrl,
   needsVersion,
   needsBuildCommand,
   needsStartCommand,
@@ -56,12 +70,25 @@ const CreateApplication = () => {
     loading: creating,
     error: createError,
   } = useCreateApplication();
+  const { getToken, loading: tokenLoading } = useGithubToken();
   const [teamId] = useState<number | null>(getSelectedTeamId());
   const [teamName] = useState<string>(getSelectedTeam()?.name ?? "");
   const [projectName, setProjectName] = useState("");
   const [repoName, setRepoName] = useState("");
   const [repoOwner, setRepoOwner] = useState("");
   const [installationId, setInstallationId] = useState("");
+  const [githubToken, setGithubToken] = useState<GithubTokenData | null>(null);
+  const [allRepositories, setAllRepositories] = useState<GithubRepository[]>(
+    []
+  );
+  const [ownerTabs, setOwnerTabs] = useState<
+    { login: string; avatarUrl?: string }[]
+  >([]);
+  const [selectedOwner, setSelectedOwner] = useState("");
+  const [installations, setInstallations] = useState<GithubInstallation[]>([]);
+  const [, setSelectedInstallation] = useState<GithubInstallation | null>(null);
+  const [repoPage, setRepoPage] = useState(1);
+  const REPOS_PER_PAGE = 12;
   const [branch, setBranch] = useState("");
   const [branches, setBranches] = useState<string[]>([]);
   const [commitHash, setCommitHash] = useState("");
@@ -87,6 +114,21 @@ const CreateApplication = () => {
     () => triggerPaths.map((p) => p.trim()).filter(Boolean),
     [triggerPaths]
   );
+
+  const filteredRepositories = useMemo(
+    () => allRepositories.filter((repo) => repo.owner.login === selectedOwner),
+    [allRepositories, selectedOwner]
+  );
+
+  const totalRepoPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredRepositories.length / REPOS_PER_PAGE)),
+    [filteredRepositories.length]
+  );
+
+  const paginatedRepositories = useMemo(() => {
+    const start = (repoPage - 1) * REPOS_PER_PAGE;
+    return filteredRepositories.slice(start, start + REPOS_PER_PAGE);
+  }, [filteredRepositories, repoPage]);
 
   const branchOptions = useMemo(
     () =>
@@ -263,22 +305,22 @@ const CreateApplication = () => {
     }
   };
 
-  const handleFetchGithub = async () => {
-    if (!repoOwner.trim() || !repoName.trim()) {
+  const handleFetchGithub = async (ownerParam?: string, repoParam?: string) => {
+    const targetOwner = ownerParam ?? repoOwner.trim();
+    const targetRepo = repoParam ?? repoName.trim();
+
+    if (!targetOwner || !targetRepo) {
       setGithubError("Owner와 Repository를 입력해주세요.");
       return;
     }
-
-    const owner = repoOwner.trim();
-    const repo = repoName.trim();
 
     setGithubLoading(true);
     setGithubError(null);
     setGithubMessage(null);
 
     try {
-      const { defaultBranch } = await getRepoInfo(owner, repo);
-      const branchNames = await listBranches(owner, repo, 100);
+      const { defaultBranch } = await getRepoInfo(targetOwner, targetRepo);
+      const branchNames = await listBranches(targetOwner, targetRepo, 100);
       setBranches(branchNames);
 
       const targetBranch =
@@ -289,7 +331,7 @@ const CreateApplication = () => {
       setBranch(targetBranch);
 
       if (targetBranch) {
-        await fetchCommitForBranch(owner, repo, targetBranch);
+        await fetchCommitForBranch(targetOwner, targetRepo, targetBranch);
       } else {
         setCommitHash("");
       }
@@ -305,6 +347,167 @@ const CreateApplication = () => {
     } finally {
       setGithubLoading(false);
     }
+  };
+
+  const handleGithubOAuth = () => {
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    if (!clientId) {
+      setGithubError("GitHub Client ID가 설정되지 않았습니다.");
+      return;
+    }
+
+    const baseUrl = import.meta.env.VITE_FRONTE_URL;
+    const redirectUri = `${baseUrl}/github/callback`;
+    const scope = "repo,read:user";
+    const state = Math.random().toString(36).substring(7);
+
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
+
+    const popup = window.open(
+      authUrl,
+      "GitHub OAuth",
+      "width=600,height=800,left=100,top=100"
+    );
+
+    if (!popup) {
+      setGithubError("팝업이 차단되었습니다. 팝업을 허용해주세요.");
+      return;
+    }
+
+    let messageHandlerApplied = false;
+
+    const handleMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+
+      if (event.data.type === "github-oauth-code") {
+        // 이미 처리된 경우 중복 처리 방지
+        if (messageHandlerApplied) {
+          console.log("[CreateApplication] OAuth already processed, skipping");
+          return;
+        }
+        messageHandlerApplied = true;
+
+        const { code } = event.data;
+        console.log("[CreateApplication] OAuth code received", code);
+
+        setGithubLoading(true);
+        setGithubError(null);
+
+        try {
+          const response = await getToken(code);
+          if (response && response.success) {
+            setGithubToken(response.data);
+            setGithubMessage("GitHub 연동이 완료되었습니다.");
+
+            // GitHub App 설치 목록 로드
+            try {
+              const installs = await listUserInstallations(
+                response.data.accessToken
+              );
+              setInstallations(installs);
+              console.log(
+                "[CreateApplication] Installations loaded:",
+                installs.length
+              );
+
+              // 첫 번째 installation이 있으면 자동으로 레포지토리 로드
+              if (installs.length > 0) {
+                const firstInstall = installs[0];
+                setSelectedInstallation(firstInstall);
+                setInstallationId(String(firstInstall.id));
+
+                try {
+                  // 모든 installations의 레포지토리 로드
+                  const allRepos: GithubRepository[] = [];
+
+                  for (const install of installs) {
+                    try {
+                      const repos = await listInstallationRepositories(
+                        response.data.accessToken,
+                        install.id
+                      );
+                      allRepos.push(...repos);
+                      console.log(
+                        `[CreateApplication] Loaded ${repos.length} repos from ${install.account.login}`
+                      );
+                    } catch (repoErr) {
+                      console.error(
+                        `[CreateApplication] Failed to load repos for installation ${install.id}`,
+                        repoErr
+                      );
+                    }
+                  }
+
+                  setAllRepositories(allRepos);
+
+                  // owner 탭 업데이트
+                  const ownerMap = new Map<string, string | undefined>();
+                  allRepos.forEach((repo) => {
+                    if (!ownerMap.has(repo.owner.login)) {
+                      ownerMap.set(repo.owner.login, repo.owner.avatar_url);
+                    }
+                  });
+
+                  const owners = Array.from(ownerMap.entries()).map(
+                    ([login, avatarUrl]) => ({ login, avatarUrl })
+                  );
+                  setOwnerTabs(owners);
+                  setSelectedOwner(owners[0]?.login ?? "");
+                  setGithubMessage(
+                    `${allRepos.length}개의 레포지토리를 불러왔습니다.`
+                  );
+                  console.log(
+                    "[CreateApplication] Total repositories loaded:",
+                    allRepos.length
+                  );
+                } catch (repoErr) {
+                  console.error(
+                    "[CreateApplication] Failed to load installation repos",
+                    repoErr
+                  );
+                  setGithubError(
+                    repoErr instanceof Error
+                      ? repoErr.message
+                      : "레포지토리 목록을 불러오지 못했습니다."
+                  );
+                }
+              }
+            } catch (installErr) {
+              console.error(
+                "[CreateApplication] Failed to load installations",
+                installErr
+              );
+              setGithubError(
+                installErr instanceof Error
+                  ? installErr.message
+                  : "설치 목록을 불러오지 못했습니다."
+              );
+            }
+          } else {
+            setGithubError("GitHub 토큰 교환에 실패했습니다.");
+          }
+        } catch (err) {
+          console.error("[CreateApplication] token exchange error", err);
+          setGithubError(
+            err instanceof Error
+              ? err.message
+              : "토큰 교환 중 오류가 발생했습니다."
+          );
+        } finally {
+          setGithubLoading(false);
+          window.removeEventListener("message", handleMessage);
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+
+    const checkPopup = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(checkPopup);
+        window.removeEventListener("message", handleMessage);
+      }
+    }, 1000);
   };
 
   return (
@@ -349,68 +552,186 @@ const CreateApplication = () => {
           </InputArea>
         </ValueBox>
         <ValueBox>
-          <SectionHeader>
+          <SectionHeader
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "20px",
+            }}
+          >
             <Typography size="5x" weight="bold">
               Step1. Github Repository
             </Typography>
-          </SectionHeader>
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Repository Name
-            </Typography>
-            <InlineInputs>
-              <Input_basic
-                value={repoName}
-                onChange={(e) => {
-                  setRepoName(e.target.value);
-                }}
-                placeholder="Repository Name"
-                width="100%"
-                height="35px"
-              />
-            </InlineInputs>
-          </InputArea>
-          <InputArea>
-            <Typography size="5x" weight="semiBold">
-              Repository Owner
-            </Typography>
-            <Input_basic
-              value={repoOwner}
-              onChange={(e) => {
-                setRepoOwner(e.target.value);
-              }}
-              placeholder="Repository Owner"
-              width="950px"
-              height="35px"
-            />
-          </InputArea>
-          <div
-            style={{
-              margin: "0.5rem",
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Tooltip
-              content="Owner와 Repository의 GitHub 정보를 불러옵니다.
-              브랜치 목록과 최신 커밋 해시가 자동으로 채워집니다."
-              position="left"
-            >
-              <Button_square
-                type="button"
-                width="200px"
-                height="40px"
-                onClick={handleFetchGithub}
-                disabled={
-                  githubLoading || !repoOwner.trim() || !repoName.trim()
-                }
+            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              {githubToken && installations.length > 0 && (
+                <span
+                  style={{
+                    fontSize: "14px",
+                    color: String(Xquare_colors.gray[500]),
+                  }}
+                >
+                  {installations.length}개 앱 연결됨
+                </span>
+              )}
+              <Tooltip
+                content="GitHub App이 설치된 Organization의 Repository를 불러옵니다. 설치 후 다시 불러오기를 눌러주세요."
+                position="bottom"
               >
-                {githubLoading ? "불러오는 중..." : "GitHub에서 불러오기"}
-              </Button_square>
-            </Tooltip>
-          </div>
+                <Button_square
+                  type="button"
+                  width="100px"
+                  height="36px"
+                  onClick={() => {
+                    handleGithubOAuth();
+                  }}
+                  disabled={tokenLoading}
+                >
+                  불러오기
+                </Button_square>
+              </Tooltip>
+              <Tooltip
+                content="앱이 설치된 organization에 한해 불러올 수 있습니다. organization이 안보이면, App을 설치해 주세요."
+                position="left"
+              >
+                <Button_square
+                  type="button"
+                  width="120px"
+                  height="36px"
+                  onClick={() => {
+                    const appSlug = import.meta.env.VITE_GITHUB_APP_SLUG;
+                    if (!appSlug) {
+                      setGithubError(
+                        "GitHub App 슬러그가 설정되지 않았습니다. 관리자에게 문의하세요."
+                      );
+                      return;
+                    }
+                    const installUrl = getGithubAppInstallUrl(
+                      appSlug,
+                      window.location.origin + "/deployment/createapplication"
+                    );
+                    window.open(installUrl, "_blank");
+                  }}
+                >
+                  + 앱 추가
+                </Button_square>
+              </Tooltip>
+            </div>
+          </SectionHeader>
+
+          <LoadingOverlay
+            isLoading={
+              !!(githubToken && githubLoading && ownerTabs.length === 0)
+            }
+          />
+
+          {githubToken && ownerTabs.length > 0 && (
+            <InputAreaWithTabs>
+              <OrganizationTabs>
+                {ownerTabs.map((item) => (
+                  <OrgTab
+                    key={item.login}
+                    isActive={selectedOwner === item.login}
+                    onClick={() => {
+                      setSelectedOwner(item.login);
+                      setRepoPage(1);
+                      setRepoName("");
+                      setRepoOwner("");
+                      setBranch("");
+                      setCommitHash("");
+                      setGithubMessage(null);
+                    }}
+                  >
+                    {item.avatarUrl ? (
+                      <OrgTabIcon src={item.avatarUrl} alt={item.login} />
+                    ) : (
+                      <OrgTabFallback>
+                        {item.login.slice(0, 1).toUpperCase()}
+                      </OrgTabFallback>
+                    )}
+                    <OrgTabLabel>{item.login}</OrgTabLabel>
+                  </OrgTab>
+                ))}
+              </OrganizationTabs>
+            </InputAreaWithTabs>
+          )}
+
+          {githubToken && filteredRepositories.length > 0 && (
+            <>
+              <RepositoryGrid>
+                {paginatedRepositories.map((repo) => (
+                  <RepositoryCard
+                    key={repo.id}
+                    isSelected={
+                      repoName === repo.name && repoOwner === repo.owner.login
+                    }
+                    onClick={() => {
+                      setRepoName(repo.name);
+                      setRepoOwner(repo.owner.login);
+                      setBranch("");
+                      setCommitHash("");
+                      setGithubMessage(null);
+                      handleFetchGithub(repo.owner.login, repo.name);
+                    }}
+                  >
+                    <RepositoryName>{repo.name}</RepositoryName>
+                    <RepositoryOwner>{repo.owner.login}</RepositoryOwner>
+                    {repo.description && (
+                      <RepositoryDesc>{repo.description}</RepositoryDesc>
+                    )}
+                  </RepositoryCard>
+                ))}
+              </RepositoryGrid>
+
+              {totalRepoPages > 1 && (
+                <PaginationRow>
+                  <PaginationButton
+                    type="button"
+                    disabled={repoPage === 1}
+                    onClick={() => setRepoPage((p) => Math.max(1, p - 1))}
+                  >
+                    이전
+                  </PaginationButton>
+                  <PaginationInfo>
+                    {repoPage} / {totalRepoPages}
+                  </PaginationInfo>
+                  <PaginationButton
+                    type="button"
+                    disabled={repoPage === totalRepoPages}
+                    onClick={() =>
+                      setRepoPage((p) => Math.min(totalRepoPages, p + 1))
+                    }
+                  >
+                    다음
+                  </PaginationButton>
+                </PaginationRow>
+              )}
+            </>
+          )}
+
+          {githubToken && ownerTabs.length === 0 && !githubLoading && (
+            <StatusRow>
+              <StatusText color={String(Xquare_colors.gray[400])}>
+                연동한 레포지토리가 없습니다.
+              </StatusText>
+            </StatusRow>
+          )}
+          <InputArea style={{ borderColor: String(Xquare_colors.gray[800]) }}>
+            <Typography size="5x" weight="semiBold">
+              Selected
+            </Typography>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span
+                style={{
+                  fontSize: "15px",
+                  color: String(Xquare_colors.gray[800]),
+                  fontWeight: "500",
+                }}
+              >
+                {repoOwner && repoName ? `${repoOwner}/${repoName}` : ""}
+              </span>
+            </div>
+          </InputArea>
           <InputArea>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Typography size="5x" weight="semiBold">
@@ -817,15 +1138,6 @@ const InputArea = styled.div`
   cursor: default;
 `;
 
-const InlineInputs = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  width: 80%;
-  cursor: default;
-`;
-
 const SectionHeader = styled.div`
   display: flex;
   align-items: center;
@@ -922,6 +1234,174 @@ const ButtonGroup = styled.div`
   gap: 10px;
   width: 100%;
   cursor: default;
+`;
+
+const RepositoryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+  width: 100%;
+  margin: 1rem 0;
+`;
+
+const InputAreaWithTabs = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 5px;
+  width: 100%;
+  min-height: 50px;
+  border-bottom: 2px solid ${Xquare_colors.gray[300]};
+  cursor: default;
+`;
+
+const OrganizationTabs = styled.div`
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 5px 0;
+  flex: 1;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${Xquare_colors.gray[400]};
+    border-radius: 2px;
+  }
+`;
+
+const OrgTab = styled.button<{ isActive: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: none;
+  border: 1px solid
+    ${({ isActive }) =>
+      isActive ? Xquare_colors.purple[400] : Xquare_colors.gray[300]};
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: ${({ isActive }) => (isActive ? "600" : "500")};
+  color: ${({ isActive }) =>
+    isActive ? Xquare_colors.purple[400] : Xquare_colors.gray[500]};
+  background: ${({ isActive }) =>
+    isActive ? Xquare_colors.purple[50] : "white"};
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: ${Xquare_colors.purple[400]};
+    background: ${Xquare_colors.purple[50]};
+  }
+`;
+
+const OrgTabIcon = styled.img`
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const OrgTabFallback = styled.div`
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: ${Xquare_colors.gray[200]};
+  color: ${Xquare_colors.gray[600]};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+`;
+
+const OrgTabLabel = styled.span`
+  display: inline-block;
+`;
+
+const RepositoryCard = styled.div<{ isSelected: boolean }>`
+  border: 2px solid
+    ${({ isSelected }) =>
+      isSelected ? Xquare_colors.purple[400] : Xquare_colors.gray[300]};
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: ${({ isSelected }) =>
+    isSelected ? Xquare_colors.purple[50] : "white"};
+
+  &:hover {
+    border-color: ${Xquare_colors.purple[400]};
+    background: ${Xquare_colors.purple[50]};
+  }
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const RepositoryName = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${Xquare_colors.gray[700]};
+`;
+
+const RepositoryOwner = styled.div`
+  font-size: 13px;
+  color: ${Xquare_colors.gray[500]};
+`;
+
+const RepositoryDesc = styled.div`
+  font-size: 12px;
+  color: ${Xquare_colors.gray[400]};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 4px;
+`;
+
+const PaginationRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 8px 0 4px;
+  width: 100%;
+`;
+
+const PaginationButton = styled.button<{ disabled: boolean }>`
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid
+    ${({ disabled }) =>
+      disabled ? Xquare_colors.gray[200] : Xquare_colors.gray[400]};
+  background: ${({ disabled }) =>
+    disabled ? Xquare_colors.gray[100] : "white"};
+  color: ${({ disabled }) =>
+    disabled ? Xquare_colors.gray[400] : Xquare_colors.gray[600]};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  transition: all 0.2s ease;
+
+  &:hover {
+    ${({ disabled }) =>
+      !disabled &&
+      `border-color: ${Xquare_colors.purple[400]}; color: ${Xquare_colors.purple[400]};`}
+  }
+`;
+
+const PaginationInfo = styled.span`
+  font-size: 13px;
+  color: ${Xquare_colors.gray[500]};
+  min-width: 48px;
+  text-align: center;
 `;
 
 export default CreateApplication;

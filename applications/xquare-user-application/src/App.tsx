@@ -20,6 +20,7 @@ import DeploymentView from "./pages/deploymentview";
 import CreateApplication from "./pages/createapplication";
 import CreateAddon from "./pages/createaddon";
 import TeamPage from "./pages/team";
+import GithubCallback from "./pages/githubcallback";
 import NotFound from "./pages/Pagenotfound";
 
 const art = `
@@ -48,6 +49,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/github/callback" element={<GithubCallback />} />
 
         <Route
           path="/"
