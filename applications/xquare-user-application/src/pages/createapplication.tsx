@@ -42,6 +42,8 @@ import {
   needsWorkingDirectory,
 } from "@xquare/utils";
 
+const APPLICATION_NAME_REGEX = /^[a-z-]{3,45}$/;
+
 // --- Domain validation helpers (module scope for stable references) ---
 function extractHostname(value: string): string {
   const trimmed = value.trim();
@@ -108,6 +110,14 @@ const CreateApplication = () => {
   const [githubMessage, setGithubMessage] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
 
+  const projectNameError = useMemo(() => {
+    if (!projectName.trim()) return null;
+    return APPLICATION_NAME_REGEX.test(projectName.trim())
+      ? null
+      : "애플리케이션 이름은 3~45자의 소문자와 하이픈(-)만 사용할 수 있습니다.";
+  }, [projectName]);
+  const projectNameValid = APPLICATION_NAME_REGEX.test(projectName.trim());
+
   const hasTeam = typeof teamId === "number" && !Number.isNaN(teamId);
 
   const normalizedTriggerPaths = useMemo(
@@ -151,7 +161,7 @@ const CreateApplication = () => {
   const isValid = useMemo(
     () =>
       hasTeam &&
-      projectName.trim() !== "" &&
+      projectNameValid &&
       repoName.trim() !== "" &&
       repoOwner.trim() !== "" &&
       installationId.trim() !== "" &&
@@ -167,7 +177,7 @@ const CreateApplication = () => {
       routesValid,
     [
       hasTeam,
-      projectName,
+      projectNameValid,
       repoName,
       repoOwner,
       installationId,
@@ -223,6 +233,12 @@ const CreateApplication = () => {
     if (!hasTeam) {
       console.error("[CreateApplication] submit error: no team selected");
       setFormError("팀을 선택해주세요. (사이드바 하단)");
+      return;
+    }
+    if (!projectNameValid) {
+      setFormError(
+        "애플리케이션 이름은 3~45자의 소문자와 하이픈(-)만 사용할 수 있습니다."
+      );
       return;
     }
     setFormError(null);
@@ -544,12 +560,14 @@ const CreateApplication = () => {
               value={projectName}
               onChange={(e) => {
                 setProjectName(e.target.value);
+                setFormError(null);
               }}
               placeholder="Project Name"
               width="950px"
               height="35px"
             />
           </InputArea>
+          {projectNameError && <ErrorMessage message={projectNameError} />}
         </ValueBox>
         <ValueBox>
           <SectionHeader

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useCreateAddon } from "@xquare/hooks";
@@ -16,6 +16,8 @@ import {
   Button_square,
   ErrorMessage,
 } from "@xquare/user-interfaces";
+
+const ADDON_NAME_REGEX = /^[a-z-]{3,45}$/;
 
 const CreateAddon = () => {
   useAuthGuard();
@@ -68,12 +70,24 @@ const CreateAddon = () => {
   const [name, setName] = useState("");
   const [type, setType] = useState("mysql");
   const [storageGi, setStorageGi] = useState("");
+  const [bootstrap, setBootstrap] = useState("");
+
+  const nameError = useMemo(() => {
+    if (!name.trim()) return null;
+    return ADDON_NAME_REGEX.test(name.trim())
+      ? null
+      : "애드온 이름은 3~45자의 소문자와 하이픈(-)만 사용할 수 있습니다.";
+  }, [name]);
+  const nameValid = ADDON_NAME_REGEX.test(name.trim());
+  const requiresBootstrap = type === "debezium";
+  const bootstrapValid = !requiresBootstrap || bootstrap.trim() !== "";
 
   const isValid =
     selectedTeamId !== null &&
-    name.trim() !== "" &&
+    nameValid &&
     type.trim() !== "" &&
-    storageGi.trim() !== "";
+    storageGi.trim() !== "" &&
+    bootstrapValid;
 
   const handleCreateAddon = async () => {
     if (
@@ -85,21 +99,49 @@ const CreateAddon = () => {
       return;
     }
 
+    if (!nameValid) {
+      return;
+    }
+
+    if (!bootstrapValid) {
+      return;
+    }
+
+    const payload: {
+      teamId: number;
+      name: string;
+      type:
+        | "mysql"
+        | "postgres"
+        | "redis"
+        | "mongodb"
+        | "kafka"
+        | "rabbitmq"
+        | "elk"
+        | "debezium";
+      storageGi: number;
+      configuration?: { bootstrap: string };
+    } = {
+      teamId: selectedTeamId,
+      name,
+      type: type as
+        | "mysql"
+        | "postgres"
+        | "redis"
+        | "mongodb"
+        | "kafka"
+        | "rabbitmq"
+        | "elk"
+        | "debezium",
+      storageGi: Number(storageGi),
+    };
+
+    if (type === "debezium") {
+      payload.configuration = { bootstrap: bootstrap.trim() };
+    }
+
     try {
-      await create({
-        teamId: selectedTeamId,
-        name,
-        type: type as
-          | "mysql"
-          | "postgres"
-          | "redis"
-          | "mongodb"
-          | "kafka"
-          | "rabbitmq"
-          | "elk"
-          | "debezium",
-        storageGi: Number(storageGi),
-      });
+      await create(payload);
     } catch (err) {
       console.error("Addon 생성 중 오류:", err);
     }
@@ -147,6 +189,7 @@ const CreateAddon = () => {
               height="35px"
             />
           </InputArea>
+          {nameError && <ErrorMessage message={nameError} />}
         </ValueBox>
 
         {/* Step1 */}
@@ -188,7 +231,11 @@ const CreateAddon = () => {
                   label: "RabbitMQ",
                   description: "Message Broker for async communication",
                 },
-                { value: "elk", label: "ELK", description: "Elasticsearch, Logstash, Kibana" },
+                {
+                  value: "elk",
+                  label: "ELK",
+                  description: "Elasticsearch, Logstash, Kibana",
+                },
                 {
                   value: "debezium",
                   label: "Debezium",
@@ -198,7 +245,12 @@ const CreateAddon = () => {
                 <TypeCard
                   key={option.value}
                   selected={type === option.value}
-                  onClick={() => setType(option.value)}
+                  onClick={() => {
+                    setType(option.value);
+                    if (option.value !== "debezium") {
+                      setBootstrap("");
+                    }
+                  }}
                 >
                   <Typography size="5x" weight="bold" color="inherit">
                     {option.label}
@@ -235,6 +287,25 @@ const CreateAddon = () => {
               height="35px"
             />
           </InputArea>
+          {requiresBootstrap && (
+            <>
+              <InputArea>
+                <Typography size="5x" weight="semiBold">
+                  Debezium Bootstrap
+                </Typography>
+                <Input_basic
+                  value={bootstrap}
+                  onChange={(e) => setBootstrap(e.target.value)}
+                  placeholder="ex) kafka:9092"
+                  width="950px"
+                  height="35px"
+                />
+              </InputArea>
+              {!bootstrapValid && (
+                <ErrorMessage message="Debezium bootstrap을 입력해주세요." />
+              )}
+            </>
+          )}
         </ValueBox>
 
         {/* Buttons */}

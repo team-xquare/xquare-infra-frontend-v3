@@ -16,6 +16,9 @@ export interface CreateAddonRequest {
     | "elk"
     | "debezium";
   storageGi: number;
+  configuration?: {
+    bootstrap: string;
+  };
 }
 
 interface CreateAddonApiResponse {
@@ -67,6 +70,14 @@ export const createAddon = async (
     throw new Error("유효한 스토리지 용량이 필요합니다.");
   }
 
+  const isDebezium = request.type === "debezium";
+  if (isDebezium) {
+    const bootstrap = request.configuration?.bootstrap?.trim();
+    if (!bootstrap) {
+      throw new Error("Debezium bootstrap이 필요합니다.");
+    }
+  }
+
   const accessToken = getAccessToken();
   if (!accessToken) {
     console.error("[createAddon] no access token");
@@ -74,13 +85,21 @@ export const createAddon = async (
   }
 
   try {
+    const payload = { ...request } as CreateAddonRequest;
+    if (isDebezium) {
+      const bootstrap = request.configuration?.bootstrap?.trim() ?? "";
+      payload.configuration = { bootstrap };
+    } else {
+      delete (payload as { configuration?: unknown }).configuration;
+    }
+
     const response = await fetchWithTimeout(`${API_BASE_URL}/addons`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
