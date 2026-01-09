@@ -11,6 +11,7 @@ export { useTeams } from "./src/useTeams";
 export { useCreateTeam } from "./src/useCreateTeam";
 export { useUpdateTeam } from "./src/useUpdateTeam";
 export { useUpdateTeamMembers } from "./src/useUpdateTeamMembers";
+export { useSearchUsers } from "./src/useSearchUsers";
 export { useCreateApplication } from "./src/useCreateApplication";
 export { useCreateAddon } from "./src/useCreateAddon";
 export { useApplicationDetail } from "./src/useApplicationDetail";
