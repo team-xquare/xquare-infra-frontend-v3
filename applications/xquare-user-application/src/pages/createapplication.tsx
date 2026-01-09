@@ -321,6 +321,16 @@ const CreateApplication = () => {
     }
   };
 
+  const findInstallationIdForOwner = (owner: string): string => {
+    // 주어진 owner에 해당하는 installation ID를 찾기
+    for (const install of installations) {
+      if (install.account.login === owner) {
+        return String(install.id);
+      }
+    }
+    return "";
+  };
+
   const handleFetchGithub = async (ownerParam?: string, repoParam?: string) => {
     const targetOwner = ownerParam ?? repoOwner.trim();
     const targetRepo = repoParam ?? repoName.trim();
@@ -657,6 +667,7 @@ const CreateApplication = () => {
                       setRepoOwner("");
                       setBranch("");
                       setCommitHash("");
+                      setInstallationId("");
                       setGithubMessage(null);
                     }}
                   >
@@ -689,6 +700,17 @@ const CreateApplication = () => {
                       setBranch("");
                       setCommitHash("");
                       setGithubMessage(null);
+                      // 선택된 repository의 설치 ID 업데이트
+                      const foundInstallId = findInstallationIdForOwner(
+                        repo.owner.login
+                      );
+                      if (foundInstallId) {
+                        setInstallationId(foundInstallId);
+                        console.log(
+                          "[CreateApplication] Installation ID updated:",
+                          foundInstallId
+                        );
+                      }
                       handleFetchGithub(repo.owner.login, repo.name);
                     }}
                   >
