@@ -86,8 +86,7 @@ const CreateApplication = () => {
   >([]);
   const [selectedOwner, setSelectedOwner] = useState("");
   const [installations, setInstallations] = useState<GithubInstallation[]>([]);
-  const [, setSelectedInstallation] =
-    useState<GithubInstallation | null>(null);
+  const [, setSelectedInstallation] = useState<GithubInstallation | null>(null);
   const [repoPage, setRepoPage] = useState(1);
   const REPOS_PER_PAGE = 12;
   const [branch, setBranch] = useState("");
@@ -594,21 +593,21 @@ const CreateApplication = () => {
                   height="36px"
                   onClick={() => {
                     const appSlug = import.meta.env.VITE_GITHUB_APP_SLUG;
-                  if (!appSlug) {
-                    setGithubError(
-                      "GitHub App 슬러그가 설정되지 않았습니다. 관리자에게 문의하세요."
+                    if (!appSlug) {
+                      setGithubError(
+                        "GitHub App 슬러그가 설정되지 않았습니다. 관리자에게 문의하세요."
+                      );
+                      return;
+                    }
+                    const installUrl = getGithubAppInstallUrl(
+                      appSlug,
+                      window.location.origin + "/deployment/createapplication"
                     );
-                    return;
-                  }
-                  const installUrl = getGithubAppInstallUrl(
-                    appSlug,
-                    window.location.origin + "/deployment/createapplication"
-                  );
-                  window.open(installUrl, "_blank");
-                }}
-              >
-                + 앱 추가
-              </Button_square>
+                    window.open(installUrl, "_blank");
+                  }}
+                >
+                  + 앱 추가
+                </Button_square>
               </Tooltip>
             </div>
           </SectionHeader>
