@@ -256,7 +256,8 @@ const Area = styled.div`
   width: 65%;
   height: 100%;
 
-  border: 2px solid ${Xquare_colors.gray[300]};
+  // border: 2px solid ${Xquare_colors.gray[300]};
+  border: none;
   border-radius: 12px;
 `;
 

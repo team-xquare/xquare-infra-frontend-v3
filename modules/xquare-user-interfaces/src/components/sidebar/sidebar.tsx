@@ -45,11 +45,9 @@ function Sidebar({
   teams,
   teamsLoading,
   teamsError,
-  userRole = "member",
   onNavItemClick,
   onSearch,
   onTeamCreated,
-  onTeamUpdated,
 }: SidebarProps) {
   const location = useLocation();
 
@@ -119,9 +117,7 @@ function Sidebar({
         teams={teams}
         teamsLoading={teamsLoading}
         teamsError={teamsError}
-        userRole={userRole}
         onTeamCreated={onTeamCreated}
-        onTeamUpdated={onTeamUpdated}
       />
     </SidebarContainer>
   );

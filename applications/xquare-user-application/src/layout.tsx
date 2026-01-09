@@ -63,7 +63,6 @@ function Layout({
         teams={teams ?? []}
         teamsLoading={teamsLoading}
         teamsError={teamsError}
-        userRole="admin"
         onNavItemClick={handleNavItemClick}
         onSearch={onSearch}
         onTeamCreated={refetchTeams}

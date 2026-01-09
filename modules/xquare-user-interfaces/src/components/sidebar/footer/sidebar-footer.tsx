@@ -56,12 +56,6 @@ function SidebarFooterComponent({
     navigate("/login");
   }, [navigate]);
 
-  const handleOpenTeamManager = useCallback(() => {
-    setModalOpen(false);
-    navigate("/teams");
-  }, [navigate]);
-
-  // 팀 선택 처리: 팀 이름과 ID를 모두 업데이트하고 스토리지에 저장
   const handleTeamSelect = useCallback((teamName: string, teamId: number) => {
     console.log("[SidebarFooter] 팀 선택:", { teamName, teamId });
     setSelectedProject(teamName);

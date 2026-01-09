@@ -28,6 +28,7 @@ export const TeamModal = ({
   const [teamType, setTeamType] = useState<"club" | "team" | "individual">(
     "team"
   );
+  const [validationError, setValidationError] = useState<string | null>(null);
   const {
     create: createTeam,
     loading: isCreating,
@@ -44,8 +45,10 @@ export const TeamModal = ({
   const handleCreateTeam = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      setValidationError(null);
+
       if (!teamName.trim()) {
-        alert("팀 이름을 입력해주세요.");
+        setValidationError("팀 이름을 입력해주세요.");
         return;
       }
 
@@ -59,6 +62,7 @@ export const TeamModal = ({
       if (teamId) {
         setTeamName("");
         setTeamType("team");
+        setValidationError(null);
         setActiveTab("select");
         if (onTeamCreated) {
           onTeamCreated();
@@ -151,6 +155,7 @@ export const TeamModal = ({
                 </Select>
               </FormGroup>
 
+              {validationError && <ErrorText>{validationError}</ErrorText>}
               {createError && <ErrorText>{createError.message}</ErrorText>}
 
               <ButtonGroup>

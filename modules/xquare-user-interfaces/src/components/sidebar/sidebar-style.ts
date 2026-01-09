@@ -67,7 +67,7 @@ export const SubItem = styled.button<SubItemProps>`
   background-color: ${(props) =>
     props.isActive ? Xquare_colors.purple[600] : "transparent"};
   color: ${(props) =>
-    props.isActive ? Xquare_colors.white : Xquare_colors.gray[100]};
+    props.isActive ? Xquare_colors.white : Xquare_colors.gray[400]};
   border: none;
   border-radius: 8px;
   font-size: 14px;
