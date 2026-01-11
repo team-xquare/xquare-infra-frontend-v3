@@ -56,6 +56,13 @@ export const updateTeam = async (
 
   if (!response.ok) {
     console.error("[updateTeam] 응답 에러:", response.status);
+
+    if (response.status === 403) {
+      throw new Error(
+        "팀 멤버는 팀을 수정할 수 없습니다. 관리자 계정으로 시도하세요."
+      );
+    }
+
     throw new Error(`팀 수정에 실패했습니다. (status: ${response.status})`);
   }
 
