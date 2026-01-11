@@ -34,11 +34,11 @@ export default function TeamPage() {
 
   // Team Members State
   const [searchName, setSearchName] = useState("");
-  const [memberRole, setMemberRole] = useState<"admin" | "member">("member");
+  const [memberRole, setMemberRole] = useState<"admin" | "contributor">("contributor");
   const [teamMembers, setTeamMembers] = useState<
     Array<{
       id: number;
-      role: "admin" | "member";
+      role: "admin" | "contributor";
       name?: string;
       username?: string;
       email?: string;
@@ -310,11 +310,11 @@ export default function TeamPage() {
                     <RoleSelect
                       value={memberRole}
                       onChange={(e) =>
-                        setMemberRole(e.target.value as "admin" | "member")
+                        setMemberRole(e.target.value as "admin" | "contributor")
                       }
                       disabled={isUpdatingMembers}
                     >
-                      <option value="member">멤버</option>
+                      <option value="contributor">멤버</option>
                       <option value="admin">관리자</option>
                     </RoleSelect>
                     <InlineText>역할로 추가</InlineText>
