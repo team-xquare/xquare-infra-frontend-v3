@@ -12,7 +12,7 @@ export function useRegister() {
       setError(null);
       try {
         const res = await registerUser(payload);
-        console.log("[useRegister] 회원가입 성공");
+        // console.log("[useRegister] 회원가입 성공");
         return res;
       } catch (err) {
         const errorMessage =

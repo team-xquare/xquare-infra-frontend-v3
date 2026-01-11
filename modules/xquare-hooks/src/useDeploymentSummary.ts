@@ -21,10 +21,10 @@ export function useDeploymentSummary(
 
   useEffect(() => {
     if (!isValidId) {
-      console.log(
+      /* console.log(
         "[useDeploymentSummary] 유효하지 않은 애플리케이션 ID:",
         applicationId
-      );
+      ); */
       setData(null);
       setError(null);
       return;
@@ -35,11 +35,11 @@ export function useDeploymentSummary(
     getDeploymentSummary(applicationId!, page, limit)
       .then((response: DeploymentListResponse) => {
         if (!cancelled) {
-          console.log(
+          /* console.log(
             "[useDeploymentSummary] 배포 정보 조회 성공:",
             response.deployments?.length || 0,
             "개"
-          );
+          ); */
           setData(response.deployments || []);
           setError(null);
         }
@@ -85,10 +85,10 @@ export function useMultipleDeploymentSummaries(
 
   useEffect(() => {
     if (!isValidIds) {
-      console.log(
+      /* console.log(
         "[useMultipleDeploymentSummaries] 유효하지 않은 애플리케이션 ID 배열:",
         applicationIds
-      );
+      ); */
       return;
     }
 
@@ -97,11 +97,11 @@ export function useMultipleDeploymentSummaries(
     getMultipleDeploymentSummaries(applicationIds!, page, limit)
       .then((summaries) => {
         if (!cancelled) {
-          console.log(
+          /* console.log(
             "[useMultipleDeploymentSummaries] 배포 정보 조회 성공:",
             Object.keys(summaries).length,
             "개"
-          );
+          ); */
           setData(summaries);
           setError(null);
         }

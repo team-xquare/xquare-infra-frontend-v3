@@ -17,16 +17,16 @@ export function useUpdateApplicationConfiguration() {
       applicationId: number,
       request: UpdateApplicationConfigurationRequest
     ): Promise<boolean> => {
-      console.log("[useUpdateApplicationConfiguration] update called", {
+      /* console.log("[useUpdateApplicationConfiguration] update called", {
         applicationId,
-      });
+      }); */
       setLoading(true);
       setError(null);
 
       try {
         // 유틸 호출 로그는 유틸 내에서 수행
         await updateApplicationConfiguration(applicationId, request);
-        console.log("[useUpdateApplicationConfiguration] update success");
+        // console.log("[useUpdateApplicationConfiguration] update success");
         return true;
       } catch (err) {
         const errorObj =

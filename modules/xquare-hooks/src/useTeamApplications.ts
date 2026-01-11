@@ -18,7 +18,7 @@ export function useTeamApplications(teamId?: number) {
 
   useEffect(() => {
     if (!isValidId) {
-      console.log("[useTeamApplications] 유효하지 않은 팀 ID:", teamId);
+      // console.log("[useTeamApplications] 유효하지 않은 팀 ID:", teamId);
       return;
     }
 
@@ -27,12 +27,12 @@ export function useTeamApplications(teamId?: number) {
     getTeamApplications(teamId!)
       .then((applications) => {
         if (!cancelled) {
-          console.log(
+          /* console.log(
             "[useTeamApplications] 애플리케이션 조회 성공:",
             applications.length,
             "개",
             applications
-          );
+          ); */
           setData(applications);
           setError(null);
         }

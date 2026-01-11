@@ -6,7 +6,7 @@ import App from "./App.tsx";
 // Hide console logs/errors in production
 if (import.meta.env && import.meta.env.PROD) {
   const noop = () => {};
-  console.log = noop;
+  // console.log = noop;
   console.error = noop;
 }
 

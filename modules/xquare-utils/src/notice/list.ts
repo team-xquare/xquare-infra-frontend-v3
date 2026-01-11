@@ -49,9 +49,9 @@ export const listNotices = async ({
   url.searchParams.set("page", String(page));
   url.searchParams.set("limit", String(limit));
 
-  console.log(
+  /* console.log(
     `[listNotices] 요청 시작: url=${url.toString()}, page=${page}, limit=${limit}`
-  );
+  ); */
 
   try {
     const response = await fetchWithTimeout(url.toString(), {
@@ -75,9 +75,9 @@ export const listNotices = async ({
       throw new Error("공지 목록 조회 실패");
     }
 
-    console.log(
+    /* console.log(
       `[listNotices] 요청 성공: notices=${result.data.notices.length}개`
-    );
+    ); */
     return result.data.notices;
   } catch (error) {
     console.error("[listNotices] 요청 실패", error);

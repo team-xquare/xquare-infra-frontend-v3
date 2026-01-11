@@ -17,7 +17,7 @@ export const getRepoInfo = async (
   repo: string,
   signal?: AbortSignal
 ): Promise<RepoInfo> => {
-  console.log("[github] getRepoInfo", { owner, repo });
+  // console.log("[github] getRepoInfo", { owner, repo });
   const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}`,
     {
@@ -30,7 +30,7 @@ export const getRepoInfo = async (
   }
   const json = await res.json();
   const defaultBranch = json?.default_branch || "main";
-  console.log("[github] getRepoInfo success", { defaultBranch });
+  // console.log("[github] getRepoInfo success", { defaultBranch });
   return { defaultBranch };
 };
 
@@ -43,7 +43,7 @@ export const listBranches = async (
   perPage = 100,
   signal?: AbortSignal
 ): Promise<string[]> => {
-  console.log("[github] listBranches", { owner, repo, perPage });
+  // console.log("[github] listBranches", { owner, repo, perPage });
   const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`,
     { signal }
@@ -91,7 +91,7 @@ export const getLatestCommitSha = async (
   branch: string,
   signal?: AbortSignal
 ): Promise<string> => {
-  console.log("[github] getLatestCommitSha", { owner, repo, branch });
+  // console.log("[github] getLatestCommitSha", { owner, repo, branch });
   const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`,
     { signal }
@@ -101,6 +101,6 @@ export const getLatestCommitSha = async (
     throw new Error(`커밋 정보를 불러오지 못했습니다. (${res.status})`);
   }
   const json = await res.json();
-  console.log("[github] getLatestCommitSha success", { sha: json?.sha });
+  // console.log("[github] getLatestCommitSha success", { sha: json?.sha });
   return json?.sha ?? "";
 };

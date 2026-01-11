@@ -7,7 +7,7 @@ import App from "./App";
 // console 로그/에러를 프로덕션에서 숨기기
 if (import.meta.env && import.meta.env.PROD) {
   const noop = () => {};
-  console.log = noop;
+  // console.log = noop;
   console.error = noop;
 }
 

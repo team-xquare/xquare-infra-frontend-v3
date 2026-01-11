@@ -12,7 +12,7 @@ export function useLogin() {
       setError(null);
       try {
         const res = await loginUser(payload);
-        console.log("[useLogin] 로그인 성공");
+        // console.log("[useLogin] 로그인 성공");
         return res;
       } catch (err) {
         const errorMessage =

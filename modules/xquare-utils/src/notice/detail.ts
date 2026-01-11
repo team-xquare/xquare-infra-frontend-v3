@@ -37,7 +37,7 @@ export const getNoticeDetail = async (
 
   const url = `${API_BASE_URL}/notices/${noticeId}`;
 
-  console.log(`[getNoticeDetail] 요청 시작: url=${url}, noticeId=${noticeId}`);
+  // console.log(`[getNoticeDetail] 요청 시작: url=${url}, noticeId=${noticeId}`);
 
   try {
     const response = await fetchWithTimeout(url, {
@@ -64,7 +64,7 @@ export const getNoticeDetail = async (
       throw new Error("공지 상세 조회 실패");
     }
 
-    console.log(`[getNoticeDetail] 요청 성공: id=${result.data.id}`);
+    // console.log(`[getNoticeDetail] 요청 성공: id=${result.data.id}`);
     return result.data;
   } catch (error) {
     console.error("[getNoticeDetail] 요청 실패", error);

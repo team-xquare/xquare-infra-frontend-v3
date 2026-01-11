@@ -17,7 +17,7 @@ export function useCreateTeam() {
 
       try {
         const teamId = await createTeam(request);
-        console.log("[useCreateTeam] 팀 생성 성공:", teamId);
+        // console.log("[useCreateTeam] 팀 생성 성공:", teamId);
         return teamId;
       } catch (err) {
         console.error("[useCreateTeam] 팀 생성 실패:", err);

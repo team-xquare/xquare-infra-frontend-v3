@@ -25,7 +25,7 @@ export function useUpdateTeam() {
       setState({ loading: true, error: null, success: false });
       try {
         await updateTeam(teamId, request);
-        console.log("[useUpdateTeam] 팀 수정 성공:", teamId);
+        // console.log("[useUpdateTeam] 팀 수정 성공:", teamId);
         setState({ loading: false, error: null, success: true });
       } catch (err) {
         const error = err instanceof Error ? err : new Error("팀 수정 실패");

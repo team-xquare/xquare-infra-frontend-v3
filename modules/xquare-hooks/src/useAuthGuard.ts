@@ -31,7 +31,7 @@ export function useAuthGuard() {
         event.key === "refreshToken" ||
         event.key === null
       ) {
-        console.log("[useAuthGuard] 토큰 변경 감지, 인증 상태 재확인");
+        // console.log("[useAuthGuard] 토큰 변경 감지, 인증 상태 재확인");
         checkAuth();
       }
     };

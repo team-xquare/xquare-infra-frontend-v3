@@ -17,7 +17,7 @@ export function useApplicationDetail(applicationId?: number) {
     const execute = async () => {
       // ID 미제공 시 조기 반환
       if (!applicationId || applicationId < 0) {
-        console.log("[useApplicationDetail] no valid applicationId");
+        // console.log("[useApplicationDetail] no valid applicationId");
         if (!cancelled) {
           setData(null);
           setError(null);
@@ -25,7 +25,7 @@ export function useApplicationDetail(applicationId?: number) {
         return;
       }
 
-      console.log("[useApplicationDetail] fetch called", { applicationId });
+      // console.log("[useApplicationDetail] fetch called", { applicationId });
       setLoading(true);
       setError(null);
 
@@ -33,7 +33,7 @@ export function useApplicationDetail(applicationId?: number) {
         // 유틸 호출 로그는 유틸 내에서 수행
         const result = await getApplicationDetail(applicationId);
         if (!cancelled) {
-          console.log("[useApplicationDetail] fetch success", result.id);
+          // console.log("[useApplicationDetail] fetch success", result.id);
           setData(result);
         }
       } catch (err) {

@@ -21,7 +21,7 @@ export function useTeamAddons(teamId?: number) {
     setError(null);
 
     if (!isValidId) {
-      console.log("[useTeamAddons] 유효하지 않은 팀 ID:", teamId);
+      // console.log("[useTeamAddons] 유효하지 않은 팀 ID:", teamId);
       return;
     }
 

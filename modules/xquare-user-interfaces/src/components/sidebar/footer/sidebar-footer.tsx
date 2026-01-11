@@ -57,7 +57,7 @@ function SidebarFooterComponent({
   }, [navigate]);
 
   const handleTeamSelect = useCallback((teamName: string, teamId: number) => {
-    console.log("[SidebarFooter] 팀 선택:", { teamName, teamId });
+    // console.log("[SidebarFooter] 팀 선택:", { teamName, teamId });
     setSelectedProject(teamName);
     setSelectedTeamId(teamId);
     setIsUserSelectedTeam(true);

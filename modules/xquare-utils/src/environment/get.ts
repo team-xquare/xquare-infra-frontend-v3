@@ -16,7 +16,7 @@ export interface EnvironmentVariablesResponse {
 export const getEnvironmentVariables = async (
   applicationId: number
 ): Promise<EnvironmentVariable[]> => {
-  console.log("[environment] getEnvironmentVariables", { applicationId });
+  // console.log("[environment] getEnvironmentVariables", { applicationId });
 
   if (!isAuthenticated()) {
     throw new Error("인증이 필요합니다");
@@ -52,10 +52,10 @@ export const getEnvironmentVariables = async (
       value,
     }));
 
-    console.log("[environment] getEnvironmentVariables success", {
+    /* console.log("[environment] getEnvironmentVariables success", {
       applicationId,
       count: variables.length,
-    });
+    }); */
 
     return variables;
   } catch (error) {

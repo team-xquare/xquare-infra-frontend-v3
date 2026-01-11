@@ -108,7 +108,7 @@ function DeploymentContents({
   const handleBranchChange = async (value: string) => {
     setBranch(value);
     setIsDirtyGithub(true);
-    console.log("[DeploymentContents] branch change", value);
+    // console.log("[DeploymentContents] branch change", value);
 
     if (!value.trim() || !owner.trim() || !repo.trim()) {
       setHash("");
@@ -191,7 +191,7 @@ function DeploymentContents({
         (err instanceof DOMException && err.name === "AbortError") ||
         (err instanceof Error && err.name === "AbortError");
       if (aborted) {
-        console.log("[DeploymentContents] github fetch aborted");
+        // console.log("[DeploymentContents] github fetch aborted");
         return;
       }
       console.error("[DeploymentContents] github fetch error", err);
@@ -231,7 +231,7 @@ function DeploymentContents({
       };
 
       await onUpdate(applicationId, { configuration: updatedConfig });
-      console.log("[DeploymentContents] GitHub 설정 저장 성공");
+      // console.log("[DeploymentContents] GitHub 설정 저장 성공");
       setIsDirtyGithub(false);
       setGithubMessage(null);
       setGithubError(null);
@@ -305,7 +305,7 @@ function DeploymentContents({
       };
 
       await onUpdate(applicationId, { configuration: updatedConfig });
-      console.log("[DeploymentContents] Build 설정 저장 성공");
+      // console.log("[DeploymentContents] Build 설정 저장 성공");
       setIsDirtyBuild(false);
       setBuildError(null);
       onSave();

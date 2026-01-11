@@ -50,14 +50,14 @@ const DeploymentView = () => {
   const servicename = appDetail?.name ?? "service-name";
   const servicedesc = appDetail?.status ?? "service-description";
 
-  console.log("[DeploymentView] initialized", {
+  /* console.log("[DeploymentView] initialized", {
     applicationId,
     id,
     servicename,
     appDetail,
     loading: appLoading,
     error: appError,
-  });
+  }); */
 
   const handleSave = useCallback(async () => {
     if (!applicationId || applicationId < 0) {
@@ -72,7 +72,7 @@ const DeploymentView = () => {
         configuration: appDetail.configuration,
       });
       if (success) {
-        console.log("[DeploymentView] configuration saved");
+        // console.log("[DeploymentView] configuration saved");
         setEditable(false);
       }
     }
