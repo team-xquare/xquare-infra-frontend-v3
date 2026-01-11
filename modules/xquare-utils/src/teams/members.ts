@@ -5,7 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export interface TeamMemberUpdate {
   id: number;
-  role: "admin" | "member";
+  role: "admin" | "contributor";
 }
 
 export interface UpdateTeamMembersRequest {
