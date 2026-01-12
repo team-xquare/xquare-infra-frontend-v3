@@ -65,7 +65,7 @@ export default function SecretContents({
 
     const success = await remove(secret.key);
     if (success) {
-      console.log("[SecretContents] 환경변수 삭제 성공");
+      // console.log("[SecretContents] 환경변수 삭제 성공");
       setSaveError(null);
     } else {
       console.error("[SecretContents] 환경변수 삭제 실패");
@@ -82,7 +82,7 @@ export default function SecretContents({
   };
 
   const saveSecrets = async () => {
-    console.log("[SecretContents] 전송될 데이터:", secrets);
+    // console.log("[SecretContents] 전송될 데이터:", secrets);
     setSaveError(null);
 
     for (const secret of secrets) {
@@ -98,7 +98,7 @@ export default function SecretContents({
       }
     }
 
-    console.log("[SecretContents] 모든 환경변수 저장 성공");
+    // console.log("[SecretContents] 모든 환경변수 저장 성공");
     setIsDirty(false);
     setSaveError(null);
     onSave();

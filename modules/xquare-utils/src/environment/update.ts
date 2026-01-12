@@ -13,10 +13,10 @@ export const addOrUpdateEnvironmentVariable = async (
   applicationId: number,
   request: AddOrUpdateEnvironmentVariableRequest
 ): Promise<void> => {
-  console.log("[environment] addOrUpdateEnvironmentVariable", {
+  /* console.log("[environment] addOrUpdateEnvironmentVariable", {
     applicationId,
     name: request.name,
-  });
+  }); */
 
   if (!isAuthenticated()) {
     throw new Error("인증이 필요합니다");
@@ -50,10 +50,10 @@ export const addOrUpdateEnvironmentVariable = async (
       );
     }
 
-    console.log("[environment] addOrUpdateEnvironmentVariable success", {
+    /* console.log("[environment] addOrUpdateEnvironmentVariable success", {
       applicationId,
       name: request.name,
-    });
+    }); */
   } catch (error) {
     console.error("[environment] addOrUpdateEnvironmentVariable exception", {
       applicationId,

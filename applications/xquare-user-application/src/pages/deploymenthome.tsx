@@ -50,16 +50,16 @@ const DeploymentHome = () => {
     };
   }, []);
 
-  console.log("[DeploymentHome] 현재 선택된 팀 ID:", teamId);
+  // console.log("[DeploymentHome] 현재 선택된 팀 ID:", teamId);
   const { data: applications, loading, error } = useTeamApplications(teamId);
-  console.log(
+  /* console.log(
     "[DeploymentHome] 애플리케이션 상태 - loading:",
     loading,
     ", applications:",
     applications?.length ?? 0,
     "개, error:",
     error
-  );
+  ); */
 
   const handleAddApplicationClick = () => {
     navigate("/deployment/createapplication");

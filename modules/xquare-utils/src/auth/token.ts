@@ -35,14 +35,14 @@ const saveToStorage = (data: TokenPair): void => {
   try {
     if (data.accessToken) {
       localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
-      console.log("[Token] 액세스 토큰 저장됨");
+      // console.log("[Token] 액세스 토큰 저장됨");
     } else {
       localStorage.removeItem(ACCESS_TOKEN_KEY);
     }
 
     if (data.refreshToken) {
       localStorage.setItem(REFRESH_TOKEN_KEY, data.refreshToken);
-      console.log("[Token] 리프레시 토큰 저장됨");
+      // console.log("[Token] 리프레시 토큰 저장됨");
     } else {
       localStorage.removeItem(REFRESH_TOKEN_KEY);
     }
@@ -123,8 +123,8 @@ export const clearAllTokens = (): void => {
     console.warn("[Token] sessionStorage 전체 삭제 실패", e);
   }
 
-  console.log("[Token] 모든 저장소가 삭제되었습니다.");
-  console.log("[Token] 인증 상태 : 토큰 없음");
+  // console.log("[Token] 모든 저장소가 삭제되었습니다.");
+  // console.log("[Token] 인증 상태 : 토큰 없음");
 };
 
 /* 액세스 토큰 존재 여부 확인 */

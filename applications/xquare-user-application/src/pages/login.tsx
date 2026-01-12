@@ -63,7 +63,7 @@ const LoginPage: React.FC = () => {
 
     const res = await login(payload);
     if (res) {
-      console.log("[Auth-login] 로그인 성공", res);
+      // console.log("[Auth-login] 로그인 성공", res);
 
       if (res.data?.accessToken && res.data?.refreshToken) {
         setTokens(res.data.accessToken, res.data.refreshToken);

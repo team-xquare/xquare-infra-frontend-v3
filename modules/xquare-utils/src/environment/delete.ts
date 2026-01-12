@@ -8,10 +8,10 @@ export const deleteEnvironmentVariable = async (
   applicationId: number,
   name: string
 ): Promise<void> => {
-  console.log("[environment] deleteEnvironmentVariable", {
+  /* console.log("[environment] deleteEnvironmentVariable", {
     applicationId,
     name,
-  });
+  }); */
 
   if (!isAuthenticated()) {
     throw new Error("인증이 필요합니다");
@@ -44,10 +44,10 @@ export const deleteEnvironmentVariable = async (
       );
     }
 
-    console.log("[environment] deleteEnvironmentVariable success", {
+    /* console.log("[environment] deleteEnvironmentVariable success", {
       applicationId,
       name,
-    });
+    }); */
   } catch (error) {
     console.error("[environment] deleteEnvironmentVariable exception", {
       applicationId,

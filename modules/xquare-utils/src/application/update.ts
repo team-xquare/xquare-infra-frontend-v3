@@ -23,7 +23,7 @@ export const updateApplicationConfiguration = async (
   applicationId: number,
   request: UpdateApplicationConfigurationRequest
 ): Promise<void> => {
-  console.log("[updateApplicationConfiguration] start", { applicationId });
+  // console.log("[updateApplicationConfiguration] start", { applicationId });
 
   if (!isAuthenticated()) {
     console.error("[updateApplicationConfiguration] not authenticated");
@@ -44,10 +44,10 @@ export const updateApplicationConfiguration = async (
   let response: Response;
 
   try {
-    console.log(
+    /* console.log(
       "[updateApplicationConfiguration] PUT",
       `${API_BASE_URL}/applications/${applicationId}/configuration`
-    );
+    ); */
     response = await fetchWithTimeout(
       `${API_BASE_URL}/applications/${applicationId}/configuration`,
       {
@@ -122,5 +122,5 @@ export const updateApplicationConfiguration = async (
     );
   }
 
-  console.log("[updateApplicationConfiguration] success");
+  // console.log("[updateApplicationConfiguration] success");
 };

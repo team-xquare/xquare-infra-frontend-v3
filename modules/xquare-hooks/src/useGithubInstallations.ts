@@ -23,10 +23,10 @@ export function useGithubInstallations(accessToken: string | null) {
     try {
       const installs = await listUserInstallations(accessToken);
       setInstallations(installs);
-      console.log(
+      /* console.log(
         "[useGithubInstallations] Installations loaded:",
         installs.length
-      );
+      ); */
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "설치 목록을 불러오지 못했습니다.";
@@ -53,10 +53,10 @@ export function useGithubInstallations(accessToken: string | null) {
           accessToken,
           installationId
         );
-        console.log(
+        /* console.log(
           "[useGithubInstallations] Installation repositories loaded:",
           repos.length
-        );
+        ); */
         return repos;
       } catch (err) {
         const message =

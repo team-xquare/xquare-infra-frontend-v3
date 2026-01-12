@@ -74,7 +74,7 @@ export const getTeamApplications = async (
     throw new Error("AccessToken이 없습니다.");
   }
 
-  console.log("[getTeamApplications] 애플리케이션 조회 시작 - teamId:", teamId);
+  // console.log("[getTeamApplications] 애플리케이션 조회 시작 - teamId:", teamId);
 
   let response: Response;
 
@@ -148,12 +148,12 @@ export const getTeamApplications = async (
     );
   }
 
-  console.log(
+  /* console.log(
     "[getTeamApplications] 애플리케이션 조회 성공:",
     result.data.applications.length,
     "개",
     result.data.applications
-  );
+  ); */
 
   return result.data.applications;
 };

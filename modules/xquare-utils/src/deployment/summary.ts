@@ -29,11 +29,11 @@ export const getDeploymentSummary = async (
   page = 0,
   limit = 20
 ): Promise<DeploymentListResponse> => {
-  console.log("[deployment] getDeploymentSummary", {
+  /* console.log("[deployment] getDeploymentSummary", {
     applicationId,
     page,
     limit,
-  });
+  }); */
 
   if (!isAuthenticated()) {
     throw new Error("인증이 필요합니다");
@@ -66,10 +66,10 @@ export const getDeploymentSummary = async (
     }
 
     const data: DeploymentListResponse = await response.json();
-    console.log("[deployment] getDeploymentSummary success", {
+    /* console.log("[deployment] getDeploymentSummary success", {
       applicationId,
       deploymentCount: data.deployments.length,
-    });
+    }); */
 
     return data;
   } catch (error) {
@@ -94,11 +94,11 @@ export const getMultipleDeploymentSummaries = async (
   page = 0,
   limit = 20
 ): Promise<Record<number, DeploymentListResponse>> => {
-  console.log("[deployment] getMultipleDeploymentSummaries", {
+  /* console.log("[deployment] getMultipleDeploymentSummaries", {
     applicationCount: applicationIds.length,
     page,
     limit,
-  });
+  }); */
 
   try {
     const promises = applicationIds.map((appId) =>
@@ -121,10 +121,10 @@ export const getMultipleDeploymentSummaries = async (
       }
     });
 
-    console.log("[deployment] getMultipleDeploymentSummaries success", {
+    /* console.log("[deployment] getMultipleDeploymentSummaries success", {
       successCount: Object.keys(summaries).length,
       failureCount: results.length - Object.keys(summaries).length,
-    });
+    }); */
 
     return summaries;
   } catch (error) {

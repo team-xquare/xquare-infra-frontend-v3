@@ -55,12 +55,12 @@ const HomePage = () => {
     error: deploymentError,
   } = useMultipleDeploymentSummaries(applicationIds);
 
-  console.log("[HomePage] deployment data state:", {
+  /* console.log("[HomePage] deployment data state:", {
     selectedTeamId,
     applicationIds,
     deploymentData,
     deploymentLoading,
-  });
+  }); */
 
   useEffect(() => {
     const fetchUser = async () => {

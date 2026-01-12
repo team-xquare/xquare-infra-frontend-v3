@@ -29,9 +29,9 @@ export const useEnvironmentVariables = (
 
     const fetchVariables = async () => {
       if (!applicationId) {
-        console.log(
+        /* console.log(
           "[useEnvironmentVariables] no applicationId, skipping fetch"
-        );
+        ); */
         if (!cancelled) {
           setVariables([]);
         }
@@ -48,10 +48,10 @@ export const useEnvironmentVariables = (
         const data = await getEnvironmentVariables(applicationId);
         if (!cancelled) {
           setVariables(data);
-          console.log("[useEnvironmentVariables] fetch success", {
+          /* console.log("[useEnvironmentVariables] fetch success", {
             applicationId,
             count: data.length,
-          });
+          }); */
         }
       } catch (err) {
         if (!cancelled) {
@@ -85,9 +85,9 @@ export const useEnvironmentVariables = (
 
   const refetch = useCallback(async () => {
     if (!applicationId) {
-      console.log(
+      /* console.log(
         "[useEnvironmentVariables] no applicationId, skipping refetch"
-      );
+      ); */
       setVariables([]);
       return;
     }
@@ -98,10 +98,10 @@ export const useEnvironmentVariables = (
     try {
       const data = await getEnvironmentVariables(applicationId);
       setVariables(data);
-      console.log("[useEnvironmentVariables] refetch success", {
+      /* console.log("[useEnvironmentVariables] refetch success", {
         applicationId,
         count: data.length,
-      });
+      }); */
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "환경변수를 불러오지 못했습니다";
@@ -126,7 +126,7 @@ export const useEnvironmentVariables = (
 
       try {
         await addOrUpdateEnvironmentVariable(applicationId, { name, value });
-        console.log("[useEnvironmentVariables] addOrUpdate success", { name });
+        // console.log("[useEnvironmentVariables] addOrUpdate success", { name });
         await refetch();
         return true;
       } catch (err) {
@@ -155,7 +155,7 @@ export const useEnvironmentVariables = (
 
       try {
         await deleteEnvironmentVariable(applicationId, name);
-        console.log("[useEnvironmentVariables] remove success", { name });
+        // console.log("[useEnvironmentVariables] remove success", { name });
         await refetch();
         return true;
       } catch (err) {

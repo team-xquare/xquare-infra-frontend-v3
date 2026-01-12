@@ -208,7 +208,7 @@ const CreateApplication = () => {
 
   const removeRoute = (index: number) => {
     // 라우트 삭제 로그
-    console.log("[CreateApplication] remove route", { index });
+    // console.log("[CreateApplication] remove route", { index });
     setRoutes((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -223,12 +223,12 @@ const CreateApplication = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("[CreateApplication] submit", {
+    /* console.log("[CreateApplication] submit", {
       teamId,
       projectName,
       repoOwner,
       repoName,
-    });
+    }); */
 
     if (!hasTeam) {
       console.error("[CreateApplication] submit error: no team selected");
@@ -296,7 +296,7 @@ const CreateApplication = () => {
 
   const handleBranchChange = async (value: string) => {
     setBranch(value);
-    console.log("[CreateApplication] branch change", value);
+    // console.log("[CreateApplication] branch change", value);
 
     if (!value.trim() || !repoOwner.trim() || !repoName.trim()) {
       setCommitHash("");
@@ -408,13 +408,13 @@ const CreateApplication = () => {
       if (event.data.type === "github-oauth-code") {
         // 이미 처리된 경우 중복 처리 방지
         if (messageHandlerApplied) {
-          console.log("[CreateApplication] OAuth already processed, skipping");
+          // console.log("[CreateApplication] OAuth already processed, skipping");
           return;
         }
         messageHandlerApplied = true;
 
         const { code } = event.data;
-        console.log("[CreateApplication] OAuth code received", code);
+        // console.log("[CreateApplication] OAuth code received", code);
 
         setGithubLoading(true);
         setGithubError(null);
@@ -431,10 +431,10 @@ const CreateApplication = () => {
                 response.data.accessToken
               );
               setInstallations(installs);
-              console.log(
+              /* console.log(
                 "[CreateApplication] Installations loaded:",
                 installs.length
-              );
+              ); */
 
               // 첫 번째 installation이 있으면 자동으로 레포지토리 로드
               if (installs.length > 0) {
@@ -453,9 +453,9 @@ const CreateApplication = () => {
                         install.id
                       );
                       allRepos.push(...repos);
-                      console.log(
+                      /* console.log(
                         `[CreateApplication] Loaded ${repos.length} repos from ${install.account.login}`
-                      );
+                      ); */
                     } catch (repoErr) {
                       console.error(
                         `[CreateApplication] Failed to load repos for installation ${install.id}`,
@@ -482,10 +482,10 @@ const CreateApplication = () => {
                   setGithubMessage(
                     `${allRepos.length}개의 레포지토리를 불러왔습니다.`
                   );
-                  console.log(
+                  /* console.log(
                     "[CreateApplication] Total repositories loaded:",
                     allRepos.length
-                  );
+                  ); */
                 } catch (repoErr) {
                   console.error(
                     "[CreateApplication] Failed to load installation repos",

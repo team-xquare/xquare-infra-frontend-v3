@@ -73,9 +73,9 @@ export class TokenReissuer {
     const exponentialDelay = this.baseDelay * Math.pow(2, attempt);
     const jitter = Math.random() * 0.3 * exponentialDelay;
     const totalDelay = exponentialDelay + jitter;
-    console.log(
+    /* console.log(
       `[Auth-reissue] 재시도 대기 중: ${Math.round(totalDelay)}ms (시도 ${attempt + 1})`
-    );
+    ); */
     return new Promise((resolve) => setTimeout(resolve, totalDelay));
   }
 
@@ -151,7 +151,7 @@ export class TokenReissuer {
    */
   async reissueAccessToken(): Promise<boolean> {
     if (this.isReissuing) {
-      console.log("[Auth-reissue] 재발급 진행 중, 중복 방지");
+      // console.log("[Auth-reissue] 재발급 진행 중, 중복 방지");
       return false;
     }
 
@@ -166,9 +166,9 @@ export class TokenReissuer {
         return false;
       }
 
-      console.log(
+      /* console.log(
         `[Auth-reissue] 시도: 시간=${new Date().toLocaleTimeString()}`
-      );
+      ); */
 
       // 재시도 로직
       for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
@@ -176,9 +176,9 @@ export class TokenReissuer {
           await this.sleep(attempt - 1);
         }
 
-        console.log(
+        /* console.log(
           `[Auth-reissue] 시도 ${attempt + 1}/${this.maxRetries + 1}`
-        );
+        ); */
 
         const result = await this.attemptReissue(refreshToken);
 
@@ -189,21 +189,21 @@ export class TokenReissuer {
           );
           localStorage.setItem(LAST_REISSUE_TIME_KEY, String(Date.now()));
 
-          console.log(
+          /* console.log(
             `[Auth-reissue] 성공: 시간=${new Date().toLocaleTimeString()}`
-          );
+          ); */
           return true;
         }
 
         if (!result.shouldRetry) {
-          console.log("[Auth-reissue] 재시도 불가능한 오류, 중단");
+          // console.log("[Auth-reissue] 재시도 불가능한 오류, 중단");
           return false;
         }
 
         if (attempt < this.maxRetries) {
-          console.log(
+          /* console.log(
             `[Auth-reissue] 재시도 예정 (남은 시도: ${this.maxRetries - attempt})`
-          );
+          ); */
         } else {
           console.error(
             `[Auth-reissue] 모든 재시도 실패 (총 ${this.maxRetries + 1}회 시도)`
@@ -220,7 +220,7 @@ export class TokenReissuer {
   /* 토큰 자동 재발급 시작 */
   start(): void {
     if (this.intervalId || this.initialTimeoutId) {
-      console.log("[Auth-reissue] 이미 실행 중, 중복 방지");
+      // console.log("[Auth-reissue] 이미 실행 중, 중복 방지");
       return;
     }
 
@@ -238,9 +238,9 @@ export class TokenReissuer {
     const elapsed = now - lastReissueTime;
     const remaining = Math.max(REISSUE_INTERVAL - elapsed, 0);
 
-    console.log(
+    /* console.log(
       `[Auth-reissue] 시작: ${Math.round(remaining / 1000)}초 후 첫 재발급`
-    );
+    ); */
 
     // 초기 재발급 (첫 토큰 갱신)
     this.initialTimeoutId = window.setTimeout(async () => {
@@ -252,9 +252,9 @@ export class TokenReissuer {
             () => this.reissueAccessToken(),
             REISSUE_INTERVAL
           );
-          console.log(
+          /* console.log(
             `[Auth-reissue] 주기 설정: ${Math.round(REISSUE_INTERVAL / 60000)}분 간격`
-          );
+          ); */
         } else {
           console.error(
             "[Auth-reissue] 초기 재발급 실패: 주기적 재발급을 시작하지 않습니다."
@@ -273,7 +273,7 @@ export class TokenReissuer {
     // 다른 탭에서의 토큰 변경 감지 리스너
     this.storageHandler = (event: StorageEvent) => {
       if (event.key === LAST_REISSUE_TIME_KEY && event.newValue) {
-        console.log("[Auth-reissue] 다른 탭에서 재발급 감지, 동기화");
+        // console.log("[Auth-reissue] 다른 탭에서 재발급 감지, 동기화");
 
         if (this.initialTimeoutId) {
           clearTimeout(this.initialTimeoutId);
@@ -315,7 +315,7 @@ export class TokenReissuer {
       this.storageHandler = null;
     }
 
-    console.log("[Auth-reissue] 중지됨");
+    // console.log("[Auth-reissue] 중지됨");
   }
 
   /* 현재 재발급 실행 여부

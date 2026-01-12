@@ -270,7 +270,7 @@ export const getApplicationDetail = async (
   applicationId: number
 ): Promise<ApplicationDetail> => {
   // 시작 로그: 요청 ID
-  console.log("[getApplicationDetail] start", { applicationId });
+  // console.log("[getApplicationDetail] start", { applicationId });
 
   if (!isAuthenticated()) {
     console.error("[getApplicationDetail] not authenticated");
@@ -291,10 +291,10 @@ export const getApplicationDetail = async (
   let response: Response;
 
   try {
-    console.log(
+    /* console.log(
       "[getApplicationDetail] GET",
       `${API_BASE_URL}/applications/${applicationId}`
-    );
+    ); */
     response = await fetchWithTimeout(
       `${API_BASE_URL}/applications/${applicationId}`,
       {
@@ -375,6 +375,6 @@ export const getApplicationDetail = async (
     throw new Error("애플리케이션 조회 실패: 서버에서 실패를 반환했습니다.");
   }
 
-  console.log("[getApplicationDetail] success", result.data.id);
+  // console.log("[getApplicationDetail] success", result.data.id);
   return result.data;
 };

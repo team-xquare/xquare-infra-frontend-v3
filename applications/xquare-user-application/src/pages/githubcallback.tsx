@@ -24,7 +24,7 @@ const GithubCallback = () => {
     }
 
     if (code) {
-      console.log("[GithubCallback] OAuth code received:", code);
+      // console.log("[GithubCallback] OAuth code received:", code);
       if (window.opener) {
         window.opener.postMessage(
           { type: "github-oauth-code", code },

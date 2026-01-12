@@ -263,6 +263,6 @@ export const createApplication = async (
     throw new Error("애플리케이션 생성 실패: 응답 데이터가 올바르지 않습니다.");
   }
 
-  console.log("[createApplication] success", result.data.applicationId);
+  // console.log("[createApplication] success", result.data.applicationId);
   return result.data.applicationId;
 };

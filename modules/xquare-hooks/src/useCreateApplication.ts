@@ -15,7 +15,7 @@ export function useCreateApplication() {
       setError(null);
       try {
         const id = await createApplication(request);
-        console.log("[useCreateApplication] created id", id);
+        // console.log("[useCreateApplication] created id", id);
         return id;
       } catch (err) {
         const errorObj =

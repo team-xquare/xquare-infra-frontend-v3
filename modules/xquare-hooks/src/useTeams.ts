@@ -20,12 +20,12 @@ export function useTeams() {
       try {
         const teams = await getTeams();
         if (!cancelled) {
-          console.log(
+          /* console.log(
             "[useTeams] 팀 목록 조회 성공:",
             teams.length,
             "개",
             teams
-          );
+          ); */
           setData(teams);
           setError(null);
         }
@@ -52,7 +52,7 @@ export function useTeams() {
     setLoading(true);
     try {
       const teams = await getTeams();
-      console.log("[useTeams] 팀 목록 조회 성공:", teams.length, "개", teams);
+      // console.log("[useTeams] 팀 목록 조회 성공:", teams.length, "개", teams);
       setData(teams);
       setError(null);
     } catch (err) {

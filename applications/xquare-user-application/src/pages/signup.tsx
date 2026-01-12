@@ -54,7 +54,7 @@ const SignupPage: React.FC = () => {
 
     const res = await register(payload);
     if (res) {
-      console.log("[Auth-register] Sign up successful", res);
+      // console.log("[Auth-register] Sign up successful", res);
 
       if (res.data?.accessToken && res.data?.refreshToken) {
         setTokens(res.data.accessToken, res.data.refreshToken);
@@ -86,12 +86,12 @@ const SignupPage: React.FC = () => {
 
   const handleNext = () => {
     if (step < 3) changeStepSmooth(step + 1);
-    console.log("[SignupPage] handleNext, 현재 step:", step + 1);
+    // console.log("[SignupPage] handleNext, 현재 step:", step + 1);
   };
 
   const handlePrev = () => {
     if (step > 1) changeStepSmooth(step - 1);
-    console.log("[SignupPage] handlePrev, step:", step - 1);
+    // console.log("[SignupPage] handlePrev, step:", step - 1);
   };
 
   return (

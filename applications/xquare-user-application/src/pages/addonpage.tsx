@@ -42,16 +42,16 @@ function AddonPage() {
       window.removeEventListener("xquare:selectedTeam-changed", syncTeam);
     };
   }, []);
-  console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);
+  // console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);
   const { data: addons, loading, error } = useTeamAddons(teamId);
-  console.log(
+  /* console.log(
     "[AddonPage] 애드온 상태 - loading:",
     loading,
     ", addons:",
     addons?.length ?? 0,
     "개, error:",
     error
-  );
+  ); */
   const handleAddAddonClick = () => {
     navigate("/addons/createaddon");
   };
