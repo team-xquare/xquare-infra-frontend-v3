@@ -62,12 +62,8 @@ export const updateTeamMembers = async (
     console.error("[updateTeamMembers] 응답 에러:", response.status);
 
     if (response.status === 403) {
-      throw new Error(
-        "팀 멤버는 팀원을 추가할 수 없습니다. 관리자 계정으로 시도하세요."
-      );
-      console.error(
-        "[updateTeamMembers] 권한 없음: 팀 멤버는 팀원을 추가할 수 없습니다."
-      );
+      throw new Error("팀 멤버는 팀원을 추가할 수 없습니다. 관리자 계정으로 시도하세요.");
+      console.error("[updateTeamMembers] 권한 없음: 팀 멤버는 팀원을 추가할 수 없습니다.");
     }
 
     throw new Error(
