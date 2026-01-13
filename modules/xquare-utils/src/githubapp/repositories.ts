@@ -106,7 +106,7 @@ export async function listOrganizationRepositories(
     const all: GithubRepository[] = [];
 
     while (true) {
-      const url = `https://api.github.com/orgs/${orgName}/repos?per_page=${perPage}&page=${page}`;
+      const url = `https://api.github.com/orgs/${orgName}/repos?per_page=${perPage}&page=${page}&type=all`;
       const res = await fetchWithTimeout(url, {
         method: "GET",
         headers: {
