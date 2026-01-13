@@ -43,7 +43,7 @@ function Notice({ page }: NoticeProps) {
     const load = async () => {
       try {
         setLoading(true);
-        const serverPage = isFullList ? currentPage + 1 : 1;
+        const serverPage = isFullList ? currentPage : 0;
         const notices = await listNotices({
           page: serverPage,
           limit: fetchLimit,
