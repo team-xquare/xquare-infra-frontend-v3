@@ -11,9 +11,6 @@ import type {
   UpdateApplicationConfigurationRequest,
 } from "@xquare/utils";
 import {
-  getRepoInfo,
-  listBranches,
-  getLatestCommitSha,
   needsVersion,
   needsBuildCommand,
   needsStartCommand,
@@ -34,6 +31,106 @@ interface DeploymentContentsProps {
     request: UpdateApplicationConfigurationRequest
   ) => Promise<boolean>;
 }
+
+const GITHUB_HEADERS: HeadersInit = {
+  Accept: "application/vnd.github+json",
+  "X-GitHub-Api-Version": "2022-11-28",
+};
+
+const fetchRepoInfo = async (
+  owner: string,
+  repo: string,
+  signal?: AbortSignal
+): Promise<{ defaultBranch: string }> => {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+    method: "GET",
+    headers: GITHUB_HEADERS,
+    signal,
+  });
+
+  if (!res.ok) {
+    console.error("[github] getRepoInfo error", res.status);
+    throw new Error(`GitHub 응답 오류: ${res.status}`);
+  }
+
+  const json = await res.json();
+  const defaultBranch = json?.default_branch || "main";
+  return { defaultBranch };
+};
+
+const fetchBranchNames = async (
+  owner: string,
+  repo: string,
+  perPage = 100,
+  signal?: AbortSignal
+): Promise<string[]> => {
+  const res = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`,
+    {
+      method: "GET",
+      headers: GITHUB_HEADERS,
+      signal,
+    }
+  );
+
+  if (!res.ok) {
+    console.error("[github] listBranches error", {
+      status: res.status,
+      statusText: res.statusText,
+    });
+    throw new Error(
+      `브랜치 목록 조회 실패 (HTTP ${res.status} ${res.statusText || ""})`
+    );
+  }
+
+  let json: unknown;
+
+  try {
+    json = await res.json();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "JSON 파싱 오류";
+    console.error("[github] listBranches parse error", message);
+    throw new Error(`브랜치 목록 파싱 실패: ${message}`);
+  }
+
+  if (!Array.isArray(json)) {
+    console.error("[github] listBranches invalid response type", {
+      receivedType: typeof json,
+      receivedValue: json,
+    });
+    throw new Error(
+      `브랜치 목록이 배열이 아닙니다. (받은 타입: ${typeof json})`
+    );
+  }
+
+  return (json as Array<{ name?: string }>)
+    .map((item) => item.name)
+    .filter((name): name is string => typeof name === "string");
+};
+
+const fetchLatestCommitSha = async (
+  owner: string,
+  repo: string,
+  branch: string,
+  signal?: AbortSignal
+): Promise<string> => {
+  const res = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`,
+    {
+      method: "GET",
+      headers: GITHUB_HEADERS,
+      signal,
+    }
+  );
+
+  if (!res.ok) {
+    console.error("[github] getLatestCommitSha error", res.status);
+    throw new Error(`커밋 정보를 불러오지 못했습니다. (${res.status})`);
+  }
+
+  const json = await res.json();
+  return json?.sha ?? "";
+};
 
 function DeploymentContents({
   applicationId,
@@ -96,7 +193,7 @@ function DeploymentContents({
     targetBranch: string,
     signal?: AbortSignal
   ) => {
-    const sha = await getLatestCommitSha(
+    const sha = await fetchLatestCommitSha(
       ownerVal,
       repoVal,
       targetBranch,
@@ -153,12 +250,12 @@ function DeploymentContents({
     setGithubMessage(null);
 
     try {
-      const { defaultBranch } = await getRepoInfo(
+      const { defaultBranch } = await fetchRepoInfo(
         ownerVal,
         repoVal,
         controller.signal
       );
-      const branchNames = await listBranches(
+      const branchNames = await fetchBranchNames(
         ownerVal,
         repoVal,
         100,
