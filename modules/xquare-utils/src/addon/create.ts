@@ -16,8 +16,8 @@ export interface CreateAddonRequest {
     | "elk"
     | "debezium";
   storageGi: number;
-  configuration?: {
-    bootstrap: string;
+  configuration: {
+    bootstrap?: string;
   };
 }
 
@@ -90,7 +90,7 @@ export const createAddon = async (
       const bootstrap = request.configuration?.bootstrap?.trim() ?? "";
       payload.configuration = { bootstrap };
     } else {
-      delete (payload as { configuration?: unknown }).configuration;
+      payload.configuration = {};
     }
 
     const response = await fetchWithTimeout(`${API_BASE_URL}/addons`, {
