@@ -154,7 +154,6 @@ export {
 export {
   getEnvironmentVariables,
   type EnvironmentVariable,
-  type EnvironmentVariablesResponse,
 } from "./src/environment/get";
 
 export {
