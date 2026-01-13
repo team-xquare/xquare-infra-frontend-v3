@@ -217,7 +217,7 @@ const CreateApplication = () => {
     repo: string,
     targetBranch: string
   ) => {
-    const sha = await getLatestCommitSha(owner, repo, targetBranch);
+    const sha = await getLatestCommitSha(githubToken.accessToken, owner, repo, targetBranch);
     setCommitHash(sha);
   };
 
@@ -345,8 +345,8 @@ const CreateApplication = () => {
     setGithubMessage(null);
 
     try {
-      const { defaultBranch } = await getRepoInfo(targetOwner, targetRepo);
-      const branchNames = await listBranches(targetOwner, targetRepo, 100);
+      const { defaultBranch } = await getRepoInfo(githubToken.accessToken, targetOwner, targetRepo);
+      const branchNames = await listBranches(githubToken.accessToken, targetOwner, targetRepo, 100);
       setBranches(branchNames);
 
       const targetBranch =
