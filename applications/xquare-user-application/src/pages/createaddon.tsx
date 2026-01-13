@@ -120,7 +120,7 @@ const CreateAddon = () => {
         | "elk"
         | "debezium";
       storageGi: number;
-      configuration?: { bootstrap: string };
+      configuration: { bootstrap?: string };
     } = {
       teamId: selectedTeamId,
       name,
@@ -134,6 +134,7 @@ const CreateAddon = () => {
         | "elk"
         | "debezium",
       storageGi: Number(storageGi),
+      configuration: {},
     };
 
     if (type === "debezium") {
