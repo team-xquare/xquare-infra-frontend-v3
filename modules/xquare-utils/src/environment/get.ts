@@ -8,8 +8,14 @@ export interface EnvironmentVariable {
   value: string;
 }
 
-export interface EnvironmentVariablesResponse {
-  [key: string]: string;
+interface EnvironmentVariablesResponse {
+  success: boolean;
+  data?: {
+    environmentVariables?: Array<{
+      name: string;
+      value?: string | null;
+    }>;
+  };
 }
 
 // 환경변수 조회
@@ -45,11 +51,10 @@ export const getEnvironmentVariables = async (
     }
 
     const data: EnvironmentVariablesResponse = await response.json();
-
-    // 객체를 배열로 변환
-    const variables = Object.entries(data).map(([name, value]) => ({
-      name,
-      value,
+    const items = data.data?.environmentVariables ?? [];
+    const variables = items.map((variable) => ({
+      name: variable.name,
+      value: variable.value ?? "",
     }));
 
     /* console.log("[environment] getEnvironmentVariables success", {
