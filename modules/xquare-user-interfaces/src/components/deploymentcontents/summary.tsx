@@ -39,8 +39,8 @@ function SummaryContents({ appDetail, loading, error }: SummaryContentsProps) {
     ? `${appDetail.configuration.github.owner}/${appDetail.configuration.github.repo}`
     : "N/A";
   const owner = appDetail?.configuration?.github?.owner || "N/A";
-  const lastDeploy = "2025-10-10 15:00";
-  const lastbuild = "2025-10-10 14:45";
+  const lastDeploy = "N/A";
+  const lastbuild = "N/A";
   const team = getSelectedTeam()?.name ?? "";
 
   return (

@@ -13,6 +13,7 @@ export interface RepoInfo {
  * Fetch repository info including default branch
  */
 export const getRepoInfo = async (
+  accessToken: string,
   owner: string,
   repo: string,
   signal?: AbortSignal
@@ -21,6 +22,12 @@ export const getRepoInfo = async (
   const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}`,
     {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
       signal,
     }
   );
@@ -38,6 +45,7 @@ export const getRepoInfo = async (
  * List branches for a repository (up to perPage)
  */
 export const listBranches = async (
+  accessToken: string,
   owner: string,
   repo: string,
   perPage = 100,
@@ -46,7 +54,15 @@ export const listBranches = async (
   // console.log("[github] listBranches", { owner, repo, perPage });
   const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`,
-    { signal }
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      signal,
+    }
   );
   if (!res.ok) {
     console.error("[github] listBranches error", {
@@ -86,6 +102,7 @@ export const listBranches = async (
  * Get latest commit SHA for a branch
  */
 export const getLatestCommitSha = async (
+  accessToken: string,
   owner: string,
   repo: string,
   branch: string,
@@ -94,7 +111,15 @@ export const getLatestCommitSha = async (
   // console.log("[github] getLatestCommitSha", { owner, repo, branch });
   const res = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`,
-    { signal }
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      signal,
+    }
   );
   if (!res.ok) {
     console.error("[github] getLatestCommitSha error", res.status);

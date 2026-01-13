@@ -217,7 +217,10 @@ const CreateApplication = () => {
     repo: string,
     targetBranch: string
   ) => {
-    const sha = await getLatestCommitSha(owner, repo, targetBranch);
+    if (!githubToken) {
+      throw new Error("GitHub 토큰이 없습니다. 연동 후 다시 시도해주세요.");
+    }
+    const sha = await getLatestCommitSha(githubToken.accessToken, owner, repo, targetBranch);
     setCommitHash(sha);
   };
 
@@ -340,13 +343,27 @@ const CreateApplication = () => {
       return;
     }
 
+    if (!githubToken) {
+      setGithubError("GitHub 연동 후 다시 시도해주세요.");
+      return;
+    }
+
     setGithubLoading(true);
     setGithubError(null);
     setGithubMessage(null);
 
     try {
-      const { defaultBranch } = await getRepoInfo(targetOwner, targetRepo);
-      const branchNames = await listBranches(targetOwner, targetRepo, 100);
+      const { defaultBranch } = await getRepoInfo(
+        githubToken.accessToken,
+        targetOwner,
+        targetRepo
+      );
+      const branchNames = await listBranches(
+        githubToken.accessToken,
+        targetOwner,
+        targetRepo,
+        100
+      );
       setBranches(branchNames);
 
       const targetBranch =

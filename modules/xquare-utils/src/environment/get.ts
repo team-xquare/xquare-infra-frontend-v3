@@ -12,7 +12,7 @@ interface EnvironmentVariablesResponse {
   success: boolean;
   data?: {
     environmentVariables?: Array<{
-      name: string;
+      key: string;
       value?: string | null;
     }>;
   };
@@ -53,7 +53,7 @@ export const getEnvironmentVariables = async (
     const data: EnvironmentVariablesResponse = await response.json();
     const items = data.data?.environmentVariables ?? [];
     const variables = items.map((variable) => ({
-      name: variable.name,
+      name: variable.key,
       value: variable.value ?? "",
     }));
 
