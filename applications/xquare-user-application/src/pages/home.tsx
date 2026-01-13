@@ -45,6 +45,7 @@ const HomePage = () => {
   const { data: applications } = useTeamApplications(selectedTeamId);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDeployCount(applications?.length ?? 0);
   }, [applications]);
 
