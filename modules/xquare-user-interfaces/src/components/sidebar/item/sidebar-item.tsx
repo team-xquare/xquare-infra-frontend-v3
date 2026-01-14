@@ -13,7 +13,12 @@ function SidebarItemComponent({
   onClick,
 }: SidebarItemProps) {
   return (
-    <SideBarMenuItemLabel isActive={isActive} onClick={onClick}>
+    <SideBarMenuItemLabel
+      type="button"
+      isActive={isActive}
+      onClick={onClick}
+      aria-current={isActive ? "page" : undefined}
+    >
       {label}
     </SideBarMenuItemLabel>
   );

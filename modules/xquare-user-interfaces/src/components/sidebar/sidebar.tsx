@@ -84,11 +84,12 @@ function Sidebar({
         <SidebarNavContent>
           <SidebarNavContainer>
             {navItems.map((item) => (
-                <SidebarItem
-                  label={item.label}
-                  isActive={isMainItemActive(item.id)}
-                  onClick={() => handleMainItemClick(item.id)}
-                />
+              <SidebarItem
+                key={item.id}
+                label={item.label}
+                isActive={isMainItemActive(item.id)}
+                onClick={() => handleMainItemClick(item.id)}
+              />
             ))}
           </SidebarNavContainer>
         </SidebarNavContent>
