@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useTeamAddons } from "@xquare/hooks";
@@ -19,13 +19,39 @@ function AddonPage() {
   const [teamId, setTeamId] = useState<number | undefined>(
     () => getSelectedTeamId() ?? undefined
   );
+  const [teamSwitchLoading, setTeamSwitchLoading] = useState(false);
+  const teamSwitchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasSyncedRef = useRef(false);
 
   useEffect(() => {
     document.title = "XQUARE | Addon";
   }, []);
 
   useEffect(() => {
-    const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
+    const triggerTeamSwitchOverlay = () => {
+      if (teamSwitchTimerRef.current) {
+        clearTimeout(teamSwitchTimerRef.current);
+      }
+      setTeamSwitchLoading(true);
+      teamSwitchTimerRef.current = setTimeout(() => {
+        setTeamSwitchLoading(false);
+        teamSwitchTimerRef.current = null;
+      }, 1000);
+    };
+
+    const syncTeam = () => {
+      const nextTeamId = getSelectedTeamId() ?? undefined;
+      setTeamId((prevTeamId) => {
+        const changed = prevTeamId !== nextTeamId;
+        if (hasSyncedRef.current && changed) {
+          triggerTeamSwitchOverlay();
+        }
+        return nextTeamId;
+      });
+      if (!hasSyncedRef.current) {
+        hasSyncedRef.current = true;
+      }
+    };
 
     const handleStorage = (event: StorageEvent) => {
       if (event.key === "xquare:selectedTeam") {
@@ -40,6 +66,10 @@ function AddonPage() {
     return () => {
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener("xquare:selectedTeam-changed", syncTeam);
+      if (teamSwitchTimerRef.current) {
+        clearTimeout(teamSwitchTimerRef.current);
+        teamSwitchTimerRef.current = null;
+      }
     };
   }, []);
   // console.log("[AddonPage] 현재 선택된 팀 ID:", teamId);
@@ -60,7 +90,7 @@ function AddonPage() {
       <Helmet>
         <title>XQUARE | Addon</title>
       </Helmet>
-      <LoadingOverlay isLoading={loading && !!teamId} />
+      <LoadingOverlay isLoading={(loading && !!teamId) || teamSwitchLoading} />
       <ContentsArea>
         <Title
           title={`Addons`}

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import type { FormEvent } from "react";
 import { Helmet } from "react-helmet-async";
 import {
@@ -9,6 +9,7 @@ import {
   ErrorMessage,
   Typography,
   Subtitle,
+  LoadingOverlay,
 } from "@xquare/user-interfaces";
 import {
   useAuthGuard,
@@ -16,13 +17,15 @@ import {
   useUpdateTeamMembers,
   useSearchUsers,
 } from "@xquare/hooks";
-import { getSelectedTeam, checkUser } from "@xquare/utils";
-import type { UserSearchResult } from "@xquare/utils";
+import { getSelectedTeam, checkUser, SELECTED_TEAM_EVENT } from "@xquare/utils";
+import type { SelectedTeamInfo, UserSearchResult } from "@xquare/utils";
 
 export default function TeamPage() {
   useAuthGuard();
 
-  const selectedTeam = useMemo(() => getSelectedTeam(), []);
+  const [selectedTeam, setSelectedTeam] = useState<SelectedTeamInfo | null>(
+    () => getSelectedTeam()
+  );
 
   // Team Info State
   const [teamName, setTeamName] = useState(selectedTeam?.name ?? "");
@@ -50,6 +53,9 @@ export default function TeamPage() {
   const [membersError, setMembersError] = useState<string | null>(null);
   const [membersSuccess, setMembersSuccess] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [teamSwitchLoading, setTeamSwitchLoading] = useState(false);
+  const teamSwitchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasSyncedRef = useRef(false);
   const {
     search,
     results: searchResults,
@@ -59,6 +65,66 @@ export default function TeamPage() {
 
   useEffect(() => {
     document.title = "XQUARE | Team";
+  }, []);
+
+  useEffect(() => {
+    const triggerTeamSwitchOverlay = () => {
+      if (teamSwitchTimerRef.current) {
+        clearTimeout(teamSwitchTimerRef.current);
+      }
+      setTeamSwitchLoading(true);
+      teamSwitchTimerRef.current = setTimeout(() => {
+        setTeamSwitchLoading(false);
+        teamSwitchTimerRef.current = null;
+      }, 1000);
+    };
+
+    const syncTeam = () => {
+      const team = getSelectedTeam();
+      setSelectedTeam((prevTeam) => {
+        const prevId = prevTeam?.id ?? null;
+        const nextId = team?.id ?? null;
+        if (hasSyncedRef.current && prevId !== nextId) {
+          triggerTeamSwitchOverlay();
+        }
+        return team;
+      });
+      setTeamName(team?.name ?? "");
+      setTeamType((team?.type as "club" | "team" | "individual") ?? "team");
+      setTeamMembers([]);
+      setMemberRole("contributor");
+      setSearchName("");
+      setInfoError(null);
+      setInfoSuccess(null);
+      setMembersError(null);
+      setMembersSuccess(null);
+      if (!hasSyncedRef.current) {
+        hasSyncedRef.current = true;
+      }
+    };
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "xquare:selectedTeam") {
+        syncTeam();
+      }
+    };
+
+    const handleTeamEvent: EventListener = () => {
+      syncTeam();
+    };
+
+    syncTeam();
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener(SELECTED_TEAM_EVENT, handleTeamEvent);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener(SELECTED_TEAM_EVENT, handleTeamEvent);
+      if (teamSwitchTimerRef.current) {
+        clearTimeout(teamSwitchTimerRef.current);
+        teamSwitchTimerRef.current = null;
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -223,6 +289,7 @@ export default function TeamPage() {
         <title>XQUARE | Team</title>
       </Helmet>
       <Container>
+        <LoadingOverlay isLoading={teamSwitchLoading} />
         <ContentsArea>
           <Subtitle title="팀 관리" subTitle="팀 정보 수정 및 팀원 관리" />
         </ContentsArea>
