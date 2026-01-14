@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import { useRegister } from "@xquare/hooks"; // 훅 import
+import { useGuestGuard, useRegister } from "@xquare/hooks"; // 훅 import
 import type { RegisterRequest } from "@xquare/utils"; // 타입 import
 import { setTokens, startTokenAutoReissue } from "@xquare/utils"; // 토큰 저장 유틸
 import { Link } from "react-router-dom";
@@ -16,6 +16,7 @@ import {
 } from "@xquare/user-interfaces";
 
 const SignupPage: React.FC = () => {
+  useGuestGuard();
   const navigate = useNavigate();
 
   useEffect(() => {
