@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import React from "react";
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
 
@@ -84,29 +85,37 @@ const Title = styled.span<TitleProps>`
 `;
 
 // 컴포넌트
-export const Input_text: React.FC<InputProps> = ({
-  value,
-  onChange,
-  placeholder,
-  disabled = false,
-  type = "text",
-  width,
-  height,
-  title,
-  titleColor,
-}) => {
-  return (
-    <Wraper>
-      <StyledInput
-        width={width}
-        height={height}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        type={type}
-      />
-      <Box>{title && <Title titleColor={titleColor}>{title}</Title>}</Box>
-    </Wraper>
-  );
-};
+export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      value,
+      onChange,
+      placeholder,
+      disabled = false,
+      type = "text",
+      width,
+      height,
+      title,
+      titleColor,
+    },
+    ref
+  ) => {
+    return (
+      <Wraper>
+        <StyledInput
+          ref={ref}
+          width={width}
+          height={height}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          type={type}
+        />
+        <Box>{title && <Title titleColor={titleColor}>{title}</Title>}</Box>
+      </Wraper>
+    );
+  }
+);
+
+Input_text.displayName = "Input_text";

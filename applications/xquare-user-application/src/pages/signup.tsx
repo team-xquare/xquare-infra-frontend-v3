@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useGuestGuard, useRegister } from "@xquare/hooks"; // 훅 import
@@ -34,6 +34,10 @@ const SignupPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const studentIdRef = useRef<HTMLInputElement | null>(null);
 
   // 회원가입 훅 연결
   const { register, loading, error } = useRegister();
@@ -77,6 +81,21 @@ const SignupPage: React.FC = () => {
 
   const [isFading, setIsFading] = useState(false);
 
+  useEffect(() => {
+    if (isFading) return;
+
+    const focusTargets: Record<
+      number,
+      React.MutableRefObject<HTMLInputElement | null>
+    > = {
+      1: emailRef,
+      2: passwordRef,
+      3: studentIdRef,
+    };
+
+    focusTargets[step]?.current?.focus();
+  }, [step, isFading]);
+
   const changeStepSmooth = (nextStep: number) => {
     setIsFading(true);
     setTimeout(() => {
@@ -115,6 +134,7 @@ const SignupPage: React.FC = () => {
             {step === 1 && (
               <>
                 <Input_text
+                  ref={emailRef}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="이메일을 입력해주세요"
@@ -140,6 +160,7 @@ const SignupPage: React.FC = () => {
             {step === 2 && (
               <>
                 <Input_text
+                  ref={passwordRef}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="비밀번호를 입력해주세요"
@@ -165,6 +186,7 @@ const SignupPage: React.FC = () => {
             {step === 3 && (
               <>
                 <Input_text
+                  ref={studentIdRef}
                   value={studentId}
                   onChange={(e) => setStudentId(e.target.value)}
                   placeholder="학번을 입력해주세요"
