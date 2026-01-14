@@ -158,11 +158,6 @@ const Container = styled.div`
   padding: 10px;
   border-radius: 8px;
   box-sizing: border-box;
-
-  &:hover {
-    background-color: ${Xquare_colors.gray[300]};
-    cursor: pointer;
-  }
 `;
 
 const Contents = styled.div`

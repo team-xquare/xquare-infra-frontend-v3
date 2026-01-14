@@ -1055,7 +1055,7 @@ const CreateApplication = () => {
               Step3. Routes
             </Typography>
             <Tooltip
-              content="애플리케이션에 접근할 URL 경로와 포트를 설정하세요."
+              content="애플리케이션의 URL 경로 및 포트를 설정하세요."
               position="right"
             >
               <InfoIcon size={18} />
@@ -1141,7 +1141,8 @@ const Container = styled.div`
   justify-content: flex-start;
   flex-direction: column;
   width: 100%;
-  padding: 10px 40px;
+  padding: 12px 40px;
+  padding-top: 22px;
   cursor: default;
 `;
 
