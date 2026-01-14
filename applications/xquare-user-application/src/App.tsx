@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Global } from "@emotion/react";
 import globalStyles from "./styles/global";
-
-import { isAuthenticated, startTokenAutoReissue } from "@xquare/utils";
 
 import Layout from "./layout";
 import LoginPage from "./pages/login";
@@ -36,11 +33,6 @@ const art = `
 `;
 
 function App() {
-  useEffect(() => {
-    if (isAuthenticated()) {
-      startTokenAutoReissue();
-    }
-  }, []);
 
   console.log(art);
   return (

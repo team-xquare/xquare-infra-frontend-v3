@@ -204,7 +204,7 @@ const Unknown = styled.div`
 
 const Info = styled.div`
   width: 100%;
-  height: 260px;
+  height: 230px;
 
   display: flex;
   flex-direction: row;

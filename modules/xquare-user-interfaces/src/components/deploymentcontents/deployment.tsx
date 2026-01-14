@@ -746,6 +746,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 25px;
   gap: 2rem;
 `;
 

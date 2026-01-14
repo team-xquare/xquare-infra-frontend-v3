@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
@@ -21,13 +21,39 @@ const DeploymentHome = () => {
   const [teamId, setTeamId] = useState<number | undefined>(
     getSelectedTeamId() ?? undefined
   );
+  const [teamSwitchLoading, setTeamSwitchLoading] = useState(false);
+  const teamSwitchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasSyncedRef = useRef(false);
 
   useEffect(() => {
     document.title = "XQUARE | Deployment";
   }, []);
 
   useEffect(() => {
-    const syncTeam = () => setTeamId(getSelectedTeamId() ?? undefined);
+    const triggerTeamSwitchOverlay = () => {
+      if (teamSwitchTimerRef.current) {
+        clearTimeout(teamSwitchTimerRef.current);
+      }
+      setTeamSwitchLoading(true);
+      teamSwitchTimerRef.current = setTimeout(() => {
+        setTeamSwitchLoading(false);
+        teamSwitchTimerRef.current = null;
+      }, 1000);
+    };
+
+    const syncTeam = () => {
+      const nextTeamId = getSelectedTeamId() ?? undefined;
+      setTeamId((prevTeamId) => {
+        const changed = prevTeamId !== nextTeamId;
+        if (hasSyncedRef.current && changed) {
+          triggerTeamSwitchOverlay();
+        }
+        return nextTeamId;
+      });
+      if (!hasSyncedRef.current) {
+        hasSyncedRef.current = true;
+      }
+    };
 
     const handleStorage = (event: StorageEvent) => {
       if (event.key === "xquare:selectedTeam") {
@@ -38,6 +64,7 @@ const DeploymentHome = () => {
     // CustomEvent 리스너를 EventListener 타입으로 캐스팅
     const handleSelectedTeamChanged: EventListener = () => syncTeam();
 
+    syncTeam();
     window.addEventListener("storage", handleStorage);
     window.addEventListener(SELECTED_TEAM_EVENT, handleSelectedTeamChanged);
 
@@ -47,6 +74,10 @@ const DeploymentHome = () => {
         SELECTED_TEAM_EVENT,
         handleSelectedTeamChanged
       );
+      if (teamSwitchTimerRef.current) {
+        clearTimeout(teamSwitchTimerRef.current);
+        teamSwitchTimerRef.current = null;
+      }
     };
   }, []);
 
@@ -74,7 +105,7 @@ const DeploymentHome = () => {
       <Helmet>
         <title>XQUARE | Deployment</title>
       </Helmet>
-      <LoadingOverlay isLoading={loading && !!teamId} />
+      <LoadingOverlay isLoading={(loading && !!teamId) || teamSwitchLoading} />
       <ContentsArea>
         <Title
           title={`Deployments`}
@@ -137,8 +168,10 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
+  height: 100vh;
   width: 100%;
-  padding: 10px 40px;
+  padding: 12px 40px;
+  padding-top: 22px;
   cursor: default;
 `;
 
