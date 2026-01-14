@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import styled from "@emotion/styled";
 import { Link } from "react-router-dom";
-import { useLogin } from "@xquare/hooks";
+import { useGuestGuard, useLogin } from "@xquare/hooks";
 import type { LoginRequest } from "@xquare/utils";
 import { setTokens, startTokenAutoReissue } from "@xquare/utils";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@xquare/user-interfaces";
 
 const LoginPage: React.FC = () => {
+  useGuestGuard();
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

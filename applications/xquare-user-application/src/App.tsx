@@ -1,9 +1,6 @@
-import { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Global } from "@emotion/react";
 import globalStyles from "./styles/global";
-
-import { isAuthenticated, startTokenAutoReissue } from "@xquare/utils";
 
 import Layout from "./layout";
 import LoginPage from "./pages/login";
@@ -36,29 +33,14 @@ const art = `
 `;
 
 function App() {
-  useEffect(() => {
-    if (isAuthenticated()) {
-      startTokenAutoReissue();
-    }
-  }, []);
 
   console.log(art);
   return (
     <>
       <Global styles={globalStyles} />
       <Routes>
-        <Route
-          path="/login"
-          element={
-            isAuthenticated() ? <Navigate to="/" replace /> : <LoginPage />
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            isAuthenticated() ? <Navigate to="/" replace /> : <SignupPage />
-          }
-        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/github/callback" element={<GithubCallback />} />
 
         <Route

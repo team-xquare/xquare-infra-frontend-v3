@@ -1,6 +1,7 @@
 export { useRegister } from "./src/useRegister";
 export { useLogin } from "./src/useLogin";
 export { useAuthGuard } from "./src/useAuthGuard";
+export { useGuestGuard } from "./src/useGuestGuard";
 export { useUserName } from "./src/useUserName";
 export { useGithubToken } from "./src/useGithubToken";
 export { useGithubInstallations } from "./src/useGithubInstallations";
