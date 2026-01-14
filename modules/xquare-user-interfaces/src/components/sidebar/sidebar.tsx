@@ -10,9 +10,6 @@ import {
   SidebarContent,
   SidebarNavContainer,
   SidebarNavContent,
-  SidebarNavItemWrapper,
-  SubItemsContainer,
-  SubItem,
 } from "./sidebar-style";
 
 interface SidebarNavItem {
@@ -87,26 +84,12 @@ function Sidebar({
         <SidebarNavContent>
           <SidebarNavContainer>
             {navItems.map((item) => (
-              <SidebarNavItemWrapper key={item.id}>
-                <SidebarItem
-                  label={item.label}
-                  isActive={isMainItemActive(item.id)}
-                  onClick={() => handleMainItemClick(item.id)}
-                />
-                {item.subItems && item.subItems.length > 0 && (
-                  <SubItemsContainer>
-                    {item.subItems.map((subItem) => (
-                      <SubItem
-                        key={subItem.id}
-                        isActive={activeItemId === subItem.id}
-                        onClick={() => onNavItemClick(subItem.id)}
-                      >
-                        {subItem.label}
-                      </SubItem>
-                    ))}
-                  </SubItemsContainer>
-                )}
-              </SidebarNavItemWrapper>
+              <SidebarItem
+                key={item.id}
+                label={item.label}
+                isActive={isMainItemActive(item.id)}
+                onClick={() => handleMainItemClick(item.id)}
+              />
             ))}
           </SidebarNavContainer>
         </SidebarNavContent>

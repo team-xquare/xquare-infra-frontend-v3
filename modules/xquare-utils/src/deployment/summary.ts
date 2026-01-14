@@ -44,6 +44,7 @@ export const getDeploymentSummary = async (
     `${API_BASE_URL}/applications/${applicationId}/deployments`
   );
 
+  url.searchParams.append("applicationId", String(applicationId));
   url.searchParams.append("page", String(page));
   url.searchParams.append("limit", String(limit));
 
