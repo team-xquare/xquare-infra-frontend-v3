@@ -48,10 +48,23 @@ const SignupPage: React.FC = () => {
     value.length >= 4 && value.length <= 15;
   const isValidPassword = (value: string) =>
     value.length >= 8 && value.length <= 20 && /[^A-Za-z0-9]/.test(value);
+  const isValidStudentId = (value: string) => /^\d{4}$/.test(value);
+
+  const handleStudentIdChange = (value: string) => {
+    const sanitized = value.replace(/\D/g, "").slice(0, 4);
+    setStudentId(sanitized);
+    if (tokenError) setTokenError(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (step !== 3) return;
+
+    if (!isValidStudentId(studentId)) {
+      setTokenError("학번은 숫자 4자리로 입력해주세요.");
+      studentIdRef.current?.focus();
+      return;
+    }
 
     const payload: RegisterRequest = {
       username,
@@ -200,9 +213,13 @@ const SignupPage: React.FC = () => {
                 <Input_text
                   ref={studentIdRef}
                   value={studentId}
-                  onChange={(e) => setStudentId(e.target.value)}
+                  onChange={(e) => handleStudentIdChange(e.target.value)}
                   placeholder="학번을 입력해주세요"
-                  title={""}
+                  title={
+                    studentId && !isValidStudentId(studentId)
+                      ? "학번은 숫자 4자리로 입력해주세요."
+                      : ""
+                  }
                   titleColor={String(Xquare_colors.red[500])}
                   type="text"
                 />
@@ -241,7 +258,7 @@ const SignupPage: React.FC = () => {
             ) : (
               <Button_square
                 type="submit"
-                disabled={loading || !studentId || !name}
+                disabled={loading || !name || !isValidStudentId(studentId)}
               >
                 {loading ? "가입 중..." : "회원가입 완료"}
               </Button_square>
