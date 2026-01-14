@@ -44,11 +44,14 @@ const SignupPage: React.FC = () => {
 
   const isValidEmail = (value: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const usernamePattern = /^[A-z0-9_-]+$/;
   const isValidUsername = (value: string) =>
-    value.length >= 4 && value.length <= 15;
+    value.length >= 4 && value.length <= 15 && usernamePattern.test(value);
   const isValidPassword = (value: string) =>
     value.length >= 8 && value.length <= 20 && /[^A-Za-z0-9]/.test(value);
   const isValidStudentId = (value: string) => /^\d{4}$/.test(value);
+  const namePattern = /^[가-힣]+$/;
+  const isValidName = (value: string) => namePattern.test(value);
 
   const handleStudentIdChange = (value: string) => {
     const sanitized = value.replace(/\D/g, "").slice(0, 4);
@@ -169,7 +172,7 @@ const SignupPage: React.FC = () => {
                   placeholder="사용할 아이디를 입력해주세요"
                   title={
                     username && !isValidUsername(username)
-                      ? "아이디는 4자 이상 15자 이하로 입력해주세요."
+                      ? "아이디는 4~15자의 영문, 숫자, -, _만 허용 합니다."
                       : ""
                   }
                   titleColor={String(Xquare_colors.red[500])}
@@ -227,7 +230,11 @@ const SignupPage: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="이름을 입력해주세요"
-                  title={""}
+                  title={
+                    name && !isValidName(name)
+                      ? "이름을 다시한번 확인해 주세요."
+                      : ""
+                  }
                   titleColor={String(Xquare_colors.red[500])}
                   type="text"
                 />
@@ -258,7 +265,12 @@ const SignupPage: React.FC = () => {
             ) : (
               <Button_square
                 type="submit"
-                disabled={loading || !name || !isValidStudentId(studentId)}
+                disabled={
+                  loading ||
+                  !name ||
+                  !isValidName(name) ||
+                  !isValidStudentId(studentId)
+                }
               >
                 {loading ? "가입 중..." : "회원가입 완료"}
               </Button_square>
