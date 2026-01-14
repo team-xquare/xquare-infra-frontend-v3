@@ -345,7 +345,8 @@ const Container = styled.div`
   justify-content: flex-start;
   flex-direction: column;
   width: 100%;
-  padding: 10px 40px;
+  padding: 12px 40px;
+  padding-top: 22px;
   cursor: default;
 `;
 

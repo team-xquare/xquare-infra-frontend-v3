@@ -34,7 +34,9 @@ export default function TeamPage() {
 
   // Team Members State
   const [searchName, setSearchName] = useState("");
-  const [memberRole, setMemberRole] = useState<"admin" | "contributor">("contributor");
+  const [memberRole, setMemberRole] = useState<"admin" | "contributor">(
+    "contributor"
+  );
   const [teamMembers, setTeamMembers] = useState<
     Array<{
       id: number;
@@ -422,8 +424,10 @@ const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
+  height: 100vh;
   width: 100%;
-  padding: 10px 40px;
+  padding: 12px 40px;
+  padding-top: 22px;
   cursor: default;
 `;
 

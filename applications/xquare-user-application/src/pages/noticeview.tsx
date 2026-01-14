@@ -65,7 +65,9 @@ const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   width: 100%;
-  padding: 20px 40px;
+  padding: 12px 40px;
+  padding-top: 22px;
+  padding-bottom: 40px;
   cursor: default;
 `;
 
@@ -85,7 +87,8 @@ const Content = styled.div`
   font-size: 17px;
   text-align: justify;
   line-height: 1.5;
-  height: 480px;
+  height: 100%;
+  padding: 3px 3px;
 `;
 
 const FileArea = styled.div`
