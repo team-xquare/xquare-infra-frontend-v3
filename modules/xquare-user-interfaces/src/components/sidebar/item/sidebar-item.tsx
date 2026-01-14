@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { SideBarMenuItem, SideBarMenuItemLabel } from "./sidebar-item-style";
+import { SideBarMenuItemLabel } from "./sidebar-item-style";
 
 interface SidebarItemProps {
   label: string;
@@ -13,9 +13,9 @@ function SidebarItemComponent({
   onClick,
 }: SidebarItemProps) {
   return (
-    <SideBarMenuItem isActive={isActive} onClick={onClick}>
-      <SideBarMenuItemLabel isActive={isActive}>{label}</SideBarMenuItemLabel>
-    </SideBarMenuItem>
+    <SideBarMenuItemLabel isActive={isActive} onClick={onClick}>
+      {label}
+    </SideBarMenuItemLabel>
   );
 }
 
