@@ -1,12 +1,65 @@
-import { createElement } from "react";
+import { createElement, type CSSProperties } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { LoadingOverlay } from "@xquare/user-interfaces";
 import { clearAllTokens } from "./auth/token";
 import { AUTH_RELOGIN_EVENT } from "./auth/events";
 
 const TIMEOUT_MS = 15000; // 15 seconds
 const LOGOUT_OVERLAY_DELAY_MS = 1000;
 const LOGOUT_OVERLAY_ID = "xquare-auth-logout-overlay";
+
+const overlayBackdropStyle: CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "rgba(17, 24, 39, 0.45)",
+  zIndex: 9999,
+};
+
+const overlayCardStyle: CSSProperties = {
+  backgroundColor: "#ffffff",
+  borderRadius: "12px",
+  padding: "24px",
+  boxShadow: "0 20px 45px rgba(15, 23, 42, 0.25)",
+  color: "#111827",
+  fontSize: "16px",
+  lineHeight: 1.5,
+  maxWidth: "280px",
+  textAlign: "center",
+};
+
+const overlayTitleStyle: CSSProperties = {
+  margin: "0 0 8px",
+  fontWeight: 600,
+  fontSize: "18px",
+};
+
+const overlayDescriptionStyle: CSSProperties = {
+  margin: 0,
+  fontSize: "14px",
+  color: "#4b5563",
+};
+
+const LogoutOverlay = () =>
+  createElement(
+    "div",
+    { style: overlayBackdropStyle },
+    createElement(
+      "div",
+      { style: overlayCardStyle },
+      createElement(
+        "h2",
+        { style: overlayTitleStyle },
+        "자동 로그아웃 중입니다",
+      ),
+      createElement(
+        "p",
+        { style: overlayDescriptionStyle },
+        "안전한 로그인을 위해 잠시만 기다려주세요.",
+      ),
+    ),
+  );
 
 export interface FetchOptions extends RequestInit {
   timeout?: number;
@@ -32,7 +85,7 @@ const mountLogoutOverlay = () => {
     logoutOverlayRoot = createRoot(logoutOverlayContainer);
   }
 
-  logoutOverlayRoot.render(createElement(LoadingOverlay, { isLoading: true }));
+  logoutOverlayRoot.render(createElement(LogoutOverlay));
 };
 
 const unmountLogoutOverlay = () => {
