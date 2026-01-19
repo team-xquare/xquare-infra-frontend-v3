@@ -1,8 +1,35 @@
+import { clearAllTokens } from "./auth/token";
+import { AUTH_RELOGIN_EVENT } from "./auth/events";
+
 const TIMEOUT_MS = 15000; // 15 seconds
 
 export interface FetchOptions extends RequestInit {
   timeout?: number;
+  autoLogoutOnUnauthorized?: boolean;
 }
+
+let unauthorizedLogoutInProgress = false;
+
+const handleUnauthorizedLogout = () => {
+  if (unauthorizedLogoutInProgress) {
+    return;
+  }
+
+  unauthorizedLogoutInProgress = true;
+
+  try {
+    console.warn("[fetchWithTimeout] 401 응답 감지, 로그아웃 처리 시작");
+    clearAllTokens();
+
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent(AUTH_RELOGIN_EVENT));
+    }
+  } catch (error) {
+    console.error("[fetchWithTimeout] 로그아웃 처리 중 오류", error);
+  } finally {
+    unauthorizedLogoutInProgress = false;
+  }
+};
 
 /**
  * @param url - The URL to fetch
@@ -12,11 +39,17 @@ export interface FetchOptions extends RequestInit {
  */
 export const fetchWithTimeout = async (
   url: string,
-  options: FetchOptions = {}
+  options: FetchOptions = {},
 ): Promise<Response> => {
-  const timeout = options.timeout ?? TIMEOUT_MS;
+  const {
+    timeout: timeoutOption,
+    autoLogoutOnUnauthorized = true,
+    signal: userSignal,
+    ...restOptions
+  } = options;
+
+  const timeout = timeoutOption ?? TIMEOUT_MS;
   const controller = new AbortController();
-  const userSignal = options.signal;
   let timedOut = false;
 
   const onUserAbort = () => {
@@ -41,13 +74,17 @@ export const fetchWithTimeout = async (
 
   try {
     const response = await fetch(url, {
-      ...options,
+      ...restOptions,
       signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
     if (userSignal) {
       userSignal.removeEventListener("abort", onUserAbort);
+    }
+
+    if (response.status === 401 && autoLogoutOnUnauthorized) {
+      handleUnauthorizedLogout();
     }
     return response;
   } catch (error) {

@@ -1,5 +1,7 @@
 import { setTokens, getRefreshToken, clearAllTokens } from "./token";
 import { fetchWithTimeout } from "../fetch";
+import { AUTH_RELOGIN_EVENT } from "./events";
+export { AUTH_RELOGIN_EVENT } from "./events";
 
 //========================================
 // 토큰 재발급 설정
@@ -13,7 +15,7 @@ const getReissueEndpoint = (): string => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
   if (!baseUrl) {
     throw new Error(
-      "[Auth-reissue] VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다"
+      "[Auth-reissue] VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다",
     );
   }
   return `${baseUrl}/auth/refresh`;
@@ -21,9 +23,6 @@ const getReissueEndpoint = (): string => {
 
 /* localStorage 키 (마지막 재발급 시간) */
 const LAST_REISSUE_TIME_KEY = "lastReissueTime";
-
-/* CustomEvent 타입 */
-export const AUTH_RELOGIN_EVENT = "auth:relogin";
 
 /* 토큰 재발급 API 응답 인터페이스 */
 interface TokenReissueResponse {
@@ -95,6 +94,7 @@ export class TokenReissuer {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
+        autoLogoutOnUnauthorized: false,
       });
 
       if (!response.ok) {
@@ -138,7 +138,7 @@ export class TokenReissuer {
       // 네트워크 오류는 재시도 가능
       console.error(
         "[Auth-reissue] 네트워크 오류:",
-        error instanceof Error ? error.message : "알 수 없는 오류"
+        error instanceof Error ? error.message : "알 수 없는 오류",
       );
       return { success: false, shouldRetry: true };
     }
@@ -185,7 +185,7 @@ export class TokenReissuer {
         if (result.success && result.data) {
           setTokens(
             result.data.data.accessToken,
-            result.data.data.refreshToken
+            result.data.data.refreshToken,
           );
           localStorage.setItem(LAST_REISSUE_TIME_KEY, String(Date.now()));
 
@@ -206,7 +206,7 @@ export class TokenReissuer {
           ); */
         } else {
           console.error(
-            `[Auth-reissue] 모든 재시도 실패 (총 ${this.maxRetries + 1}회 시도)`
+            `[Auth-reissue] 모든 재시도 실패 (총 ${this.maxRetries + 1}회 시도)`,
           );
         }
       }
@@ -232,7 +232,7 @@ export class TokenReissuer {
 
     const lastReissueTime = parseInt(
       localStorage.getItem(LAST_REISSUE_TIME_KEY) || "0",
-      10
+      10,
     );
     const now = Date.now();
     const elapsed = now - lastReissueTime;
@@ -250,20 +250,20 @@ export class TokenReissuer {
         if (success) {
           this.intervalId = window.setInterval(
             () => this.reissueAccessToken(),
-            REISSUE_INTERVAL
+            REISSUE_INTERVAL,
           );
           /* console.log(
             `[Auth-reissue] 주기 설정: ${Math.round(REISSUE_INTERVAL / 60000)}분 간격`
           ); */
         } else {
           console.error(
-            "[Auth-reissue] 초기 재발급 실패: 주기적 재발급을 시작하지 않습니다."
+            "[Auth-reissue] 초기 재발급 실패: 주기적 재발급을 시작하지 않습니다.",
           );
         }
       } catch (error) {
         console.error(
           "[Auth-reissue] 초기 재발급 오류:",
-          error instanceof Error ? error.message : "알 수 없는 오류"
+          error instanceof Error ? error.message : "알 수 없는 오류",
         );
       } finally {
         this.initialTimeoutId = null;
