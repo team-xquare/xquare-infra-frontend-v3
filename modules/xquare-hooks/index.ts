@@ -15,6 +15,8 @@ export { useUpdateTeamMembers } from "./src/useUpdateTeamMembers";
 export { useSearchUsers } from "./src/useSearchUsers";
 export { useCreateApplication } from "./src/useCreateApplication";
 export { useCreateAddon } from "./src/useCreateAddon";
+export { useUpdateAddon } from "./src/useUpdateAddon";
+export { useAddonDetail } from "./src/useAddonDetail";
 export { useApplicationDetail } from "./src/useApplicationDetail";
 export { useUpdateApplicationConfiguration } from "./src/useUpdateApplicationConfiguration";
 export {

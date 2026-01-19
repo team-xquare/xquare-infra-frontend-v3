@@ -50,6 +50,14 @@ export type { TeamAddon } from "./src/teams/addons";
 
 export { createAddon } from "./src/addon/create";
 export type { CreateAddonRequest } from "./src/addon/create";
+export { getAddonDetail } from "./src/addon/detail";
+export type {
+  AddonDetail,
+  AddonConfiguration,
+  AddonType,
+} from "./src/addon/detail";
+export { updateAddon } from "./src/addon/update";
+export type { UpdateAddonRequest } from "./src/addon/update";
 
 export { exchangeGithubToken } from "./src/githubapp/token";
 export {
