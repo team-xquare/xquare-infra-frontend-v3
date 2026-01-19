@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useAuthGuard, useTeamAddons } from "@xquare/hooks";
@@ -17,7 +17,7 @@ function AddonPage() {
   useAuthGuard();
   const navigate = useNavigate();
   const [teamId, setTeamId] = useState<number | undefined>(
-    () => getSelectedTeamId() ?? undefined
+    () => getSelectedTeamId() ?? undefined,
   );
   const [teamSwitchLoading, setTeamSwitchLoading] = useState(false);
   const teamSwitchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,6 +85,13 @@ function AddonPage() {
   const handleAddAddonClick = () => {
     navigate("/addons/createaddon");
   };
+
+  const handleAddonClick = useCallback(
+    (addonId: number) => {
+      navigate(`/addons/${addonId}`);
+    },
+    [navigate],
+  );
   return (
     <Container>
       <Helmet>
@@ -144,6 +151,7 @@ function AddonPage() {
                 addonWithMeta.lastBuild ?? addonWithMeta.lastbuild ?? "N/A"
               }
               charge={addonWithMeta.charge ?? "N/A"}
+              onClick={() => handleAddonClick(addon.id)}
             />
           );
         })}

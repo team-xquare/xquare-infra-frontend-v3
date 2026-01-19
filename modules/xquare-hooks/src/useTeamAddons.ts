@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getTeamAddons } from "@xquare/utils";
 import type { TeamAddon } from "@xquare/utils";
 
@@ -10,48 +10,56 @@ import type { TeamAddon } from "@xquare/utils";
 export function useTeamAddons(teamId?: number) {
   const [data, setData] = useState<TeamAddon[] | null>(null);
   const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(false);
+  const requestIdRef = useRef(0);
 
   const isValidId = useMemo(
     () => typeof teamId === "number" && !Number.isNaN(teamId),
-    [teamId]
+    [teamId],
   );
 
-  useEffect(() => {
-    setData(null);
-    setError(null);
-
+  const fetchAddons = useCallback(async () => {
     if (!isValidId) {
-      // console.log("[useTeamAddons] 유효하지 않은 팀 ID:", teamId);
-      return;
+      const invalidError = new Error("유효한 팀 ID가 필요합니다.");
+      setData(null);
+      setError(invalidError);
+      setLoading(false);
+      throw invalidError;
     }
 
-    let cancelled = false;
+    const requestId = ++requestIdRef.current;
+    setLoading(true);
+    setError(null);
 
-    getTeamAddons(teamId!)
-      .then((addons) => {
-        if (!cancelled) {
-          setData(addons);
-          setError(null);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(
-            err instanceof Error ? err : new Error("팀 애드온 조회 실패")
-          );
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    try {
+      const addons = await getTeamAddons(teamId!);
+      if (requestId === requestIdRef.current) {
+        setData(addons);
+        setLoading(false);
+      }
+    } catch (err) {
+      const nextError =
+        err instanceof Error ? err : new Error("팀 애드온 조회 실패");
+      if (requestId === requestIdRef.current) {
+        setError(nextError);
+        setLoading(false);
+      }
+      throw nextError;
+    }
   }, [teamId, isValidId]);
+
+  useEffect(() => {
+    fetchAddons().catch(() => undefined);
+  }, [fetchAddons]);
 
   const computedError = !isValidId
     ? new Error("유효한 팀 ID가 필요합니다.")
     : error;
 
-  const loading = isValidId && data === null && !computedError;
-
-  return { data: isValidId ? data : null, loading, error: computedError };
+  return {
+    data: isValidId ? data : null,
+    loading: isValidId ? loading : false,
+    error: computedError,
+    refetch: fetchAddons,
+  };
 }
