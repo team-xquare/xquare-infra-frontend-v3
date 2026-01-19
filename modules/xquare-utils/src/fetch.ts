@@ -1,7 +1,12 @@
+import { createElement } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { LoadingOverlay } from "@xquare/user-interfaces";
 import { clearAllTokens } from "./auth/token";
 import { AUTH_RELOGIN_EVENT } from "./auth/events";
 
 const TIMEOUT_MS = 15000; // 15 seconds
+const LOGOUT_OVERLAY_DELAY_MS = 1000;
+const LOGOUT_OVERLAY_ID = "xquare-auth-logout-overlay";
 
 export interface FetchOptions extends RequestInit {
   timeout?: number;
@@ -9,6 +14,39 @@ export interface FetchOptions extends RequestInit {
 }
 
 let unauthorizedLogoutInProgress = false;
+let logoutOverlayContainer: HTMLDivElement | null = null;
+let logoutOverlayRoot: Root | null = null;
+
+const mountLogoutOverlay = () => {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  if (!logoutOverlayContainer) {
+    logoutOverlayContainer = document.createElement("div");
+    logoutOverlayContainer.id = LOGOUT_OVERLAY_ID;
+    document.body.appendChild(logoutOverlayContainer);
+  }
+
+  if (!logoutOverlayRoot) {
+    logoutOverlayRoot = createRoot(logoutOverlayContainer);
+  }
+
+  logoutOverlayRoot.render(createElement(LoadingOverlay, { isLoading: true }));
+};
+
+const unmountLogoutOverlay = () => {
+  if (logoutOverlayRoot) {
+    logoutOverlayRoot.unmount();
+    logoutOverlayRoot = null;
+  }
+
+  if (logoutOverlayContainer?.parentElement) {
+    logoutOverlayContainer.parentElement.removeChild(logoutOverlayContainer);
+  }
+
+  logoutOverlayContainer = null;
+};
 
 const handleUnauthorizedLogout = () => {
   if (unauthorizedLogoutInProgress) {
@@ -16,19 +54,32 @@ const handleUnauthorizedLogout = () => {
   }
 
   unauthorizedLogoutInProgress = true;
+  console.warn("[fetchWithTimeout] 401 응답 감지, 로그아웃 처리 시작");
 
-  try {
-    console.warn("[fetchWithTimeout] 401 응답 감지, 로그아웃 처리 시작");
-    clearAllTokens();
-
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new CustomEvent(AUTH_RELOGIN_EVENT));
+  if (typeof window === "undefined") {
+    try {
+      clearAllTokens();
+    } catch (error) {
+      console.error("[fetchWithTimeout] 로그아웃 처리 중 오류", error);
+    } finally {
+      unauthorizedLogoutInProgress = false;
     }
-  } catch (error) {
-    console.error("[fetchWithTimeout] 로그아웃 처리 중 오류", error);
-  } finally {
-    unauthorizedLogoutInProgress = false;
+    return;
   }
+
+  mountLogoutOverlay();
+
+  window.setTimeout(() => {
+    try {
+      clearAllTokens();
+      window.dispatchEvent(new CustomEvent(AUTH_RELOGIN_EVENT));
+    } catch (error) {
+      console.error("[fetchWithTimeout] 로그아웃 처리 중 오류", error);
+    } finally {
+      unmountLogoutOverlay();
+      unauthorizedLogoutInProgress = false;
+    }
+  }, LOGOUT_OVERLAY_DELAY_MS);
 };
 
 /**
