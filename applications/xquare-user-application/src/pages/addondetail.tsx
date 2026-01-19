@@ -46,6 +46,7 @@ function AddonDetailPage() {
 
   useEffect(() => {
     if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStorageInput(String(data.storageGi));
     }
   }, [data]);
@@ -322,7 +323,7 @@ const ConfigList = styled.div`
 const EmptyState = styled.div`
   padding: 20px;
   border-radius: 12px;
-  background-color: ${String(Xquare_colors.gray[100])};
+  background-color: ${String(Xquare_colors.gray[300])};
   color: ${String(Xquare_colors.gray[500])};
   text-align: center;
 `;

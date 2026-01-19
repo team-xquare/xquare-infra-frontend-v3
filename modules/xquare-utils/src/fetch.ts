@@ -81,9 +81,7 @@ const mountLogoutOverlay = () => {
     document.body.appendChild(logoutOverlayContainer);
   }
 
-  if (!logoutOverlayRoot) {
-    logoutOverlayRoot = createRoot(logoutOverlayContainer);
-  }
+  logoutOverlayRoot = createRoot(logoutOverlayContainer!);
 
   logoutOverlayRoot.render(createElement(LogoutOverlay));
 };
