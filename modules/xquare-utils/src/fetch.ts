@@ -4,8 +4,9 @@ import { clearAllTokens } from "./auth/token";
 import { AUTH_RELOGIN_EVENT } from "./auth/events";
 
 const TIMEOUT_MS = 15000; // 15 seconds
-const LOGOUT_OVERLAY_DELAY_MS = 1000;
+const LOGOUT_OVERLAY_DELAY_MS = 200;
 const LOGOUT_OVERLAY_ID = "xquare-auth-logout-overlay";
+const SPINNER_STYLE_ID = "xquare-auth-logout-spinner-style";
 
 const overlayBackdropStyle: CSSProperties = {
   position: "fixed",
@@ -13,52 +14,41 @@ const overlayBackdropStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "rgba(17, 24, 39, 0.45)",
+  backgroundColor: "rgba(0, 0, 0, 0.3)",
+  backdropFilter: "blur(2px)",
   zIndex: 9999,
+  cursor: "wait",
 };
 
-const overlayCardStyle: CSSProperties = {
-  backgroundColor: "#ffffff",
-  borderRadius: "12px",
-  padding: "24px",
-  boxShadow: "0 20px 45px rgba(15, 23, 42, 0.25)",
-  color: "#111827",
-  fontSize: "16px",
-  lineHeight: 1.5,
-  maxWidth: "280px",
-  textAlign: "center",
+const overlaySpinnerStyle: CSSProperties = {
+  width: 65,
+  height: 65,
+  border: "4px solid #EAEAEA",
+  borderTopColor: "#8A38F5",
+  borderRadius: "50%",
+  animation: "xquare-auth-spinner 0.8s linear infinite",
 };
 
-const overlayTitleStyle: CSSProperties = {
-  margin: "0 0 8px",
-  fontWeight: 600,
-  fontSize: "18px",
-};
+const ensureSpinnerStylesInjected = () => {
+  if (typeof document === "undefined") {
+    return;
+  }
 
-const overlayDescriptionStyle: CSSProperties = {
-  margin: 0,
-  fontSize: "14px",
-  color: "#4b5563",
+  if (document.getElementById(SPINNER_STYLE_ID)) {
+    return;
+  }
+
+  const styleElement = document.createElement("style");
+  styleElement.id = SPINNER_STYLE_ID;
+  styleElement.textContent = `@keyframes xquare-auth-spinner { to { transform: rotate(360deg); } }`;
+  document.head.appendChild(styleElement);
 };
 
 const LogoutOverlay = () =>
   createElement(
     "div",
     { style: overlayBackdropStyle },
-    createElement(
-      "div",
-      { style: overlayCardStyle },
-      createElement(
-        "h2",
-        { style: overlayTitleStyle },
-        "자동 로그아웃 중입니다",
-      ),
-      createElement(
-        "p",
-        { style: overlayDescriptionStyle },
-        "안전한 로그인을 위해 잠시만 기다려주세요.",
-      ),
-    ),
+    createElement("div", { style: overlaySpinnerStyle }),
   );
 
 export interface FetchOptions extends RequestInit {
@@ -74,6 +64,8 @@ const mountLogoutOverlay = () => {
   if (typeof document === "undefined") {
     return;
   }
+
+  ensureSpinnerStylesInjected();
 
   if (!logoutOverlayContainer) {
     logoutOverlayContainer = document.createElement("div");
