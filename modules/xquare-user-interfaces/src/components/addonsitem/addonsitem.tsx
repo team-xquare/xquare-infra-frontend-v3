@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import type { KeyboardEvent } from "react";
 import { Xquare_colors } from "../../styles/colors";
 import { Typography } from "../typography";
 import PodImg from "../../assets/pod.svg";
@@ -14,6 +15,8 @@ interface AddonItemProps {
   lastdeploy?: string | null;
   lastbuild?: string | null;
   charge?: string | null;
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
 function AddonItem({
@@ -26,6 +29,8 @@ function AddonItem({
   lastdeploy,
   lastbuild,
   charge,
+  onClick,
+  disabled = false,
 }: AddonItemProps) {
   const safeHealth =
     typeof health === "number" && Number.isFinite(health) && health > 0
@@ -38,6 +43,19 @@ function AddonItem({
   const safeLastDeploy = lastdeploy ?? "N/A";
   const safeLastBuild = lastbuild ?? "N/A";
   const safeCharge = charge ?? "N/A";
+
+  const clickable = typeof onClick === "function";
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!clickable || disabled) {
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onClick?.();
+    }
+  };
 
   const renderHealth = () => {
     if (safeHealth) {
@@ -62,7 +80,14 @@ function AddonItem({
   };
 
   return (
-    <Container>
+    <Container
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable && !disabled ? 0 : undefined}
+      clickable={clickable}
+      disabled={disabled}
+      onClick={disabled ? undefined : onClick}
+      onKeyDown={handleKeyDown}
+    >
       <Contents>
         <Heading>
           <Typo>
@@ -148,7 +173,7 @@ function AddonItem({
   );
 }
 
-const Container = styled.div`
+const Container = styled.div<{ clickable: boolean; disabled: boolean }>`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -158,6 +183,22 @@ const Container = styled.div`
   padding: 10px;
   border-radius: 8px;
   box-sizing: border-box;
+  cursor: ${({ clickable }) => (clickable ? "pointer" : "default")};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? "none" : "auto")};
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: ${({ clickable }) =>
+      clickable ? "rgba(0, 0, 0, 0.04)" : "transparent"};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${String(Xquare_colors.purple[400])};
+    outline-offset: 2px;
+  }
 `;
 
 const Contents = styled.div`

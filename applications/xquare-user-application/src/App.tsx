@@ -16,6 +16,7 @@ import DeploymentHome from "./pages/deploymenthome";
 import DeploymentView from "./pages/deploymentview";
 import CreateApplication from "./pages/createapplication";
 import CreateAddon from "./pages/createaddon";
+import AddonDetailPage from "./pages/addondetail";
 import TeamPage from "./pages/team";
 import GithubCallback from "./pages/githubcallback";
 import NotFound from "./pages/Pagenotfound";
@@ -33,7 +34,6 @@ const art = `
 `;
 
 function App() {
-
   console.log(art);
   return (
     <>
@@ -84,6 +84,15 @@ function App() {
           element={
             <Layout>
               <CreateAddon />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/addons/:addonId"
+          element={
+            <Layout>
+              <AddonDetailPage />
             </Layout>
           }
         />
