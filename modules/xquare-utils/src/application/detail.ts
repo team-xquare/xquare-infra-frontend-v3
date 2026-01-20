@@ -10,7 +10,7 @@ export interface ApplicationGitHubDetail {
   branch: string;
   installationId: string;
   hash: string;
-  triggerPaths: string[];
+  triggerPaths?: string[];
 }
 
 // 빌드 타입별 필수 필드 정의
@@ -73,12 +73,12 @@ interface GetApplicationDetailApiResponse {
  * 런타임 유효성 검사: 응답 객체가 required fields를 포함하는지 확인
  */
 const validateApplicationDetailResponse = (
-  data: unknown
+  data: unknown,
 ): data is GetApplicationDetailApiResponse => {
   if (typeof data !== "object" || data === null) {
     console.error(
       "[validateApplicationDetailResponse] data is not an object",
-      data
+      data,
     );
     return false;
   }
@@ -88,7 +88,7 @@ const validateApplicationDetailResponse = (
   if (typeof obj.success !== "boolean") {
     console.error(
       "[validateApplicationDetailResponse] success is not boolean",
-      obj.success
+      obj.success,
     );
     return false;
   }
@@ -96,7 +96,7 @@ const validateApplicationDetailResponse = (
   if (typeof obj.data !== "object" || obj.data === null) {
     console.error(
       "[validateApplicationDetailResponse] data field is not an object",
-      obj.data
+      obj.data,
     );
     return false;
   }
@@ -106,7 +106,7 @@ const validateApplicationDetailResponse = (
   if (typeof appDetail.id !== "number") {
     console.error(
       "[validateApplicationDetailResponse] data.id is not a number",
-      appDetail.id
+      appDetail.id,
     );
     return false;
   }
@@ -114,7 +114,7 @@ const validateApplicationDetailResponse = (
   if (typeof appDetail.teamId !== "number") {
     console.error(
       "[validateApplicationDetailResponse] data.teamId is not a number",
-      appDetail.teamId
+      appDetail.teamId,
     );
     return false;
   }
@@ -122,7 +122,7 @@ const validateApplicationDetailResponse = (
   if (typeof appDetail.name !== "string" || !appDetail.name.trim()) {
     console.error(
       "[validateApplicationDetailResponse] data.name is not a non-empty string",
-      appDetail.name
+      appDetail.name,
     );
     return false;
   }
@@ -130,12 +130,12 @@ const validateApplicationDetailResponse = (
   if (
     typeof appDetail.status !== "string" ||
     !["pending", "running", "failed", "stopped", "published"].includes(
-      appDetail.status
+      appDetail.status,
     )
   ) {
     console.error(
       "[validateApplicationDetailResponse] data.status is not a valid status",
-      appDetail.status
+      appDetail.status,
     );
     return false;
   }
@@ -146,7 +146,7 @@ const validateApplicationDetailResponse = (
   ) {
     console.error(
       "[validateApplicationDetailResponse] data.configuration is not an object",
-      appDetail.configuration
+      appDetail.configuration,
     );
     return false;
   }
@@ -156,7 +156,7 @@ const validateApplicationDetailResponse = (
   if (typeof config.github !== "object" || config.github === null) {
     console.error(
       "[validateApplicationDetailResponse] data.configuration.github is not an object",
-      config.github
+      config.github,
     );
     return false;
   }
@@ -171,15 +171,18 @@ const validateApplicationDetailResponse = (
   ) {
     console.error(
       "[validateApplicationDetailResponse] github fields are invalid",
-      github
+      github,
     );
     return false;
   }
 
-  if (!Array.isArray(github.triggerPaths)) {
+  if (
+    typeof github.triggerPaths !== "undefined" &&
+    !Array.isArray(github.triggerPaths)
+  ) {
     console.error(
       "[validateApplicationDetailResponse] github.triggerPaths is not an array",
-      github.triggerPaths
+      github.triggerPaths,
     );
     return false;
   }
@@ -187,7 +190,7 @@ const validateApplicationDetailResponse = (
   if (typeof config.build !== "object" || config.build === null) {
     console.error(
       "[validateApplicationDetailResponse] data.configuration.build is not an object",
-      config.build
+      config.build,
     );
     return false;
   }
@@ -196,7 +199,7 @@ const validateApplicationDetailResponse = (
   if (typeof build.type !== "string") {
     console.error(
       "[validateApplicationDetailResponse] build.type is not a string",
-      build.type
+      build.type,
     );
     return false;
   }
@@ -208,7 +211,7 @@ const validateApplicationDetailResponse = (
     if (typeof fieldValue !== "string" || !fieldValue.trim()) {
       console.error(
         `[validateApplicationDetailResponse] build.${fieldName} is required for type ${build.type}`,
-        fieldValue
+        fieldValue,
       );
       return false;
     }
@@ -228,7 +231,7 @@ const validateApplicationDetailResponse = (
     if (fieldValue !== undefined && typeof fieldValue !== "string") {
       console.error(
         `[validateApplicationDetailResponse] build.${fieldName} must be a string if provided`,
-        fieldValue
+        fieldValue,
       );
       return false;
     }
@@ -238,7 +241,7 @@ const validateApplicationDetailResponse = (
   if (!Array.isArray(config.endpoints)) {
     console.error(
       "[validateApplicationDetailResponse] data.configuration.endpoints is not an array",
-      config.endpoints
+      config.endpoints,
     );
     return false;
   }
@@ -252,7 +255,7 @@ const validateApplicationDetailResponse = (
     ) {
       console.error(
         "[validateApplicationDetailResponse] endpoint is invalid",
-        endpoint
+        endpoint,
       );
       return false;
     }
@@ -267,7 +270,7 @@ const validateApplicationDetailResponse = (
  *
  */
 export const getApplicationDetail = async (
-  applicationId: number
+  applicationId: number,
 ): Promise<ApplicationDetail> => {
   // 시작 로그: 요청 ID
   // console.log("[getApplicationDetail] start", { applicationId });
@@ -303,7 +306,7 @@ export const getApplicationDetail = async (
           Authorization: `Bearer ${accessToken}`,
           Accept: "*/*",
         },
-      }
+      },
     );
   } catch (error) {
     const message =
@@ -330,10 +333,10 @@ export const getApplicationDetail = async (
     console.error(
       "[getApplicationDetail] http error",
       response.status,
-      response.statusText
+      response.statusText,
     );
     throw new Error(
-      `애플리케이션 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `애플리케이션 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 
@@ -354,7 +357,7 @@ export const getApplicationDetail = async (
       body: rawBody,
     });
     throw new Error(
-      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`
+      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`,
     );
   }
 
@@ -366,7 +369,7 @@ export const getApplicationDetail = async (
       data: result,
     });
     throw new Error(
-      `애플리케이션 조회 실패: 서버 응답 형식이 올바르지 않습니다. (status: ${response.status}, url: ${response.url})`
+      `애플리케이션 조회 실패: 서버 응답 형식이 올바르지 않습니다. (status: ${response.status}, url: ${response.url})`,
     );
   }
 

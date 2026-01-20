@@ -14,7 +14,7 @@ export interface ApplicationGitHub {
   branch: string;
   installationId: string;
   hash: string;
-  triggerPaths: string[];
+  triggerPaths?: string[];
 }
 
 export interface ApplicationBuild {
@@ -52,7 +52,7 @@ interface CreateApplicationApiResponse {
  * - POST {API_BASE_URL}/api/v1/applications
  */
 export const createApplication = async (
-  request: CreateApplicationRequest
+  request: CreateApplicationRequest,
 ): Promise<number> => {
   if (!isAuthenticated()) {
     console.error("[createApplication] not authenticated");
@@ -85,7 +85,7 @@ export const createApplication = async (
   ) {
     console.error(
       "[createApplication] invalid github configuration",
-      request.configuration.github
+      request.configuration.github,
     );
     throw new Error("GitHub 설정이 올바르지 않습니다.");
   }
@@ -95,7 +95,7 @@ export const createApplication = async (
   if (typeof github.hash !== "string" || !github.hash.trim()) {
     console.error(
       "[createApplication] invalid or missing github.hash",
-      github.hash
+      github.hash,
     );
     throw new Error("GitHub 커밋 해시가 필요합니다.");
   }
@@ -106,7 +106,7 @@ export const createApplication = async (
   ) {
     console.error(
       "[createApplication] invalid or missing github.installationId",
-      github.installationId
+      github.installationId,
     );
     throw new Error("GitHub 설치 ID가 필요합니다.");
   }
@@ -114,7 +114,7 @@ export const createApplication = async (
   if (typeof github.branch !== "string" || !github.branch.trim()) {
     console.error(
       "[createApplication] invalid or missing github.branch",
-      github.branch
+      github.branch,
     );
     throw new Error("GitHub 브랜치가 필요합니다.");
   }
@@ -126,7 +126,7 @@ export const createApplication = async (
   ) {
     console.error(
       "[createApplication] invalid build configuration",
-      request.configuration.build
+      request.configuration.build,
     );
     throw new Error("빌드 설정이 올바르지 않습니다.");
   }
@@ -153,10 +153,10 @@ export const createApplication = async (
     console.error(
       "[createApplication] invalid build.type",
       request.configuration.build.type,
-      `allowed: ${ALLOWED_BUILD_TYPES.join(", ")}`
+      `allowed: ${ALLOWED_BUILD_TYPES.join(", ")}`,
     );
     throw new Error(
-      `유효하지 않은 빌드 타입입니다. (허용: ${ALLOWED_BUILD_TYPES.join(", ")})`
+      `유효하지 않은 빌드 타입입니다. (허용: ${ALLOWED_BUILD_TYPES.join(", ")})`,
     );
   }
 
@@ -235,10 +235,10 @@ export const createApplication = async (
     console.error(
       "[createApplication] http error",
       response.status,
-      response.statusText
+      response.statusText,
     );
     throw new Error(
-      `애플리케이션 생성 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `애플리케이션 생성 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 
@@ -254,7 +254,7 @@ export const createApplication = async (
       rawBody = "본문을 읽을 수 없습니다";
     }
     throw new Error(
-      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`
+      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`,
     );
   }
 
