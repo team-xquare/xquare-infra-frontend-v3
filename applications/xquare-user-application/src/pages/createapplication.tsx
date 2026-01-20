@@ -81,7 +81,7 @@ const CreateApplication = () => {
   const [installationId, setInstallationId] = useState("");
   const [githubToken, setGithubToken] = useState<GithubTokenData | null>(null);
   const [allRepositories, setAllRepositories] = useState<GithubRepository[]>(
-    []
+    [],
   );
   const [ownerTabs, setOwnerTabs] = useState<
     { login: string; avatarUrl?: string }[]
@@ -122,17 +122,17 @@ const CreateApplication = () => {
 
   const normalizedTriggerPaths = useMemo(
     () => triggerPaths.map((p) => p.trim()).filter(Boolean),
-    [triggerPaths]
+    [triggerPaths],
   );
 
   const filteredRepositories = useMemo(
     () => allRepositories.filter((repo) => repo.owner.login === selectedOwner),
-    [allRepositories, selectedOwner]
+    [allRepositories, selectedOwner],
   );
 
   const totalRepoPages = useMemo(
     () => Math.max(1, Math.ceil(filteredRepositories.length / REPOS_PER_PAGE)),
-    [filteredRepositories.length]
+    [filteredRepositories.length],
   );
 
   const paginatedRepositories = useMemo(() => {
@@ -143,7 +143,7 @@ const CreateApplication = () => {
   const branchOptions = useMemo(
     () =>
       branch && !branches.includes(branch) ? [branch, ...branches] : branches,
-    [branch, branches]
+    [branch, branches],
   );
 
   const routesValid = useMemo(
@@ -154,9 +154,9 @@ const CreateApplication = () => {
           r.url.trim() !== "" &&
           isAllowedDomain(r.url) &&
           r.port.trim() !== "" &&
-          Number.isFinite(Number(r.port))
+          Number.isFinite(Number(r.port)),
       ),
-    [routes]
+    [routes],
   );
   const isValid = useMemo(
     () =>
@@ -166,7 +166,6 @@ const CreateApplication = () => {
       repoOwner.trim() !== "" &&
       installationId.trim() !== "" &&
       branch.trim() !== "" &&
-      normalizedTriggerPaths.length > 0 &&
       buildTools.trim() !== "" &&
       (!needsVersion(buildTools) || javaVersion.trim() !== "") &&
       (!needsWorkingDirectory(buildTools) || workingDirectory.trim() !== "") &&
@@ -182,7 +181,6 @@ const CreateApplication = () => {
       repoOwner,
       installationId,
       branch,
-      normalizedTriggerPaths,
       buildTools,
       javaVersion,
       workingDirectory,
@@ -191,18 +189,18 @@ const CreateApplication = () => {
       inputPath,
       outputPath,
       routesValid,
-    ]
+    ],
   );
 
   const handleKeyChange = (index: number, value: string) => {
     setRoutes((prev) =>
-      prev.map((route, i) => (i === index ? { ...route, url: value } : route))
+      prev.map((route, i) => (i === index ? { ...route, url: value } : route)),
     );
   };
 
   const handleValueChange = (index: number, value: string) => {
     setRoutes((prev) =>
-      prev.map((route, i) => (i === index ? { ...route, port: value } : route))
+      prev.map((route, i) => (i === index ? { ...route, port: value } : route)),
     );
   };
 
@@ -215,12 +213,17 @@ const CreateApplication = () => {
   const fetchCommitForBranch = async (
     owner: string,
     repo: string,
-    targetBranch: string
+    targetBranch: string,
   ) => {
     if (!githubToken) {
       throw new Error("GitHub 토큰이 없습니다. 연동 후 다시 시도해주세요.");
     }
-    const sha = await getLatestCommitSha(githubToken.accessToken, owner, repo, targetBranch);
+    const sha = await getLatestCommitSha(
+      githubToken.accessToken,
+      owner,
+      repo,
+      targetBranch,
+    );
     setCommitHash(sha);
   };
 
@@ -240,7 +243,7 @@ const CreateApplication = () => {
     }
     if (!projectNameValid) {
       setFormError(
-        "애플리케이션 이름은 3~45자의 소문자와 하이픈(-)만 사용할 수 있습니다."
+        "애플리케이션 이름은 3~45자의 소문자와 하이픈(-)만 사용할 수 있습니다.",
       );
       return;
     }
@@ -274,18 +277,23 @@ const CreateApplication = () => {
       };
     }
 
+    const githubConfig: CreateApplicationRequest["configuration"]["github"] = {
+      owner: repoOwner.trim(),
+      repo: repoName.trim(),
+      branch: branch.trim(),
+      installationId: installationId.trim(),
+      hash: commitHash.trim(),
+    };
+
+    if (normalizedTriggerPaths.length > 0) {
+      githubConfig.triggerPaths = normalizedTriggerPaths;
+    }
+
     const payload: CreateApplicationRequest = {
       teamId: teamId!,
       name: projectName.trim(),
       configuration: {
-        github: {
-          owner: repoOwner.trim(),
-          repo: repoName.trim(),
-          branch: branch.trim(),
-          installationId: installationId.trim(),
-          hash: commitHash.trim(),
-          triggerPaths: normalizedTriggerPaths,
-        },
+        github: githubConfig,
         build: buildConfig,
         endpoints,
       },
@@ -316,7 +324,7 @@ const CreateApplication = () => {
     } catch (err) {
       console.error("[CreateApplication] branch commit fetch error", err);
       setGithubError(
-        err instanceof Error ? err.message : "커밋 정보를 불러오지 못했습니다."
+        err instanceof Error ? err.message : "커밋 정보를 불러오지 못했습니다.",
       );
       setCommitHash("");
     } finally {
@@ -356,13 +364,13 @@ const CreateApplication = () => {
       const { defaultBranch } = await getRepoInfo(
         githubToken.accessToken,
         targetOwner,
-        targetRepo
+        targetRepo,
       );
       const branchNames = await listBranches(
         githubToken.accessToken,
         targetOwner,
         targetRepo,
-        100
+        100,
       );
       setBranches(branchNames);
 
@@ -385,7 +393,7 @@ const CreateApplication = () => {
       setGithubError(
         err instanceof Error
           ? err.message
-          : "GitHub 정보를 불러오지 못했습니다."
+          : "GitHub 정보를 불러오지 못했습니다.",
       );
     } finally {
       setGithubLoading(false);
@@ -409,7 +417,7 @@ const CreateApplication = () => {
     const popup = window.open(
       authUrl,
       "GitHub OAuth",
-      "width=600,height=800,left=100,top=100"
+      "width=600,height=800,left=100,top=100",
     );
 
     if (!popup) {
@@ -445,7 +453,7 @@ const CreateApplication = () => {
             // GitHub App 설치 목록 로드
             try {
               const installs = await listUserInstallations(
-                response.data.accessToken
+                response.data.accessToken,
               );
               setInstallations(installs);
               /* console.log(
@@ -467,7 +475,7 @@ const CreateApplication = () => {
                     try {
                       const repos = await listInstallationRepositories(
                         response.data.accessToken,
-                        install.id
+                        install.id,
                       );
                       allRepos.push(...repos);
                       /* console.log(
@@ -476,7 +484,7 @@ const CreateApplication = () => {
                     } catch (repoErr) {
                       console.error(
                         `[CreateApplication] Failed to load repos for installation ${install.id}`,
-                        repoErr
+                        repoErr,
                       );
                     }
                   }
@@ -492,12 +500,12 @@ const CreateApplication = () => {
                   });
 
                   const owners = Array.from(ownerMap.entries()).map(
-                    ([login, avatarUrl]) => ({ login, avatarUrl })
+                    ([login, avatarUrl]) => ({ login, avatarUrl }),
                   );
                   setOwnerTabs(owners);
                   setSelectedOwner(owners[0]?.login ?? "");
                   setGithubMessage(
-                    `${allRepos.length}개의 레포지토리를 불러왔습니다.`
+                    `${allRepos.length}개의 레포지토리를 불러왔습니다.`,
                   );
                   /* console.log(
                     "[CreateApplication] Total repositories loaded:",
@@ -506,24 +514,24 @@ const CreateApplication = () => {
                 } catch (repoErr) {
                   console.error(
                     "[CreateApplication] Failed to load installation repos",
-                    repoErr
+                    repoErr,
                   );
                   setGithubError(
                     repoErr instanceof Error
                       ? repoErr.message
-                      : "레포지토리 목록을 불러오지 못했습니다."
+                      : "레포지토리 목록을 불러오지 못했습니다.",
                   );
                 }
               }
             } catch (installErr) {
               console.error(
                 "[CreateApplication] Failed to load installations",
-                installErr
+                installErr,
               );
               setGithubError(
                 installErr instanceof Error
                   ? installErr.message
-                  : "설치 목록을 불러오지 못했습니다."
+                  : "설치 목록을 불러오지 못했습니다.",
               );
             }
           } else {
@@ -534,7 +542,7 @@ const CreateApplication = () => {
           setGithubError(
             err instanceof Error
               ? err.message
-              : "토큰 교환 중 오류가 발생했습니다."
+              : "토큰 교환 중 오류가 발생했습니다.",
           );
         } finally {
           setGithubLoading(false);
@@ -647,13 +655,13 @@ const CreateApplication = () => {
                     const appSlug = import.meta.env.VITE_GITHUB_APP_SLUG;
                     if (!appSlug) {
                       setGithubError(
-                        "GitHub App 슬러그가 설정되지 않았습니다. 관리자에게 문의하세요."
+                        "GitHub App 슬러그가 설정되지 않았습니다. 관리자에게 문의하세요.",
                       );
                       return;
                     }
                     const installUrl = getGithubAppInstallUrl(
                       appSlug,
-                      window.location.origin + "/deployment/createapplication"
+                      window.location.origin + "/deployment/createapplication",
                     );
                     window.open(installUrl, "_blank");
                   }}
@@ -719,13 +727,13 @@ const CreateApplication = () => {
                       setGithubMessage(null);
                       // 선택된 repository의 설치 ID 업데이트
                       const foundInstallId = findInstallationIdForOwner(
-                        repo.owner.login
+                        repo.owner.login,
                       );
                       if (foundInstallId) {
                         setInstallationId(foundInstallId);
                         console.log(
                           "[CreateApplication] Installation ID updated:",
-                          foundInstallId
+                          foundInstallId,
                         );
                       }
                       handleFetchGithub(repo.owner.login, repo.name);
@@ -886,7 +894,7 @@ const CreateApplication = () => {
                     value={path}
                     onChange={(e) =>
                       setTriggerPaths((prev) =>
-                        prev.map((p, idx) => (idx === i ? e.target.value : p))
+                        prev.map((p, idx) => (idx === i ? e.target.value : p)),
                       )
                     }
                     placeholder="ex) src/main/**"
@@ -898,7 +906,7 @@ const CreateApplication = () => {
                     <DeleteBtn
                       onClick={() =>
                         setTriggerPaths((prev) =>
-                          prev.filter((_, idx) => idx !== i)
+                          prev.filter((_, idx) => idx !== i),
                         )
                       }
                     >
@@ -968,8 +976,6 @@ const CreateApplication = () => {
               <Input_basic
                 value={workingDirectory}
                 onChange={(e) => setWorkingDirectory(e.target.value)}
-                placeholder="ex) /backend/service"
-                width="950px"
                 height="35px"
               />
             </InputArea>

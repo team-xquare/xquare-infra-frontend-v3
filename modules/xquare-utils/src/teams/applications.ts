@@ -14,7 +14,7 @@ export interface ApplicationGitHub {
   branch: string;
   installationId: string;
   hash: string;
-  triggerPaths: string[];
+  triggerPaths?: string[];
 }
 
 export interface ApplicationBuild {
@@ -55,7 +55,7 @@ interface TeamApplicationsApiResponse {
  * - 헤더: Authorization Bearer, Accept: all
  */
 export const getTeamApplications = async (
-  teamId: number
+  teamId: number,
 ): Promise<TeamApplication[]> => {
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");
@@ -87,7 +87,7 @@ export const getTeamApplications = async (
           Authorization: `Bearer ${accessToken}`,
           Accept: "*/*",
         },
-      }
+      },
     );
   } catch (error) {
     const message =
@@ -108,10 +108,10 @@ export const getTeamApplications = async (
     console.error(
       "[getTeamApplications] HTTP 오류:",
       response.status,
-      response.statusText
+      response.statusText,
     );
     throw new Error(
-      `팀 애플리케이션 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `팀 애플리케이션 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 
@@ -133,7 +133,7 @@ export const getTeamApplications = async (
     }
 
     throw new Error(
-      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`
+      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`,
     );
   }
 
@@ -144,7 +144,7 @@ export const getTeamApplications = async (
   ) {
     console.error("[getTeamApplications] 잘못된 응답 데이터:", result);
     throw new Error(
-      "팀 애플리케이션 조회 실패: 응답 데이터가 올바르지 않습니다."
+      "팀 애플리케이션 조회 실패: 응답 데이터가 올바르지 않습니다.",
     );
   }
 

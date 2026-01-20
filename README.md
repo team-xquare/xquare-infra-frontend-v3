@@ -1,11 +1,12 @@
 # ✨ XQUARE Infrastructure Frontend v3
 
-> 안녕하세요, tema-xquare입니다 :)  
+> 안녕하세요, team-xquare입니다 :)
 > XQUARE Infrastructure는 대덕소프트웨어마이스터고등학교만을 위한 통합 인프라 서비스로 DSM 학생이라면 누구나 쉽게 배포할 수 있도록 도와줍니다.
 
 ---
 
 ## 📚 목차
+
 - [한눈에 보기](#-한눈에-보기)
 - [기술 스택](#-기술-스택)
 - [아키텍처 개요](#-아키텍처-개요)
@@ -25,6 +26,7 @@
 - 🛡️ **일관된 품질 보장**: Husky와 lint-staged로 커밋 전 자동 포맷팅 및 린트 검사를 수행합니다.
 
 ## 🛠️ 기술 스택
+
 - React 19 · TypeScript 5.9 · React Router DOM
 - Vite 7 · Bun 1.3.2 · Turbo Repo 2.x
 - Emotion · Storybook (추가 예정, 디자인 시스템 기반)
@@ -52,6 +54,7 @@
 ## 🚀 시작하기
 
 ### ✅ 요구 사항
+
 - Node.js 20 이상 (LTS 권장)
 - Bun 1.3.2 이상
 - Git
@@ -68,33 +71,35 @@ bun install
 ```
 
 ### 🧪 개발 서버
-| 목적 | 명령어 |
-| --- | --- |
-| 전체 앱 개발 서버 실행 | `bun run dev` |
-| 사용자 앱만 실행 | `bun run dev --filter=@xquare/user-application` |
-| 관리자 앱만 실행 | `bun run dev --filter=@xquare/admin-application` |
+
+| 목적                   | 명령어                                           |
+| ---------------------- | ------------------------------------------------ |
+| 전체 앱 개발 서버 실행 | `bun run dev`                                    |
+| 사용자 앱만 실행       | `bun run dev --filter=@xquare/user-application`  |
+| 관리자 앱만 실행       | `bun run dev --filter=@xquare/admin-application` |
 
 각 앱의 프리뷰 설정은 [applications/xquare-user-application/package.json](applications/xquare-user-application/package.json#L8-L12)과 [applications/xquare-admin-application/package.json](applications/xquare-admin-application/package.json#L8-L12)에서 확인할 수 있습니다.
 
 ### 🏗️ 빌드 & 품질 확인
-| 작업 | 명령어 |
-| --- | --- |
-| 전체 워크스페이스 빌드 | `bun run build` |
-| 사용자 앱만 빌드 | `bun run build --filter=@xquare/user-application` |
-| 관리자 앱만 빌드 | `bun run build --filter=@xquare/admin-application` |
-| 린트 검사 | `bun run lint` |
+
+| 작업                   | 명령어                                             |
+| ---------------------- | -------------------------------------------------- |
+| 전체 워크스페이스 빌드 | `bun run build`                                    |
+| 사용자 앱만 빌드       | `bun run build --filter=@xquare/user-application`  |
+| 관리자 앱만 빌드       | `bun run build --filter=@xquare/admin-application` |
+| 린트 검사              | `bun run lint`                                     |
 
 > Husky와 lint-staged가 커밋 전 자동으로 포맷팅 및 린트를 실행합니다. 로컬에서 동일한 명령을 수행하면 CI와 일관된 결과를 확인할 수 있습니다.
 
 ## 🔧 핵심 스크립트 모음
 
-| 스크립트 | 설명 |
-| --- | --- |
-| `bun run dev` | Turbo가 각 애플리케이션의 `dev` 명령을 병렬로 실행합니다. |
-| `bun run build` | TypeScript 타입 체크 후 Vite 빌드를 실행해 정적 자산을 생성합니다. |
-| `bun run lint` | 워크스페이스 전역 ESLint 규칙으로 코드 품질을 검사합니다. |
-| `bun run format` | Prettier를 통해 Markdown, JSON, TypeScript 파일을 포맷팅합니다. |
-| `bunx turbo run <task> --filter=<pkg>` | 특정 패키지에 대해 Turbo 작업을 수행할 수 있는 저수준 명령입니다. |
+| 스크립트                               | 설명                                                               |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| `bun run dev`                          | Turbo가 각 애플리케이션의 `dev` 명령을 병렬로 실행합니다.          |
+| `bun run build`                        | TypeScript 타입 체크 후 Vite 빌드를 실행해 정적 자산을 생성합니다. |
+| `bun run lint`                         | 워크스페이스 전역 ESLint 규칙으로 코드 품질을 검사합니다.          |
+| `bun run format`                       | Prettier를 통해 Markdown, JSON, TypeScript 파일을 포맷팅합니다.    |
+| `bunx turbo run <task> --filter=<pkg>` | 특정 패키지에 대해 Turbo 작업을 수행할 수 있는 저수준 명령입니다.  |
 
 ## 🌐 환경 변수
 
@@ -111,16 +116,16 @@ VITE_API_BASE_URL=https://api.example.com
 ## 📦 모듈 상세
 
 - **[modules/xquare-hooks](modules/xquare-hooks)**:
-   - 인증, 팀 관리, 배포 모니터링 등 도메인 로직을 React Hook으로 제공합니다.
-   - 예시: [useLogin](modules/xquare-hooks/src/useLogin.ts#L1-L33), [useDeploymentSummary](modules/xquare-hooks/src/useDeploymentSummary.ts#L1-L40).
+  - 인증, 팀 관리, 배포 모니터링 등 도메인 로직을 React Hook으로 제공합니다.
+  - 예시: [useLogin](modules/xquare-hooks/src/useLogin.ts#L1-L33), [useDeploymentSummary](modules/xquare-hooks/src/useDeploymentSummary.ts#L1-L40).
 - **[modules/xquare-user-interfaces](modules/xquare-user-interfaces)**:
-   - 버튼, 폼, 모달 등 핵심 UI 컴포넌트와 디자인 토큰을 정의합니다.
-   - Emotion 기반으로 구현되어 테마 확장이 용이합니다.
+  - 버튼, 폼, 모달 등 핵심 UI 컴포넌트와 디자인 토큰을 정의합니다.
+  - Emotion 기반으로 구현되어 테마 확장이 용이합니다.
 - **[modules/xquare-utils](modules/xquare-utils)**:
-   - fetch 래퍼, 응답 파서, 날짜 포맷터 등을 제공해 서비스 전반의 데이터 처리를 표준화합니다.
-   - API 클라이언트 엔트리는 [modules/xquare-utils/index.ts](modules/xquare-utils/index.ts)에서 확인할 수 있습니다.
+  - fetch 래퍼, 응답 파서, 날짜 포맷터 등을 제공해 서비스 전반의 데이터 처리를 표준화합니다.
+  - API 클라이언트 엔트리는 [modules/xquare-utils/index.ts](modules/xquare-utils/index.ts)에서 확인할 수 있습니다.
 - **[modules/xquare-eslint-configs](modules/xquare-eslint-configs)**:
-   - React, TypeScript, Emotion 등을 포괄하는 ESLint 규칙을 정의합니다. 각 앱의 전역 린트 설정은 [applications/xquare-user-application/eslint.config.js](applications/xquare-user-application/eslint.config.js)에 적용됩니다.
+  - React, TypeScript, Emotion 등을 포괄하는 ESLint 규칙을 정의합니다. 각 앱의 전역 린트 설정은 [applications/xquare-user-application/eslint.config.js](applications/xquare-user-application/eslint.config.js)에 적용됩니다.
 
 ## 🤝 기여하기
 
