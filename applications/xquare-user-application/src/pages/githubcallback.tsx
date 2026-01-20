@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import styled from "@emotion/styled";
+import { Xquare_colors } from "@xquare/user-interfaces";
 
 const GithubCallback = () => {
   useEffect(() => {
@@ -16,7 +17,7 @@ const GithubCallback = () => {
       if (window.opener) {
         window.opener.postMessage(
           { type: "github-oauth-error", error },
-          window.location.origin
+          window.location.origin,
         );
       }
       window.close();
@@ -28,7 +29,7 @@ const GithubCallback = () => {
       if (window.opener) {
         window.opener.postMessage(
           { type: "github-oauth-code", code },
-          window.location.origin
+          window.location.origin,
         );
       }
       setTimeout(() => {
@@ -41,8 +42,9 @@ const GithubCallback = () => {
 
   return (
     <Container>
-      <Message>GitHub 연동 중...</Message>
-      <SubMessage>잠시만 기다려주세요.</SubMessage>
+      <XquareTitle>XQUARE</XquareTitle>
+      <MainTitle>GitHub 연동 중...</MainTitle>
+      <Description>잠시만 기다려주세요.</Description>
     </Container>
   );
 };
@@ -50,22 +52,33 @@ const GithubCallback = () => {
 export default GithubCallback;
 
 const Container = styled.div`
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: #f8f9fa;
+  align-items: center;
+  background: #0d1117;
+  text-align: center;
+  padding: 0 20px;
 `;
 
-const Message = styled.div`
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
+const XquareTitle = styled.h1`
+  font-size: 45px;
+  font-weight: 800;
+  margin-bottom: 17px;
+  color: ${Xquare_colors.white};
 `;
 
-const SubMessage = styled.div`
-  font-size: 16px;
-  color: #666;
+const MainTitle = styled.h1`
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  color: ${Xquare_colors.purple[400]};
+`;
+
+const Description = styled.p`
+  font-size: 20px;
+  color: ${Xquare_colors.gray[500]};
+  font-weight: 500;
+  line-height: 1.6;
 `;

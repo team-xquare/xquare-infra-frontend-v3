@@ -19,6 +19,7 @@ import CreateAddon from "./pages/createaddon";
 import AddonDetailPage from "./pages/addondetail";
 import TeamPage from "./pages/team";
 import GithubCallback from "./pages/githubcallback";
+import GithubSetupComplete from "./pages/githubsetupcomplete";
 import NotFound from "./pages/Pagenotfound";
 
 const art = `
@@ -42,6 +43,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/github/callback" element={<GithubCallback />} />
+
+        <Route
+          path="/github/setup-complete"
+          element={<GithubSetupComplete />}
+        />
 
         <Route
           path="/"
