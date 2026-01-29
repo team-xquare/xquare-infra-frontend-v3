@@ -336,7 +336,7 @@ export default function TeamPage() {
               <SectionTitle style={{ marginTop: 30 }}>팀원 목록</SectionTitle>
               {(() => {
                 if (teamDetailLoading) {
-                  return <Typography>팀원 정보를 불러오는 중...</Typography>;
+                  return <LoadingOverlay isLoading={teamDetailLoading} />;
                 }
                 if (teamDetailError) {
                   return <ErrorMessage message={teamDetailError.message} />;

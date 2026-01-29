@@ -22,7 +22,7 @@ interface TeamDetailApiResponse {
 
 /**
  * 팀 상세정보 조회
- * - 경로: GET {API_BASE_URL}/api/v1/teams/{teamId}
+ * - 경로: GET {API_BASE_URL}/teams/{teamId}
  * - 헤더: Authorization Bearer, Accept: all
  */
 export const getTeamDetail = async (teamId: number): Promise<TeamDetail> => {
