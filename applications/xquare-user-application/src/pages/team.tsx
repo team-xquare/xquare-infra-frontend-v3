@@ -287,21 +287,16 @@ export default function TeamPage() {
               <SectionTitle>팀 정보 수정</SectionTitle>
               {infoSuccess && <SuccessMessage>{infoSuccess}</SuccessMessage>}
               <form onSubmit={handleUpdateTeamInfo}>
-                <InputArea>
-                  <Typography size="5x" weight="semiBold">
-                    팀 이름
-                  </Typography>
+                <FormGroupA>
                   <Input_basic
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                     placeholder="팀 이름을 입력하세요"
                     disabled={true}
-                    width="300px"
+                    width="160px"
                     height="35px"
                   />
-                </InputArea>
-                <FormGroup>
-                  <Label htmlFor="teamType">팀 유형</Label>
+                  <InlineText> 의 팀 유형을 </InlineText>
                   <Select
                     value={teamType}
                     onChange={(e) =>
@@ -315,7 +310,8 @@ export default function TeamPage() {
                     <option value="team">팀</option>
                     <option value="individual">개인</option>
                   </Select>
-                </FormGroup>
+                  <InlineText> 으로 변경</InlineText>
+                </FormGroupA>
                 {infoError && <ErrorMessage message={infoError} />}
                 <ButtonGroup>
                   <Button_square
@@ -325,24 +321,31 @@ export default function TeamPage() {
                     width="150px"
                     height="45px"
                   >
-                    {isUpdatingTeam ? "저장 중..." : "팀 정보 저장"}
+                    {isUpdatingTeam ? "저장 중..." : "수정하기"}
                   </Button_square>
                 </ButtonGroup>
               </form>
-              <SectionTitle style={{ marginTop: 40 }}>
-                현재 팀원 목록
+              <SectionTitle style={{ marginTop: 30 }}>
+                팀원 목록
               </SectionTitle>
               {(() => {
                 const teamId = selectedTeam?.id;
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                const { data: teamDetail, loading: teamDetailLoading, error: teamDetailError } = useTeamDetail(teamId);
+                const {
+                  data: teamDetail,
+                  loading: teamDetailLoading,
+                  error: teamDetailError,
+                } = useTeamDetail(teamId);
                 if (teamDetailLoading) {
                   return <Typography>팀원 정보를 불러오는 중...</Typography>;
                 }
                 if (teamDetailError) {
                   return <ErrorMessage message={teamDetailError.message} />;
                 }
-                if (teamDetail && teamDetail.members && teamDetail.members.length > 0) {
+                if (
+                  teamDetail &&
+                  teamDetail.members &&
+                  teamDetail.members.length > 0
+                ) {
                   return (
                     <MembersList>
                       {teamDetail.members.map((member) => (
@@ -350,7 +353,8 @@ export default function TeamPage() {
                           <MemberInfo>
                             <MemberName>유저 ID: {member.userId}</MemberName>
                             <MemberRole>
-                              역할: {member.role === "admin" ? "관리자" : "멤버"}
+                              역할:{" "}
+                              {member.role === "admin" ? "관리자" : "멤버"}
                             </MemberRole>
                           </MemberInfo>
                         </MemberItem>
@@ -368,7 +372,7 @@ export default function TeamPage() {
               )}
               <form onSubmit={handleSubmitMembers}>
                 <FormGroup>
-                  <Label>팀원 검색</Label>
+                  <Label>사용자 검색</Label>
                   <InputRow>
                     <Input_basic
                       placeholder="사용자 이름을 입력하세요"
@@ -420,7 +424,7 @@ export default function TeamPage() {
                             width="80px"
                             height="40px"
                           >
-                            추가
+                            선택
                           </Button_square>
                         </SearchResultItem>
                       ))}
@@ -457,7 +461,7 @@ export default function TeamPage() {
                             width="80px"
                             height="40px"
                           >
-                            제거
+                            삭제
                           </Button_square>
                         </MemberItem>
                       ))}
@@ -475,7 +479,7 @@ export default function TeamPage() {
                   >
                     {isUpdatingMembers
                       ? "저장 중..."
-                      : `팀원 저장 (${teamMembers.length}명)`}
+                      : `저장하기 (${teamMembers.length}명)`}
                   </Button_square>
                 </ButtonGroup>
               </form>
@@ -541,6 +545,15 @@ const FormGroup = styled.div`
   margin-bottom: 20px;
 `;
 
+const FormGroupA = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin-bottom: 20px;
+`;
+
 const Label = styled.label`
   font-size: 18px;
   font-weight: 600;
@@ -572,7 +585,7 @@ const Select = styled.select`
 const ButtonGroup = styled.div`
   display: flex;
   gap: 12px;
-  margin-top: 37px;
+  margin-top: 30px;
   justify-content: flex-end;
 `;
 
@@ -607,7 +620,7 @@ const MembersList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 35px;
 `;
 
 const MemberItem = styled.div`
@@ -674,17 +687,4 @@ const SearchResultName = styled.span`
 const SearchResultMeta = styled.span`
   font-size: 12px;
   color: ${Xquare_colors.gray[500]};
-`;
-
-const InputArea = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 3px 5px;
-  width: 100%;
-  height: 40px;
-  border-bottom: 2px solid ${Xquare_colors.gray[300]};
-  cursor: default;
-  margin-bottom: 20px;
 `;
