@@ -110,42 +110,42 @@ function AddonDetailPage() {
     <>
       <ValueBox>
         <Typography size="6x" weight="bold">
-          기본 정보
+          Addon
         </Typography>
         <InputArea>
           <Typography size="5x" weight="semiBold">
-            애드온 이름
-          </Typography>
-          <Input_basic
-            value={data?.name ?? ""}
-            onChange={noop}
-            placeholder="애드온 이름"
-            width="950px"
-            height="35px"
-            disabled
-          />
-        </InputArea>
-        <InputArea>
-          <Typography size="5x" weight="semiBold">
-            애드온 타입
-          </Typography>
-          <Input_basic
-            value={data?.type ?? ""}
-            onChange={noop}
-            placeholder="애드온 타입"
-            width="950px"
-            height="35px"
-            disabled
-          />
-        </InputArea>
-        <InputArea>
-          <Typography size="5x" weight="semiBold">
-            애드온 ID
+            Addon ID
           </Typography>
           <Input_basic
             value={data ? `#${data.id}` : ""}
             onChange={noop}
-            placeholder="애드온 ID"
+            placeholder="Addon ID"
+            width="950px"
+            height="35px"
+            disabled
+          />
+        </InputArea>
+        <InputArea>
+          <Typography size="5x" weight="semiBold">
+            Addon Name
+          </Typography>
+          <Input_basic
+            value={data?.name ?? ""}
+            onChange={noop}
+            placeholder="Addon Name"
+            width="950px"
+            height="35px"
+            disabled
+          />
+        </InputArea>
+        <InputArea>
+          <Typography size="5x" weight="semiBold">
+            Addon Type
+          </Typography>
+          <Input_basic
+            value={data?.type ?? ""}
+            onChange={noop}
+            placeholder="Addon Type"
             width="950px"
             height="35px"
             disabled
@@ -155,7 +155,7 @@ function AddonDetailPage() {
 
       <ValueBox>
         <Typography size="6x" weight="bold">
-          스토리지 설정
+          Storage Settings
         </Typography>
         <InputArea>
           <Typography size="5x" weight="semiBold">
@@ -165,7 +165,7 @@ function AddonDetailPage() {
             <Input_basic
               value={storageInput}
               onChange={(event) => setStorageInput(event.target.value)}
-              placeholder="스토리지 용량"
+              placeholder="Storage Capacity"
               type="number"
               width="220px"
               align="right"
@@ -189,7 +189,7 @@ function AddonDetailPage() {
 
       <ValueBox>
         <Typography size="6x" weight="bold">
-          추가 설정
+          Additional Settings
         </Typography>
         {configurationEntries.length === 0 ? (
           <EmptyState>구성 정보가 없습니다.</EmptyState>
@@ -224,7 +224,7 @@ function AddonDetailPage() {
       <LoadingOverlay isLoading={loading || updateLoading} />
       <ContentsArea>
         <Title
-          title={data ? data.name : "Addon Detail"}
+          title={"Addon Detail"}
           subTitle="애드온 상세 정보를 확인합니다."
         />
       </ContentsArea>
