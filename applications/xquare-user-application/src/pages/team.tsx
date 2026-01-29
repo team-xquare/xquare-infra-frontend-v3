@@ -16,6 +16,7 @@ import {
   useUpdateTeam,
   useUpdateTeamMembers,
   useSearchUsers,
+  useTeamDetail,
 } from "@xquare/hooks";
 import { getSelectedTeam, checkUser, SELECTED_TEAM_EVENT } from "@xquare/utils";
 import type { SelectedTeamInfo, UserSearchResult } from "@xquare/utils";
@@ -24,21 +25,19 @@ export default function TeamPage() {
   useAuthGuard();
 
   const [selectedTeam, setSelectedTeam] = useState<SelectedTeamInfo | null>(
-    () => getSelectedTeam()
+    () => getSelectedTeam(),
   );
 
-  // Team Info State
   const [teamName, setTeamName] = useState(selectedTeam?.name ?? "");
   const [teamType, setTeamType] = useState<"club" | "team" | "individual">(
-    (selectedTeam?.type as "club" | "team" | "individual") ?? "team"
+    (selectedTeam?.type as "club" | "team" | "individual") ?? "team",
   );
   const [infoError, setInfoError] = useState<string | null>(null);
   const [infoSuccess, setInfoSuccess] = useState<string | null>(null);
 
-  // Team Members State
   const [searchName, setSearchName] = useState("");
   const [memberRole, setMemberRole] = useState<"admin" | "contributor">(
-    "contributor"
+    "contributor",
   );
   const [teamMembers, setTeamMembers] = useState<
     Array<{
@@ -157,22 +156,6 @@ export default function TeamPage() {
         return;
       }
 
-      if (trimmedName.length < 3) {
-        setInfoError("팀 이름은 최소 3자 이상이어야 합니다.");
-        return;
-      }
-
-      if (trimmedName.length > 45) {
-        setInfoError("팀 이름은 최대 45자까지 가능합니다.");
-        return;
-      }
-
-      const lowercasePattern = /^[a-z]+$/;
-      if (!lowercasePattern.test(trimmedName)) {
-        setInfoError("팀 이름은 알파벳 소문자만 사용 가능합니다.");
-        return;
-      }
-
       try {
         await updateTeam(selectedTeam.id, {
           name: trimmedName,
@@ -181,11 +164,11 @@ export default function TeamPage() {
         setInfoSuccess("팀 정보가 성공적으로 수정되었습니다.");
       } catch (err) {
         setInfoError(
-          err instanceof Error ? err.message : "팀 정보 수정에 실패했습니다."
+          err instanceof Error ? err.message : "팀 정보 수정에 실패했습니다.",
         );
       }
     },
-    [selectedTeam, teamName, teamType, updateTeam]
+    [selectedTeam, teamName, teamType, updateTeam],
   );
 
   const handleSearchUsers = useCallback(async () => {
@@ -202,7 +185,7 @@ export default function TeamPage() {
       await search(trimmed);
     } catch (err) {
       setMembersError(
-        err instanceof Error ? err.message : "유저 검색에 실패했습니다."
+        err instanceof Error ? err.message : "유저 검색에 실패했습니다.",
       );
     }
   }, [search, searchName]);
@@ -245,7 +228,7 @@ export default function TeamPage() {
         },
       ]);
     },
-    [currentUserId, memberRole, teamMembers]
+    [currentUserId, memberRole, teamMembers],
   );
 
   const handleRemoveMember = useCallback((userId: number) => {
@@ -276,11 +259,11 @@ export default function TeamPage() {
         setMembersSuccess("팀원이 성공적으로 추가되었습니다.");
       } catch (err) {
         setMembersError(
-          err instanceof Error ? err.message : "팀원 추가에 실패했습니다."
+          err instanceof Error ? err.message : "팀원 추가에 실패했습니다.",
         );
       }
     },
-    [selectedTeam, teamMembers, updateTeamMembers]
+    [selectedTeam, teamMembers, updateTeamMembers],
   );
 
   return (
@@ -303,7 +286,6 @@ export default function TeamPage() {
             <FormContainer>
               <SectionTitle>팀 정보 수정</SectionTitle>
               {infoSuccess && <SuccessMessage>{infoSuccess}</SuccessMessage>}
-
               <form onSubmit={handleUpdateTeamInfo}>
                 <InputArea>
                   <Typography size="5x" weight="semiBold">
@@ -318,14 +300,13 @@ export default function TeamPage() {
                     height="35px"
                   />
                 </InputArea>
-
                 <FormGroup>
                   <Label htmlFor="teamType">팀 유형</Label>
                   <Select
                     value={teamType}
                     onChange={(e) =>
                       setTeamType(
-                        e.target.value as "club" | "team" | "individual"
+                        e.target.value as "club" | "team" | "individual",
                       )
                     }
                     disabled={isUpdatingTeam}
@@ -335,9 +316,7 @@ export default function TeamPage() {
                     <option value="individual">개인</option>
                   </Select>
                 </FormGroup>
-
                 {infoError && <ErrorMessage message={infoError} />}
-
                 <ButtonGroup>
                   <Button_square
                     onClick={() => {}}
@@ -350,15 +329,43 @@ export default function TeamPage() {
                   </Button_square>
                 </ButtonGroup>
               </form>
+              <SectionTitle style={{ marginTop: 40 }}>
+                현재 팀원 목록
+              </SectionTitle>
+              {(() => {
+                const teamId = selectedTeam?.id;
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const { data: teamDetail, loading: teamDetailLoading, error: teamDetailError } = useTeamDetail(teamId);
+                if (teamDetailLoading) {
+                  return <Typography>팀원 정보를 불러오는 중...</Typography>;
+                }
+                if (teamDetailError) {
+                  return <ErrorMessage message={teamDetailError.message} />;
+                }
+                if (teamDetail && teamDetail.members && teamDetail.members.length > 0) {
+                  return (
+                    <MembersList>
+                      {teamDetail.members.map((member) => (
+                        <MemberItem key={member.userId}>
+                          <MemberInfo>
+                            <MemberName>유저 ID: {member.userId}</MemberName>
+                            <MemberRole>
+                              역할: {member.role === "admin" ? "관리자" : "멤버"}
+                            </MemberRole>
+                          </MemberInfo>
+                        </MemberItem>
+                      ))}
+                    </MembersList>
+                  );
+                }
+                return <Typography>팀원이 없습니다.</Typography>;
+              })()}
             </FormContainer>
-
-            {/* 팀원 관리 섹션 */}
             <FormContainer>
               <SectionTitle>팀원 관리</SectionTitle>
               {membersSuccess && (
                 <SuccessMessage>{membersSuccess}</SuccessMessage>
               )}
-
               <form onSubmit={handleSubmitMembers}>
                 <FormGroup>
                   <Label>팀원 검색</Label>
@@ -374,7 +381,6 @@ export default function TeamPage() {
                       disabled={isUpdatingMembers || searching}
                       width="200px"
                     />
-
                     <InlineText>을(를)</InlineText>
                     <RoleSelect
                       value={memberRole}
@@ -389,7 +395,6 @@ export default function TeamPage() {
                     <InlineText>역할로 추가</InlineText>
                   </InputRow>
                 </FormGroup>
-
                 {searchResults.length > 0 && (
                   <FormGroup>
                     <Label>검색 결과 ({searchResults.length}명)</Label>
@@ -422,9 +427,7 @@ export default function TeamPage() {
                     </SearchResultsList>
                   </FormGroup>
                 )}
-
                 {searchError && <ErrorMessage message={searchError.message} />}
-
                 {teamMembers.length > 0 && (
                   <FormGroup>
                     <Label>추가할 팀원 목록 ({teamMembers.length}명)</Label>
@@ -461,9 +464,7 @@ export default function TeamPage() {
                     </MembersList>
                   </FormGroup>
                 )}
-
                 {membersError && <ErrorMessage message={membersError} />}
-
                 <ButtonGroup>
                   <Button_square
                     onClick={() => {}}
