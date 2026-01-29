@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEventHandler } from "react";
 import styled from "@emotion/styled";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";
@@ -28,9 +28,11 @@ interface DeploymentContentsProps {
   configuration?: ApplicationConfigurationDetail;
   onUpdate: (
     applicationId: number,
-    request: UpdateApplicationConfigurationRequest
+    request: UpdateApplicationConfigurationRequest,
   ) => Promise<boolean>;
 }
+
+const noop: ChangeEventHandler<HTMLInputElement> = () => undefined;
 
 const GITHUB_HEADERS: HeadersInit = {
   Accept: "application/vnd.github+json",
@@ -40,7 +42,7 @@ const GITHUB_HEADERS: HeadersInit = {
 const fetchRepoInfo = async (
   owner: string,
   repo: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<{ defaultBranch: string }> => {
   const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
     method: "GET",
@@ -62,7 +64,7 @@ const fetchBranchNames = async (
   owner: string,
   repo: string,
   perPage = 100,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string[]> => {
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/branches?per_page=${perPage}`,
@@ -70,7 +72,7 @@ const fetchBranchNames = async (
       method: "GET",
       headers: GITHUB_HEADERS,
       signal,
-    }
+    },
   );
 
   if (!res.ok) {
@@ -79,7 +81,7 @@ const fetchBranchNames = async (
       statusText: res.statusText,
     });
     throw new Error(
-      `브랜치 목록 조회 실패 (HTTP ${res.status} ${res.statusText || ""})`
+      `브랜치 목록 조회 실패 (HTTP ${res.status} ${res.statusText || ""})`,
     );
   }
 
@@ -99,7 +101,7 @@ const fetchBranchNames = async (
       receivedValue: json,
     });
     throw new Error(
-      `브랜치 목록이 배열이 아닙니다. (받은 타입: ${typeof json})`
+      `브랜치 목록이 배열이 아닙니다. (받은 타입: ${typeof json})`,
     );
   }
 
@@ -112,7 +114,7 @@ const fetchLatestCommitSha = async (
   owner: string,
   repo: string,
   branch: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string> => {
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/commits/${branch}`,
@@ -120,7 +122,7 @@ const fetchLatestCommitSha = async (
       method: "GET",
       headers: GITHUB_HEADERS,
       signal,
-    }
+    },
   );
 
   if (!res.ok) {
@@ -191,13 +193,13 @@ function DeploymentContents({
     ownerVal: string,
     repoVal: string,
     targetBranch: string,
-    signal?: AbortSignal
+    signal?: AbortSignal,
   ) => {
     const sha = await fetchLatestCommitSha(
       ownerVal,
       repoVal,
       targetBranch,
-      signal
+      signal,
     );
     setHash(sha);
   };
@@ -222,7 +224,7 @@ function DeploymentContents({
     } catch (err) {
       console.error("[DeploymentContents] branch commit fetch error", err);
       setGithubError(
-        err instanceof Error ? err.message : "커밋 정보를 불러오지 못했습니다."
+        err instanceof Error ? err.message : "커밋 정보를 불러오지 못했습니다.",
       );
       setHash("");
     } finally {
@@ -253,13 +255,13 @@ function DeploymentContents({
       const { defaultBranch } = await fetchRepoInfo(
         ownerVal,
         repoVal,
-        controller.signal
+        controller.signal,
       );
       const branchNames = await fetchBranchNames(
         ownerVal,
         repoVal,
         100,
-        controller.signal
+        controller.signal,
       );
       setBranches(branchNames);
 
@@ -275,7 +277,7 @@ function DeploymentContents({
           ownerVal,
           repoVal,
           targetBranch,
-          controller.signal
+          controller.signal,
         );
       } else {
         setHash("");
@@ -295,7 +297,7 @@ function DeploymentContents({
       setGithubError(
         err instanceof Error
           ? err.message
-          : "GitHub 정보를 불러오지 못했습니다."
+          : "GitHub 정보를 불러오지 못했습니다.",
       );
     } finally {
       setGithubLoading(false);
@@ -308,7 +310,7 @@ function DeploymentContents({
   const handleSaveGithub = async () => {
     if (!applicationId || !configuration) {
       console.error(
-        "[DeploymentContents] applicationId or configuration missing"
+        "[DeploymentContents] applicationId or configuration missing",
       );
       return;
     }
@@ -370,7 +372,7 @@ function DeploymentContents({
   const handleSaveBuild = async () => {
     if (!applicationId || !configuration) {
       console.error(
-        "[DeploymentContents] applicationId or configuration missing"
+        "[DeploymentContents] applicationId or configuration missing",
       );
       return;
     }
@@ -418,6 +420,22 @@ function DeploymentContents({
     <Container>
       <ValueBox>
         <Typography size="6x" weight="bold">
+          Configuration
+        </Typography>
+        <InputArea>
+          <Typography size="5x" weight="semiBold">
+            Application ID
+          </Typography>
+          <Input_basic
+            value={applicationId ?? ""}
+            onChange={noop}
+            placeholder="Application ID"
+            width="950px"
+            height="35px"
+            disabled
+          />
+        </InputArea>
+        <Typography size="6x" weight="bold" style={{ marginTop: "20px" }}>
           GitHub
         </Typography>
 
@@ -571,7 +589,7 @@ function DeploymentContents({
       </ValueBox>
 
       <ValueBox>
-        <Typography size="6x" weight="bold">
+        <Typography size="6x" weight="bold" style={{ marginTop: "10px" }}>
           Builds
         </Typography>
 

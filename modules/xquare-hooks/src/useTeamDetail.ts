@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getTeamDetail, TeamDetail } from "@xquare/utils";
+import { getTeamDetail } from "@xquare/utils";
+import type { TeamDetail } from "@xquare/utils";
 
 export function useTeamDetail(teamId?: number) {
   const [data, setData] = useState<TeamDetail | null>(null);
