@@ -28,6 +28,14 @@ export default function TeamPage() {
     () => getSelectedTeam(),
   );
 
+  const teamId = selectedTeam?.id;
+
+  const {
+    data: teamDetail,
+    loading: teamDetailLoading,
+    error: teamDetailError,
+  } = useTeamDetail(teamId);
+
   const [teamName, setTeamName] = useState(selectedTeam?.name ?? "");
   const [teamType, setTeamType] = useState<"club" | "team" | "individual">(
     (selectedTeam?.type as "club" | "team" | "individual") ?? "team",
@@ -325,16 +333,8 @@ export default function TeamPage() {
                   </Button_square>
                 </ButtonGroup>
               </form>
-              <SectionTitle style={{ marginTop: 30 }}>
-                팀원 목록
-              </SectionTitle>
+              <SectionTitle style={{ marginTop: 30 }}>팀원 목록</SectionTitle>
               {(() => {
-                const teamId = selectedTeam?.id;
-                const {
-                  data: teamDetail,
-                  loading: teamDetailLoading,
-                  error: teamDetailError,
-                } = useTeamDetail(teamId);
                 if (teamDetailLoading) {
                   return <Typography>팀원 정보를 불러오는 중...</Typography>;
                 }
