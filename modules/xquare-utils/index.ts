@@ -1,3 +1,8 @@
+export { getTeamDetail } from "./src/teams/detail";
+export type {
+  TeamDetail,
+  TeamMember as TeamDetailMember,
+} from "./src/teams/detail";
 export type { RegisterRequest, RegisterResponse } from "./src/auth/register";
 export { registerUser } from "./src/auth/register";
 
