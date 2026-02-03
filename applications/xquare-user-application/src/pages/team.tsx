@@ -20,6 +20,7 @@ import {
 } from "@xquare/hooks";
 import { getSelectedTeam, checkUser, SELECTED_TEAM_EVENT } from "@xquare/utils";
 import type { SelectedTeamInfo, UserSearchResult } from "@xquare/utils";
+import { TeamMembersDetailList } from "@xquare/user-interfaces";
 
 export default function TeamPage() {
   useAuthGuard();
@@ -334,36 +335,11 @@ export default function TeamPage() {
                 </ButtonGroup>
               </form>
               <SectionTitle style={{ marginTop: 30 }}>팀원 목록</SectionTitle>
-              {(() => {
-                if (teamDetailLoading) {
-                  return <LoadingOverlay isLoading={teamDetailLoading} />;
-                }
-                if (teamDetailError) {
-                  return <ErrorMessage message={teamDetailError.message} />;
-                }
-                if (
-                  teamDetail &&
-                  teamDetail.members &&
-                  teamDetail.members.length > 0
-                ) {
-                  return (
-                    <MembersList>
-                      {teamDetail.members.map((member) => (
-                        <MemberItem key={member.userId}>
-                          <MemberInfo>
-                            <MemberName>유저 ID: {member.userId}</MemberName>
-                            <MemberRole>
-                              역할:{" "}
-                              {member.role === "admin" ? "관리자" : "멤버"}
-                            </MemberRole>
-                          </MemberInfo>
-                        </MemberItem>
-                      ))}
-                    </MembersList>
-                  );
-                }
-                return <Typography>팀원이 없습니다.</Typography>;
-              })()}
+              <TeamMembersDetailList
+                members={teamDetail?.members || []}
+                loading={teamDetailLoading}
+                error={teamDetailError}
+              />
             </FormContainer>
             <FormContainer>
               <SectionTitle>팀원 관리</SectionTitle>

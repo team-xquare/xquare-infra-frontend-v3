@@ -13,6 +13,7 @@ export * from "./src/components/tooltip/index";
 export * from "./src/components/errormessage/index";
 export * from "./src/components/spinner/index";
 export * from "./src/components/loadingoverlays/index";
+export * from "./src/components/teammembers/index";
 export * from "./src/styles";
 
 export { default as Logo } from "./src/assets/icons/Logo.svg";
