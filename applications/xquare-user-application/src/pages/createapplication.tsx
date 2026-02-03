@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import styled from "@emotion/styled";
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
@@ -44,7 +45,6 @@ import {
 
 const APPLICATION_NAME_REGEX = /^[a-z-]{3,45}$/;
 
-// --- Domain validation helpers (module scope for stable references) ---
 function extractHostname(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "";
@@ -109,6 +109,10 @@ const CreateApplication = () => {
   const [githubError, setGithubError] = useState<string | null>(null);
   const [githubMessage, setGithubMessage] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setFormError(null);
+  }, [commitHash, branch, installationId]);
 
   const projectNameError = useMemo(() => {
     if (!projectName.trim()) return null;
@@ -247,6 +251,18 @@ const CreateApplication = () => {
       );
       return;
     }
+    if (!commitHash) {
+      setFormError("GitHub 커밋 해시가 필요합니다.");
+      return;
+    }
+    if (!installationId) {
+      setFormError("GitHub Installation ID가 필요합니다.");
+      return;
+    }
+    if (!branch) {
+      setFormError("GitHub 브랜치가 필요합니다.");
+      return;
+    }
     setFormError(null);
 
     const endpoints = routes.map((r) => ({
@@ -311,6 +327,7 @@ const CreateApplication = () => {
 
     if (!value.trim() || !repoOwner.trim() || !repoName.trim()) {
       setCommitHash("");
+      setGithubError(null);
       return;
     }
 
@@ -385,6 +402,7 @@ const CreateApplication = () => {
         await fetchCommitForBranch(targetOwner, targetRepo, targetBranch);
       } else {
         setCommitHash("");
+        setGithubError(null);
       }
 
       setGithubMessage("GitHub 정보가 업데이트되었습니다.");

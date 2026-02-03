@@ -39,6 +39,8 @@ export {
 } from "./src/user/check";
 export { searchUsersByName } from "./src/user/search";
 export type { UserSearchResult } from "./src/user/search";
+export { getUserDetail } from "./src/user/info";
+export type { UserDetail } from "./src/user/info";
 
 export { formatDate } from "./src/formatDate";
 
