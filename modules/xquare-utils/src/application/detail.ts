@@ -361,6 +361,29 @@ export const getApplicationDetail = async (
     );
   }
 
+  // hash 값이 undefined/null이면 빈 문자열로 변환
+  if (
+    result &&
+    typeof result === "object" &&
+    result !== null &&
+    "data" in result &&
+    result.data &&
+    typeof result.data === "object" &&
+    result.data !== null &&
+    "configuration" in result.data &&
+    result.data.configuration &&
+    typeof result.data.configuration === "object" &&
+    result.data.configuration !== null &&
+    "github" in result.data.configuration &&
+    result.data.configuration.github &&
+    typeof result.data.configuration.github === "object"
+  ) {
+    const github = result.data.configuration.github as ApplicationGitHubDetail;
+    if (github.hash == null) {
+      github.hash = "";
+    }
+  }
+
   // Runtime validation
   if (!validateApplicationDetailResponse(result)) {
     console.error("[getApplicationDetail] validation error", {
