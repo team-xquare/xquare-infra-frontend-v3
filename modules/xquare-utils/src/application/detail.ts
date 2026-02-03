@@ -9,7 +9,7 @@ export interface ApplicationGitHubDetail {
   repo: string;
   branch: string;
   installationId: string;
-  hash: string;
+  hash?: string;
   triggerPaths?: string[];
 }
 
