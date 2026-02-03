@@ -20,6 +20,7 @@ import {
 } from "@xquare/hooks";
 import { getSelectedTeam, checkUser, SELECTED_TEAM_EVENT } from "@xquare/utils";
 import type { SelectedTeamInfo, UserSearchResult } from "@xquare/utils";
+import { TeamMembersDetailList } from "@xquare/user-interfaces";
 
 export default function TeamPage() {
   useAuthGuard();
@@ -224,6 +225,11 @@ export default function TeamPage() {
         return;
       }
 
+      if (teamDetail?.members?.some((m) => m.userId === user.id)) {
+        setMembersError("이미 팀에 속한 사용자입니다.");
+        return;
+      }
+
       setTeamMembers((prev) => [
         ...prev,
         {
@@ -236,7 +242,7 @@ export default function TeamPage() {
         },
       ]);
     },
-    [currentUserId, memberRole, teamMembers],
+    [currentUserId, memberRole, teamDetail?.members, teamMembers],
   );
 
   const handleRemoveMember = useCallback((userId: number) => {
@@ -334,36 +340,11 @@ export default function TeamPage() {
                 </ButtonGroup>
               </form>
               <SectionTitle style={{ marginTop: 30 }}>팀원 목록</SectionTitle>
-              {(() => {
-                if (teamDetailLoading) {
-                  return <LoadingOverlay isLoading={teamDetailLoading} />;
-                }
-                if (teamDetailError) {
-                  return <ErrorMessage message={teamDetailError.message} />;
-                }
-                if (
-                  teamDetail &&
-                  teamDetail.members &&
-                  teamDetail.members.length > 0
-                ) {
-                  return (
-                    <MembersList>
-                      {teamDetail.members.map((member) => (
-                        <MemberItem key={member.userId}>
-                          <MemberInfo>
-                            <MemberName>유저 ID: {member.userId}</MemberName>
-                            <MemberRole>
-                              역할:{" "}
-                              {member.role === "admin" ? "관리자" : "멤버"}
-                            </MemberRole>
-                          </MemberInfo>
-                        </MemberItem>
-                      ))}
-                    </MembersList>
-                  );
-                }
-                return <Typography>팀원이 없습니다.</Typography>;
-              })()}
+              <TeamMembersDetailList
+                members={teamDetail?.members || []}
+                loading={teamDetailLoading}
+                error={teamDetailError}
+              />
             </FormContainer>
             <FormContainer>
               <SectionTitle>팀원 관리</SectionTitle>
@@ -418,7 +399,10 @@ export default function TeamPage() {
                             disabled={
                               isUpdatingMembers ||
                               (currentUserId !== null &&
-                                user.id === currentUserId)
+                                user.id === currentUserId) ||
+                              teamDetail?.members?.some(
+                                (m) => m.userId === user.id,
+                              )
                             }
                             type="button"
                             width="80px"
@@ -439,20 +423,27 @@ export default function TeamPage() {
                       {teamMembers.map((member) => (
                         <MemberItem key={member.id}>
                           <MemberInfo>
-                            <MemberName>
-                              {member.name ?? "이름 없음"} (
-                              {member.username ?? member.id})
-                            </MemberName>
+                            <MemberHeader>
+                              <MemberName>
+                                {member.name ?? "이름 없음"} (
+                                {member.username ?? member.id})
+                              </MemberName>
+                              <MemberRoleBadge
+                                variant={
+                                  member.role === "admin"
+                                    ? "admin"
+                                    : "contributor"
+                                }
+                              >
+                                {member.role === "admin" ? "관리자" : "멤버"}
+                              </MemberRoleBadge>
+                            </MemberHeader>
                             <MemberMeta>
                               {member.email ?? "이메일 없음"}
                               {member.studentNumber !== undefined
                                 ? ` · 학번 ${member.studentNumber}`
                                 : ""}
                             </MemberMeta>
-                            <MemberRole>
-                              역할:{" "}
-                              {member.role === "admin" ? "관리자" : "멤버"}
-                            </MemberRole>
                           </MemberInfo>
                           <Button_square
                             onClick={() => handleRemoveMember(member.id)}
@@ -639,6 +630,12 @@ const MemberInfo = styled.div`
   gap: 4px;
 `;
 
+const MemberHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 const MemberName = styled.span`
   font-size: 14px;
   font-weight: 700;
@@ -650,9 +647,20 @@ const MemberMeta = styled.span`
   color: ${Xquare_colors.gray[500]};
 `;
 
-const MemberRole = styled.span`
-  font-size: 13px;
-  color: ${Xquare_colors.gray[600]};
+const MemberRoleBadge = styled.span<{ variant: "admin" | "contributor" }>`
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: ${(props) =>
+    props.variant === "admin"
+      ? Xquare_colors.purple[100]
+      : Xquare_colors.gray[300]};
+  color: ${(props) =>
+    props.variant === "admin"
+      ? Xquare_colors.purple[500]
+      : Xquare_colors.gray[500]};
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
 `;
 
 const SearchResultsList = styled.div`

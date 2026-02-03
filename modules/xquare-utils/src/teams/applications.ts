@@ -155,5 +155,14 @@ export const getTeamApplications = async (
     result.data.applications
   ); */
 
-  return result.data.applications;
+  const applications = result.data.applications.map((app) => {
+    if (app.configuration && app.configuration.github) {
+      if (app.configuration.github.hash == null) {
+        app.configuration.github.hash = "";
+      }
+    }
+    return app;
+  });
+
+  return applications;
 };
