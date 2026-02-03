@@ -78,7 +78,7 @@ export const createApplication = async (
     throw new Error("애플리케이션 설정이 필요합니다.");
   }
 
-  // Validate github configuration
+  // Validate github configuration (API 요청 전 최소한의 타입만 체크)
   if (
     typeof request.configuration.github !== "object" ||
     request.configuration.github === null
@@ -89,35 +89,7 @@ export const createApplication = async (
     );
     throw new Error("GitHub 설정이 올바르지 않습니다.");
   }
-
-  const { github } = request.configuration;
-
-  if (typeof github.hash !== "string" || !github.hash.trim()) {
-    console.error(
-      "[createApplication] invalid or missing github.hash",
-      github.hash,
-    );
-    throw new Error("GitHub 커밋 해시가 필요합니다.");
-  }
-
-  if (
-    typeof github.installationId !== "string" ||
-    !github.installationId.trim()
-  ) {
-    console.error(
-      "[createApplication] invalid or missing github.installationId",
-      github.installationId,
-    );
-    throw new Error("GitHub 설치 ID가 필요합니다.");
-  }
-
-  if (typeof github.branch !== "string" || !github.branch.trim()) {
-    console.error(
-      "[createApplication] invalid or missing github.branch",
-      github.branch,
-    );
-    throw new Error("GitHub 브랜치가 필요합니다.");
-  }
+  // 커밋 해시, 설치 ID, 브랜치 등 필수값 검사는 컴포넌트(버튼 클릭 시)에서만 수행
 
   // Validate build configuration
   if (

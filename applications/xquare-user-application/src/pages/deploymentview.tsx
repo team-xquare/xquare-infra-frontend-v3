@@ -171,13 +171,16 @@ const DeploymentView = () => {
                 onClick={() => handleTabClick(index)}
                 active={activeTab === index}
               />
-            )
+            ),
           )}
         </NavBar>
-        <Button_round
-          children={editable ? "취소하기" : "수정하기"}
-          onClick={handleeditClick}
-        />
+        <div style={{ minWidth: 100 }}>
+          <Button_round
+            children={editable ? "취소하기" : "수정하기"}
+            onClick={handleeditClick}
+            disabled={appLoading}
+          />
+        </div>
       </ButtonArea>
       <Contents>{tabContents[activeTab]}</Contents>
     </Container>
