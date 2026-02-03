@@ -225,6 +225,11 @@ export default function TeamPage() {
         return;
       }
 
+      if (teamDetail?.members?.some((m) => m.userId === user.id)) {
+        setMembersError("이미 팀에 속한 사용자입니다.");
+        return;
+      }
+
       setTeamMembers((prev) => [
         ...prev,
         {
@@ -237,7 +242,7 @@ export default function TeamPage() {
         },
       ]);
     },
-    [currentUserId, memberRole, teamMembers],
+    [currentUserId, memberRole, teamDetail?.members, teamMembers],
   );
 
   const handleRemoveMember = useCallback((userId: number) => {
@@ -394,7 +399,10 @@ export default function TeamPage() {
                             disabled={
                               isUpdatingMembers ||
                               (currentUserId !== null &&
-                                user.id === currentUserId)
+                                user.id === currentUserId) ||
+                              teamDetail?.members?.some(
+                                (m) => m.userId === user.id,
+                              )
                             }
                             type="button"
                             width="80px"
