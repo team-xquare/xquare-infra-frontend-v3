@@ -415,20 +415,27 @@ export default function TeamPage() {
                       {teamMembers.map((member) => (
                         <MemberItem key={member.id}>
                           <MemberInfo>
-                            <MemberName>
-                              {member.name ?? "이름 없음"} (
-                              {member.username ?? member.id})
-                            </MemberName>
+                            <MemberHeader>
+                              <MemberName>
+                                {member.name ?? "이름 없음"} (
+                                {member.username ?? member.id})
+                              </MemberName>
+                              <MemberRoleBadge
+                                variant={
+                                  member.role === "admin"
+                                    ? "admin"
+                                    : "contributor"
+                                }
+                              >
+                                {member.role === "admin" ? "관리자" : "멤버"}
+                              </MemberRoleBadge>
+                            </MemberHeader>
                             <MemberMeta>
                               {member.email ?? "이메일 없음"}
                               {member.studentNumber !== undefined
                                 ? ` · 학번 ${member.studentNumber}`
                                 : ""}
                             </MemberMeta>
-                            <MemberRole>
-                              역할:{" "}
-                              {member.role === "admin" ? "관리자" : "멤버"}
-                            </MemberRole>
                           </MemberInfo>
                           <Button_square
                             onClick={() => handleRemoveMember(member.id)}
@@ -615,6 +622,12 @@ const MemberInfo = styled.div`
   gap: 4px;
 `;
 
+const MemberHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 const MemberName = styled.span`
   font-size: 14px;
   font-weight: 700;
@@ -626,9 +639,20 @@ const MemberMeta = styled.span`
   color: ${Xquare_colors.gray[500]};
 `;
 
-const MemberRole = styled.span`
-  font-size: 13px;
-  color: ${Xquare_colors.gray[600]};
+const MemberRoleBadge = styled.span<{ variant: "admin" | "contributor" }>`
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: ${(props) =>
+    props.variant === "admin"
+      ? Xquare_colors.purple[100]
+      : Xquare_colors.gray[300]};
+  color: ${(props) =>
+    props.variant === "admin"
+      ? Xquare_colors.purple[500]
+      : Xquare_colors.gray[500]};
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
 `;
 
 const SearchResultsList = styled.div`

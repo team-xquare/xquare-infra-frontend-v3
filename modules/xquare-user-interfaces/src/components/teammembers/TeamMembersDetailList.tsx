@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { LoadingOverlay } from "../loadingoverlays";
 import { ErrorMessage } from "../errormessage";
 import { Typography } from "../typography";
+import { Xquare_colors } from "../../styles";
 import { getUserDetail } from "@xquare/utils";
 import type { UserDetail } from "@xquare/utils";
 
@@ -83,19 +84,23 @@ export function TeamMembersDetailList({
         return (
           <MemberItem key={member.userId}>
             <MemberInfo>
-              <MemberName>
-                {detail
-                  ? `${detail.name} (${detail.username})`
-                  : `유저 ID: ${member.userId}`}
-              </MemberName>
+              <MemberHeader>
+                <MemberName>
+                  {detail
+                    ? `${detail.name} (${detail.username})`
+                    : `유저 ID: ${member.userId}`}
+                </MemberName>
+                <MemberRoleBadge
+                  variant={member.role === "admin" ? "admin" : "contributor"}
+                >
+                  {member.role === "admin" ? "관리자" : "멤버"}
+                </MemberRoleBadge>
+              </MemberHeader>
               {detail && (
                 <MemberMeta>
                   {detail.email} · 학번 {detail.studentNumber}
                 </MemberMeta>
               )}
-              <MemberRole>
-                역할: {member.role === "admin" ? "관리자" : "멤버"}
-              </MemberRole>
             </MemberInfo>
           </MemberItem>
         );
@@ -127,6 +132,12 @@ const MemberInfo = styled.div`
   gap: 4px;
 `;
 
+const MemberHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
 const MemberName = styled.span`
   font-size: 14px;
   font-weight: 700;
@@ -138,7 +149,18 @@ const MemberMeta = styled.span`
   color: #888;
 `;
 
-const MemberRole = styled.span`
-  font-size: 13px;
-  color: #666;
+const MemberRoleBadge = styled.span<{ variant: "admin" | "contributor" }>`
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: ${(props) =>
+    props.variant === "admin"
+      ? Xquare_colors.purple[100]
+      : Xquare_colors.gray[300]};
+  color: ${(props) =>
+    props.variant === "admin"
+      ? Xquare_colors.purple[500]
+      : Xquare_colors.gray[500]};
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
 `;
