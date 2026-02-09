@@ -91,16 +91,6 @@ bun install
 
 > Husky와 lint-staged가 커밋 전 자동으로 포맷팅 및 린트를 실행합니다. 로컬에서 동일한 명령을 수행하면 CI와 일관된 결과를 확인할 수 있습니다.
 
-## 🔧 핵심 스크립트 모음
-
-| 스크립트                               | 설명                                                               |
-| -------------------------------------- | ------------------------------------------------------------------ |
-| `bun run dev`                          | Turbo가 각 애플리케이션의 `dev` 명령을 병렬로 실행합니다.          |
-| `bun run build`                        | TypeScript 타입 체크 후 Vite 빌드를 실행해 정적 자산을 생성합니다. |
-| `bun run lint`                         | 워크스페이스 전역 ESLint 규칙으로 코드 품질을 검사합니다.          |
-| `bun run format`                       | Prettier를 통해 Markdown, JSON, TypeScript 파일을 포맷팅합니다.    |
-| `bunx turbo run <task> --filter=<pkg>` | 특정 패키지에 대해 Turbo 작업을 수행할 수 있는 저수준 명령입니다.  |
-
 ## 🌐 환경 변수
 
 - `VITE_API_BASE_URL`: 백엔드 API 엔드포인트. 타입 정의는 [modules/xquare-utils/src/env.d.ts](modules/xquare-utils/src/env.d.ts#L3-L9)에서 확인할 수 있습니다.
