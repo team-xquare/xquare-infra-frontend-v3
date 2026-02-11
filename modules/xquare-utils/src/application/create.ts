@@ -110,6 +110,7 @@ export const createApplication = async (
     "vite",
     "vue",
     "next_js",
+    "next_js_export",
     "go",
     "rust",
     "maven",
