@@ -21,6 +21,7 @@ const BUILD_REQUIRED_FIELDS: Record<string, string[]> = {
   vite: ["version", "buildCommand", "outputPath"],
   vue: ["version", "buildCommand", "outputPath"],
   next_js: ["version", "buildCommand", "startCommand"],
+  next_js_export: ["version", "buildCommand", "outputPath"],
   go: ["version", "buildCommand", "outputPath"],
   rust: ["version", "buildCommand", "outputPath"],
   maven: ["version", "buildCommand", "outputPath"],
