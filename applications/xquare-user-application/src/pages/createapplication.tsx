@@ -962,6 +962,7 @@ const CreateApplication = () => {
               <option value="vite">vite</option>
               <option value="vue">vue</option>
               <option value="next_js">next_js</option>
+              <option value="next_js_export">next_js_export</option>
               <option value="go">go</option>
               <option value="rust">rust</option>
               <option value="maven">maven</option>

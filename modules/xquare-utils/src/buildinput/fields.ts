@@ -18,6 +18,7 @@ export const REQUIRED_FIELDS: Record<string, BuildField[]> = {
   vite: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
   vue: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
   next_js: ["VERSION", "BUILD_COMMAND", "START_COMMAND"],
+  next_js_export: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
   go: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
   rust: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
   maven: ["VERSION", "BUILD_COMMAND", "OUTPUT_PATH"],
