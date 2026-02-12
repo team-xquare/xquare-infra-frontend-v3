@@ -19,7 +19,7 @@ const NoticeView = () => {
     document.title = "XQUARE | Notice Detail";
   }, []);
   const { data, loading, error } = useNoticeDetail(
-    Number.isNaN(noticeId) ? undefined : noticeId
+    Number.isNaN(noticeId) ? undefined : noticeId,
   );
 
   const title = data?.title ?? "공지사항";
@@ -89,6 +89,7 @@ const Content = styled.div`
   line-height: 1.5;
   height: 100%;
   padding: 3px 3px;
+  white-space: pre-wrap;
 `;
 
 const FileArea = styled.div`
