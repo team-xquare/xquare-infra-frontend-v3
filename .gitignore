@@ -69,3 +69,5 @@ server/dist
 public/dist
 .contentlayer
 .storybook-static
+
+*storybook.log
