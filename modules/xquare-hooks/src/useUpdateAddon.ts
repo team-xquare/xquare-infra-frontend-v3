@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { updateAddon } from "@xquare/utils";
 import type { UpdateAddonRequest } from "@xquare/utils";
 
@@ -18,9 +18,12 @@ export function useUpdateAddon() {
     error: null,
     success: false,
   });
+  const inFlightRef = useRef(false);
 
   const mutate = useCallback(
     async (addonId: number, request: UpdateAddonRequest) => {
+      if (inFlightRef.current) return;
+      inFlightRef.current = true;
       setState({ loading: true, error: null, success: false });
 
       try {
@@ -33,6 +36,7 @@ export function useUpdateAddon() {
         setState({ loading: false, error, success: false });
         throw error;
       }
+      inFlightRef.current = false;
     },
     [],
   );

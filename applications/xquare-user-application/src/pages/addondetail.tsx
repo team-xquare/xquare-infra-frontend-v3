@@ -74,7 +74,7 @@ function AddonDetailPage() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!data || !addonId) {
+    if (!data || !addonId || updateLoading) {
       return;
     }
 
@@ -104,7 +104,7 @@ function AddonDetailPage() {
       setSubmitError(message);
       setSuccessMessage(null);
     }
-  }, [addonId, data, refetch, storageInput, updateAddon]);
+  }, [addonId, data, refetch, storageInput, updateAddon, updateLoading]);
 
   const configurationContent = (
     <>
