@@ -59,24 +59,10 @@ const DeploymentView = () => {
     error: appError,
   }); */
 
-  const handleSave = useCallback(async () => {
-    if (!applicationId || applicationId < 0) {
-      console.error("[DeploymentView] invalid applicationId for save", {
-        applicationId,
-      });
-      return;
-    }
-
-    if (appDetail) {
-      const success = await updateConfig(applicationId, {
-        configuration: appDetail.configuration,
-      });
-      if (success) {
-        // console.log("[DeploymentView] configuration saved");
-        setEditable(false);
-      }
-    }
-  }, [applicationId, appDetail, updateConfig]);
+  const handleSave = useCallback(() => {
+    // 하위 컴포넌트가 저장에 성공하면 편집 모드만 종료한다 (API 재호출 없음)
+    setEditable(false);
+  }, []);
 
   const tabContents = [
     <SummaryContents
