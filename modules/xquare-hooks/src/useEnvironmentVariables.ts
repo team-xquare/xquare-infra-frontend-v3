@@ -11,12 +11,16 @@ interface UseEnvironmentVariablesResult {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-  addOrUpdate: (name: string, value: string) => Promise<boolean>;
+  addOrUpdate: (
+    name: string,
+    value: string,
+    options?: { skipRefetch?: boolean },
+  ) => Promise<boolean>;
   remove: (name: string) => Promise<boolean>;
 }
 
 export const useEnvironmentVariables = (
-  applicationId?: number
+  applicationId?: number,
 ): UseEnvironmentVariablesResult => {
   const [variables, setVariables] = useState<EnvironmentVariable[]>([]);
   const [loadingCount, setLoadingCount] = useState(0);
@@ -114,7 +118,11 @@ export const useEnvironmentVariables = (
   }, [applicationId]);
 
   const addOrUpdate = useCallback(
-    async (name: string, value: string): Promise<boolean> => {
+    async (
+      name: string,
+      value: string,
+      options?: { skipRefetch?: boolean },
+    ): Promise<boolean> => {
       if (!applicationId) {
         console.error("[useEnvironmentVariables] no applicationId");
         setError("애플리케이션 ID가 필요합니다");
@@ -127,7 +135,9 @@ export const useEnvironmentVariables = (
       try {
         await addOrUpdateEnvironmentVariable(applicationId, { name, value });
         // console.log("[useEnvironmentVariables] addOrUpdate success", { name });
-        await refetch();
+        if (!options?.skipRefetch) {
+          await refetch();
+        }
         return true;
       } catch (err) {
         const message =
@@ -139,7 +149,7 @@ export const useEnvironmentVariables = (
         setLoadingCount((prev) => Math.max(0, prev - 1));
       }
     },
-    [applicationId, refetch]
+    [applicationId, refetch],
   );
 
   const remove = useCallback(
@@ -168,7 +178,7 @@ export const useEnvironmentVariables = (
         setLoadingCount((prev) => Math.max(0, prev - 1));
       }
     },
-    [applicationId, refetch]
+    [applicationId, refetch],
   );
 
   return {
