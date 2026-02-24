@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   updateApplicationConfiguration,
   type UpdateApplicationConfigurationRequest,
@@ -11,12 +11,15 @@ import {
 export function useUpdateApplicationConfiguration() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const inFlightRef = useRef(false);
 
   const update = useCallback(
     async (
       applicationId: number,
-      request: UpdateApplicationConfigurationRequest
+      request: UpdateApplicationConfigurationRequest,
     ): Promise<boolean> => {
+      if (inFlightRef.current) return false;
+      inFlightRef.current = true;
       /* console.log("[useUpdateApplicationConfiguration] update called", {
         applicationId,
       }); */
@@ -30,20 +33,19 @@ export function useUpdateApplicationConfiguration() {
         return true;
       } catch (err) {
         const errorObj =
-          err instanceof Error
-            ? err
-            : new Error("애플리케이션 설정 수정 실패");
+          err instanceof Error ? err : new Error("애플리케이션 설정 수정 실패");
         console.error(
           "[useUpdateApplicationConfiguration] update error",
-          errorObj
+          errorObj,
         );
         setError(errorObj);
         return false;
       } finally {
         setLoading(false);
+        inFlightRef.current = false;
       }
     },
-    []
+    [],
   );
 
   return { update, loading, error };

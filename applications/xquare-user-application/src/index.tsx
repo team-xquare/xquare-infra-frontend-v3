@@ -23,5 +23,5 @@ root.render(
         <App />
       </BrowserRouter>
     </HelmetProvider>
-  </StrictMode>
+  </StrictMode>,
 );
