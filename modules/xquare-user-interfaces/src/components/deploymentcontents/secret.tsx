@@ -22,7 +22,7 @@ export default function SecretContents({
   editable: boolean;
   onSave: () => void;
 }) {
-  const { variables, loading, error, addOrUpdate, remove } =
+  const { variables, loading, error, addOrUpdate, remove, refetch } =
     useEnvironmentVariables(id);
 
   const [secrets, setSecrets] = useState<SecretItem[]>([]);
@@ -43,14 +43,14 @@ export default function SecretContents({
 
   const handleKeyChange = (index: number, v: string) => {
     setSecrets((prev) =>
-      prev.map((s, i) => (i === index ? { ...s, key: v } : s))
+      prev.map((s, i) => (i === index ? { ...s, key: v } : s)),
     );
     setIsDirty(true);
   };
 
   const handleValueChange = (index: number, v: string) => {
     setSecrets((prev) =>
-      prev.map((s, i) => (i === index ? { ...s, value: v } : s))
+      prev.map((s, i) => (i === index ? { ...s, value: v } : s)),
     );
     setIsDirty(true);
   };
@@ -91,12 +91,16 @@ export default function SecretContents({
         return;
       }
 
-      const success = await addOrUpdate(secret.key, secret.value);
+      const success = await addOrUpdate(secret.key, secret.value, {
+        skipRefetch: true,
+      });
       if (!success) {
         setSaveError(error || `${secret.key} 저장에 실패했습니다`);
         return;
       }
     }
+
+    await refetch();
 
     // console.log("[SecretContents] 모든 환경변수 저장 성공");
     setIsDirty(false);
