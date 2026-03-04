@@ -44,12 +44,16 @@ const SignupPage: React.FC = () => {
 
   const isValidEmail = (value: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  const usernamePattern = /^[A-z0-9_-]+$/;
+  const usernamePattern = /^[A-Za-z0-9_-]+$/;
   const isValidUsername = (value: string) =>
     value.length >= 4 && value.length <= 15 && usernamePattern.test(value);
+  const passwordSpecialPattern = /[!@#$%^&*(),.?":{}|<>]/;
   const isValidPassword = (value: string) =>
-    value.length >= 8 && value.length <= 20 && /[^A-Za-z0-9]/.test(value);
-  const isValidStudentId = (value: string) => /^\d{4}$/.test(value);
+    value.length >= 8 &&
+    value.length <= 20 &&
+    passwordSpecialPattern.test(value);
+  const isValidStudentId = (value: string) =>
+    /^\d{4}$/.test(value) && Number(value) >= 1000 && Number(value) <= 3999;
   const namePattern = /^[가-힣]+$/;
   const isValidName = (value: string) => namePattern.test(value);
 
@@ -220,7 +224,7 @@ const SignupPage: React.FC = () => {
                   placeholder="학번을 입력해주세요"
                   title={
                     studentId && !isValidStudentId(studentId)
-                      ? "학번은 숫자 4자리로 입력해주세요."
+                      ? "학번은 1000~3999의 숫자 4자리로 입력해주세요."
                       : ""
                   }
                   titleColor={String(Xquare_colors.red[500])}
