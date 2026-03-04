@@ -206,7 +206,7 @@ const Right = styled.div`
   gap: 2rem;
 
   @media (max-width: 650px) {
-    margin-top: 6vh;
+    margin-top: 7vh;
   }
 `;
 
@@ -228,7 +228,7 @@ const Inputs = styled.div`
   margin-bottom: 9.8rem;
 
   @media (max-width: 650px) {
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
   }
 `;
 
