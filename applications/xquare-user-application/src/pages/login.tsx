@@ -165,7 +165,7 @@ const Container = styled.div`
   background-color: ${Xquare_colors.white};
   cursor: default;
 
-  @media (max-width: 600px) {
+  @media (max-width: 650px) {
     flex-direction: column;
   }
 `;
@@ -179,9 +179,10 @@ const Left = styled.div`
   justify-content: center;
   cursor: default;
 
-  @media (max-width: 600px) {
+  @media (max-width: 650px) {
     width: 100%;
-    padding: 1.5rem 0;
+    padding: 0.7rem 0;
+    max-height: 30vh;
   }
 `;
 
@@ -189,6 +190,11 @@ const LogoImg = styled.img`
   width: 55%;
   height: auto;
   max-width: 360px;
+
+  @media (max-width: 650px) {
+    width: 43%;
+    max-height: 28vh;
+  }
 `;
 
 const Right = styled.div`
@@ -198,6 +204,10 @@ const Right = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 2rem;
+
+  @media (max-width: 650px) {
+    margin-top: 7vh;
+  }
 `;
 
 const FormCard = styled.form`
@@ -216,6 +226,10 @@ const Inputs = styled.div`
   gap: 0.2rem;
   align-items: center;
   margin-bottom: 9.8rem;
+
+  @media (max-width: 650px) {
+    margin-bottom: 3rem;
+  }
 `;
 
 const FormActions = styled.div`
