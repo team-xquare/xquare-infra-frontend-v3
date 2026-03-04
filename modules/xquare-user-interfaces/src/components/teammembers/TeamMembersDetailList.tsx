@@ -7,6 +7,14 @@ import { Xquare_colors } from "../../styles";
 import { getUserDetail } from "@xquare/utils";
 import type { UserDetail } from "@xquare/utils";
 
+function maskEmail(email?: string | null) {
+  if (!email) return "이메일 없음";
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  const maskedLocal = "*".repeat(Math.max(local.length, 1));
+  return `${maskedLocal}@${domain}`;
+}
+
 interface TeamMembersDetailListProps {
   members: Array<{ userId: number; role: string }>;
   loading: boolean;
@@ -98,7 +106,7 @@ export function TeamMembersDetailList({
               </MemberHeader>
               {detail && (
                 <MemberMeta>
-                  {detail.email} · 학번 {detail.studentNumber}
+                  {maskEmail(detail.email)} · 학번 {detail.studentNumber}
                 </MemberMeta>
               )}
             </MemberInfo>

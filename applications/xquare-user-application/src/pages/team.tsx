@@ -22,6 +22,14 @@ import { getSelectedTeam, checkUser, SELECTED_TEAM_EVENT } from "@xquare/utils";
 import type { SelectedTeamInfo, UserSearchResult } from "@xquare/utils";
 import { TeamMembersDetailList } from "@xquare/user-interfaces";
 
+function maskEmail(email?: string | null) {
+  if (!email) return "이메일 없음";
+  const [local, domain] = email.split("@");
+  if (!domain) return email;
+  const maskedLocal = "*".repeat(Math.max(local.length, 1));
+  return `${maskedLocal}@${domain}`;
+}
+
 export default function TeamPage() {
   useAuthGuard();
 
@@ -391,7 +399,8 @@ export default function TeamPage() {
                               {user.name} ({user.username})
                             </SearchResultName>
                             <SearchResultMeta>
-                              {user.email} · 학번 {user.studentNumber}
+                              {maskEmail(user.email)} · 학번{" "}
+                              {user.studentNumber}
                             </SearchResultMeta>
                           </SearchResultInfo>
                           <Button_square
@@ -439,7 +448,7 @@ export default function TeamPage() {
                               </MemberRoleBadge>
                             </MemberHeader>
                             <MemberMeta>
-                              {member.email ?? "이메일 없음"}
+                              {maskEmail(member.email ?? null)}
                               {member.studentNumber !== undefined
                                 ? ` · 학번 ${member.studentNumber}`
                                 : ""}
