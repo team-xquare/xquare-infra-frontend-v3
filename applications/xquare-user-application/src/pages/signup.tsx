@@ -352,6 +352,7 @@ const Left = styled.div`
   @media (max-width: 650px) {
     width: 100%;
     padding: 0.7rem 0;
+    max-height: 30vh;
   }
 `;
 
@@ -362,6 +363,7 @@ const LogoImg = styled.img`
 
   @media (max-width: 650px) {
     width: 43%;
+    max-height: 28vh;
   }
 `;
 
@@ -374,7 +376,7 @@ const Right = styled.div`
   gap: 2rem;
 
   @media (max-width: 650px) {
-    margin-top: 7vh;
+    margin-top: 8vh;
   }
 `;
 
@@ -412,7 +414,7 @@ const Inputs = styled.div`
   }
 
   @media (max-width: 650px) {
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
   }
 `;
 
