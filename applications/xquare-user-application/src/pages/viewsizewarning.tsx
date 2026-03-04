@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
+import { useAuthGuard } from "@xquare/hooks";
 
 export default function ViewSizeWarning() {
+  useAuthGuard();
+
   const location = useLocation();
   const [viewport, setViewport] = useState(() => ({
     width: typeof window === "undefined" ? 0 : window.innerWidth,
