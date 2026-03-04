@@ -1,7 +1,9 @@
 import { Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Global } from "@emotion/react";
 import globalStyles from "./styles/global";
 
+import ViewSizeWarning from "./pages/viewsizewarning";
 import Layout from "./layout";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
@@ -35,7 +37,46 @@ const art = `
 `;
 
 function App() {
+  const [isBlocked, setIsBlocked] = useState(false);
+
   console.log(art);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      if (window.innerWidth < 1100) setIsBlocked(true);
+      else if (window.innerHeight < 720) setIsBlocked(true);
+      else setIsBlocked(false);
+    };
+
+    // 초기 체크
+    checkScreenSize();
+
+    // 창 크기 변경 시 체크
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  if (isBlocked) {
+    return (
+      <>
+        <Global styles={globalStyles} />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/github/callback" element={<GithubCallback />} />
+
+          <Route
+            path="/github/setup-complete"
+            element={<GithubSetupComplete />}
+          />
+
+          <Route path="*" element={<ViewSizeWarning />} />
+        </Routes>
+      </>
+    );
+  }
+
   return (
     <>
       <Global styles={globalStyles} />
