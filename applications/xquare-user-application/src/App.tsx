@@ -22,6 +22,7 @@ import AddonDetailPage from "./pages/AddonDetailPage";
 import TeamPage from "./pages/TeamPage";
 import GithubCallback from "./pages/GithubCallback";
 import GithubSetupComplete from "./pages/GithubSetupComplete";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const art = `
@@ -197,6 +198,8 @@ function App() {
             </Layout>
           }
         />
+
+        <Route path="/about" element={<About />} />
 
         {/* <Route
           path="/feed/view/:id"
