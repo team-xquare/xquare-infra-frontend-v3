@@ -1,8 +1,3 @@
-/**
- * Build type field definitions and validation helpers
- * Shared across application creation and deployment configuration
- */
-
 export type BuildField =
   | "VERSION"
   | "BUILD_COMMAND"

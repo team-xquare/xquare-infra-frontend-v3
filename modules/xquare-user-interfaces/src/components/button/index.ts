@@ -1,2 +1,2 @@
-export { Button_square } from "./Button_square";
-export { Button_round } from "./Button_round";
+export { Button_square } from "./ButtonSquare";
+export { Button_round } from "./StyledButton";

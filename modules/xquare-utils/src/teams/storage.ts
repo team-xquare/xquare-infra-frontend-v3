@@ -7,7 +7,7 @@ const emitTeamChange = (team: SelectedTeamInfo | null) => {
     window.dispatchEvent(
       new CustomEvent(SELECTED_TEAM_EVENT, {
         detail: team,
-      })
+      }),
     );
   } catch (error) {
     console.error("[emitTeamChange] 이벤트 전파 실패:", error);
@@ -49,7 +49,7 @@ export const getSelectedTeam = (): SelectedTeamInfo | null => {
 };
 
 /**
- * 선택된 팀 ID만 반환
+ * 선택된 팀의 ID 반환
  */
 export const getSelectedTeamId = (): number | null => {
   const team = getSelectedTeam();

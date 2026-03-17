@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 // GitHub 설정
 export interface ApplicationGitHubDetail {
   owner: string;
@@ -12,6 +10,8 @@ export interface ApplicationGitHubDetail {
   hash?: string;
   triggerPaths?: string[];
 }
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 빌드 타입별 필수 필드 정의
 const BUILD_REQUIRED_FIELDS: Record<string, string[]> = {
@@ -267,8 +267,8 @@ const validateApplicationDetailResponse = (
 
 /**
  * 애플리케이션 상세 조회
- * - GET {API_BASE_URL}/applications/{applicationId}
- *
+ * - 경로: GET {API_BASE_URL}/applications/{applicationId}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const getApplicationDetail = async (
   applicationId: number,

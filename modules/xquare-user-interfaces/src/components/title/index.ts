@@ -1,2 +1,2 @@
-export { Title } from "./title";
-export { Subtitle } from "./subtitle";
+export { Title } from "./Title";
+export { Subtitle } from "./TitleContainer";

@@ -3,10 +3,14 @@ import { fetchWithTimeout } from "../fetch";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// 환경 변수 삭제
+/**
+ * 환경 변수 삭제
+ * - 경로: DELETE {API_BASE_URL}/applications/{applicationId}/environment-variables/{name}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const deleteEnvironmentVariable = async (
   applicationId: number,
-  name: string
+  name: string,
 ): Promise<void> => {
   /* console.log("[environment] deleteEnvironmentVariable", {
     applicationId,
@@ -40,7 +44,7 @@ export const deleteEnvironmentVariable = async (
         statusText: response.statusText,
       });
       throw new Error(
-        `환경변수 삭제 실패 (HTTP ${response.status} ${response.statusText || ""})`
+        `환경변수 삭제 실패 (HTTP ${response.status} ${response.statusText || ""})`,
       );
     }
 

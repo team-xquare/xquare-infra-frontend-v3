@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
-import { SummaryItem } from "./summaryitem/index";
+import { SummaryItem } from "./Summaryitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import Xquare_colors from "../../styles";

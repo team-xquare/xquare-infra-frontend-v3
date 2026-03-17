@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Xquare_colors } from "../../styles/colors";
+import { Xquare_colors } from "../../styles/Colors.styles";
 
 const SIDEBAR_WIDTH = "280px";
 const ANIMATION_DURATION = "0.3s";

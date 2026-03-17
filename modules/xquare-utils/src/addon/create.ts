@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface CreateAddonRequest {
   teamId: number;
   name: string;
@@ -28,9 +26,15 @@ interface CreateAddonApiResponse {
   };
 }
 
-// Addon 생성
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ * 애드온 생성
+ * - 경로: POST {API_BASE_URL}/addons
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const createAddon = async (
-  request: CreateAddonRequest
+  request: CreateAddonRequest,
 ): Promise<number> => {
   if (!isAuthenticated()) {
     console.error("[createAddon] not authenticated");
@@ -111,7 +115,7 @@ export const createAddon = async (
       });
       throw new Error(
         errorData?.message ||
-          `Addon 생성 실패: ${response.status} ${response.statusText}`
+          `Addon 생성 실패: ${response.status} ${response.statusText}`,
       );
     }
 

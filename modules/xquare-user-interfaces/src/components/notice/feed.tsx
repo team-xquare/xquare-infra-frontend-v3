@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
-import { NoticeItem } from "./noticeitem/index";
+import { NoticeItem } from "./Noticeitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import { SearchBox } from "../input/index";

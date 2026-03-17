@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
-import { Xquare_colors } from "../../../styles/colors";
+import { Xquare_colors } from "../../../styles/Colors.styles";
 
 interface NoticeItemProps {
   type: "notice" | "feed";

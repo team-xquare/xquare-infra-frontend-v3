@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import "../../../../modules/xquare-user-interfaces/src/styles/font.css";
+import "../../../../modules/xquare-user-interfaces/src/styles/Font.css";
 
 const globalStyles = css`
   *,

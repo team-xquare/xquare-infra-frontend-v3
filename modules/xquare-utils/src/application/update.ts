@@ -2,8 +2,6 @@ import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 import type { ApplicationConfigurationDetail } from "./detail";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 // 설정 수정 요청
 export interface UpdateApplicationConfigurationRequest {
   configuration: ApplicationConfigurationDetail;
@@ -14,14 +12,16 @@ interface UpdateApplicationConfigurationApiResponse {
   success: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
- * 애플리케이션 설정 수정
- * - PUT {API_BASE_URL}/applications/{applicationId}/configuration
- *
+ * 애플리케이션 설정을 수정하는 함수
+ * - 경로: PUT {API_BASE_URL}/applications/{applicationId}/configuration
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const updateApplicationConfiguration = async (
   applicationId: number,
-  request: UpdateApplicationConfigurationRequest
+  request: UpdateApplicationConfigurationRequest,
 ): Promise<void> => {
   // console.log("[updateApplicationConfiguration] start", { applicationId });
 
@@ -58,7 +58,7 @@ export const updateApplicationConfiguration = async (
           Accept: "*/*",
         },
         body: JSON.stringify(request),
-      }
+      },
     );
   } catch (error) {
     const message =
@@ -67,7 +67,7 @@ export const updateApplicationConfiguration = async (
         : "알 수 없는 네트워크 오류가 발생했습니다.";
     console.error("[updateApplicationConfiguration] network error", message);
     throw new Error(
-      `[updateApplicationConfiguration] 네트워크 오류: ${message}`
+      `[updateApplicationConfiguration] 네트워크 오류: ${message}`,
     );
   }
 
@@ -87,10 +87,10 @@ export const updateApplicationConfiguration = async (
     console.error(
       "[updateApplicationConfiguration] http error",
       response.status,
-      response.statusText
+      response.statusText,
     );
     throw new Error(
-      `애플리케이션 설정 수정 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `애플리케이션 설정 수정 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 
@@ -111,14 +111,14 @@ export const updateApplicationConfiguration = async (
       body: rawBody,
     });
     throw new Error(
-      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`
+      `서버 응답을 파싱할 수 없습니다. (status: ${response.status}, url: ${response.url}, body: ${rawBody})`,
     );
   }
 
   if (!result.success) {
     console.error("[updateApplicationConfiguration] invalid response", result);
     throw new Error(
-      "애플리케이션 설정 수정 실패: 응답 데이터가 올바르지 않습니다."
+      "애플리케이션 설정 수정 실패: 응답 데이터가 올바르지 않습니다.",
     );
   }
 

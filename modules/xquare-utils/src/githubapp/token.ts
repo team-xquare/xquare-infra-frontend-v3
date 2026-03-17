@@ -7,8 +7,13 @@ if (!API_BASE_URL) {
   throw new Error("VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다.");
 }
 
+/**
+ * GitHub OAuth 토큰 교환
+ * - 경로: POST {API_BASE_URL}/github/token
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export async function exchangeGithubToken(
-  code: string
+  code: string,
 ): Promise<GithubTokenResponse> {
   try {
     const payload: GithubTokenRequest = { code };

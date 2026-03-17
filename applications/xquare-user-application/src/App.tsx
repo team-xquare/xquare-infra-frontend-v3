@@ -1,28 +1,28 @@
 import { Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Global } from "@emotion/react";
-import globalStyles from "./styles/global";
+import globalStyles from "./styles/Global.styles";
 
-import ViewSizeWarning from "./pages/viewsizewarning";
+import ViewSizeWarning from "./pages/ViewSizeWarning";
 import Layout from "./layout";
-import LoginPage from "./pages/login";
-import SignupPage from "./pages/signup";
-import HomePage from "./pages/home";
-import NoticePage from "./pages/noticepage";
-// import FeedPage from "./pages/feedpage";
-import SummaryPage from "./pages/summary";
-import NoticeView from "./pages/noticeview";
-// import FeedView from "./pages/feedview";
-import AddonPage from "./pages/addonpage";
-import DeploymentHome from "./pages/deploymenthome";
-import DeploymentView from "./pages/deploymentview";
-import CreateApplication from "./pages/createapplication";
-import CreateAddon from "./pages/createaddon";
-import AddonDetailPage from "./pages/addondetail";
-import TeamPage from "./pages/team";
-import GithubCallback from "./pages/githubcallback";
-import GithubSetupComplete from "./pages/githubsetupcomplete";
-import NotFound from "./pages/Pagenotfound";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import HomePage from "./pages/HomePage";
+import NoticePage from "./pages/NoticePage";
+// import FeedPage from "./pages/FeedPage";
+import SummaryPage from "./pages/SummaryPage";
+import NoticeView from "./pages/NoticeView";
+// import FeedView from "./pages/FeedView";
+import AddonPage from "./pages/AddonPage";
+import DeploymentHome from "./pages/DeploymentHome";
+import DeploymentView from "./pages/DeploymentView";
+import CreateApplication from "./pages/CreateApplication";
+import CreateAddon from "./pages/CreateAddon";
+import AddonDetailPage from "./pages/AddonDetailPage";
+import TeamPage from "./pages/TeamPage";
+import GithubCallback from "./pages/GithubCallback";
+import GithubSetupComplete from "./pages/GithubSetupComplete";
+import NotFound from "./pages/NotFound";
 
 const art = `
                                                               

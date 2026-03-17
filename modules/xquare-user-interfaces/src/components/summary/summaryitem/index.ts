@@ -1,1 +1,1 @@
-export { SummaryItem } from "./summaryitem";
+export { SummaryItem } from "./SummaryItem";

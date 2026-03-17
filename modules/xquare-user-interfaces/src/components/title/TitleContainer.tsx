@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import styled from "@emotion/styled";
-import { Xquare_colors } from "../../styles/colors";
+import { Xquare_colors } from "../../styles/Colors.styles";
 
 interface TitleProps {
   title: string;

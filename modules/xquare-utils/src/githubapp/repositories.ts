@@ -70,7 +70,7 @@ export async function getCurrentUser(accessToken: string): Promise<GithubUser> {
 }
 
 export async function listUserOrganizations(
-  accessToken: string
+  accessToken: string,
 ): Promise<GithubOrganization[]> {
   try {
     const res = await fetchWithTimeout("https://api.github.com/user/orgs", {
@@ -98,7 +98,7 @@ export async function listUserOrganizations(
 
 export async function listOrganizationRepositories(
   accessToken: string,
-  orgName: string
+  orgName: string,
 ): Promise<GithubRepository[]> {
   try {
     const perPage = 100;
@@ -137,7 +137,7 @@ export async function listOrganizationRepositories(
 }
 
 export async function listUserRepositories(
-  accessToken: string
+  accessToken: string,
 ): Promise<GithubRepository[]> {
   try {
     const perPage = 100;
@@ -176,7 +176,7 @@ export async function listUserRepositories(
 }
 
 export async function listAllRepositoriesByOrg(
-  accessToken: string
+  accessToken: string,
 ): Promise<RepositoriesByOrg[]> {
   try {
     // 현재 사용자 정보 조회
@@ -185,7 +185,7 @@ export async function listAllRepositoriesByOrg(
     // 개인 레포지토리 조회 (사용자 소유 레포만)
     const allUserRepos = await listUserRepositories(accessToken);
     const personalRepos = allUserRepos.filter(
-      (repo) => repo.owner.login === currentUser.login
+      (repo) => repo.owner.login === currentUser.login,
     );
 
     // 사용자의 조직 목록 조회
@@ -212,7 +212,7 @@ export async function listAllRepositoriesByOrg(
       try {
         const repos = await listOrganizationRepositories(
           accessToken,
-          org.login
+          org.login,
         );
         if (repos.length > 0) {
           result.push({
@@ -235,7 +235,7 @@ export async function listAllRepositoriesByOrg(
 }
 
 export async function listUserInstallations(
-  accessToken: string
+  accessToken: string,
 ): Promise<GithubInstallation[]> {
   try {
     const res = await fetchWithTimeout(
@@ -247,7 +247,7 @@ export async function listUserInstallations(
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
         },
-      }
+      },
     );
 
     if (!res.ok) {
@@ -266,7 +266,7 @@ export async function listUserInstallations(
 
 export async function listInstallationRepositories(
   accessToken: string,
-  installationId: number
+  installationId: number,
 ): Promise<GithubRepository[]> {
   try {
     const perPage = 100;
@@ -286,7 +286,7 @@ export async function listInstallationRepositories(
 
       if (!res.ok) {
         throw new Error(
-          `설치 ID ${installationId}의 레포지토리를 불러오지 못했습니다.`
+          `설치 ID ${installationId}의 레포지토리를 불러오지 못했습니다.`,
         );
       }
 
@@ -309,7 +309,7 @@ export async function listInstallationRepositories(
 
 export function getGithubAppInstallUrl(
   appName: string,
-  redirectUri?: string
+  redirectUri?: string,
 ): string {
   const baseUrl = `https://github.com/apps/${appName}/installations/new`;
   if (redirectUri) {

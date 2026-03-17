@@ -25,10 +25,11 @@ export interface ListNoticesParams {
   limit?: number;
 }
 
-// 공지 목록 조회 유틸리티
-// - Authorization 헤더에 액세스 토큰 포함
-// - page/limit 쿼리로 페이징 처리
-// - 실패 시 오류 메시지와 함께 throw
+/**
+ * 공지 목록 조회
+ * - 경로: GET {API_BASE_URL}/notices
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const listNotices = async ({
   page = 0,
   limit = 10,
@@ -64,7 +65,7 @@ export const listNotices = async ({
 
     if (!response.ok) {
       console.error(
-        `[listNotices] HTTP 오류: status=${response.status}, statusText=${response.statusText}`
+        `[listNotices] HTTP 오류: status=${response.status}, statusText=${response.statusText}`,
       );
       throw new Error(`공지 목록 조회 실패 (HTTP ${response.status})`);
     }

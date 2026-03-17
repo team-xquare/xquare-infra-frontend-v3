@@ -1,12 +1,6 @@
 import { validateAuthResponse } from "./validation";
 import { fetchWithTimeout } from "../fetch";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-if (!BASE_URL) {
-  throw new Error("VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다.");
-}
-
 export interface RegisterRequest {
   username: string;
   password: string;
@@ -25,8 +19,19 @@ export interface RegisterResponse {
   data: RegisterResponseData;
 }
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!BASE_URL) {
+  throw new Error("VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다.");
+}
+
+/**
+ * 회원가입
+ * - 경로: POST {API_BASE_URL}/auth/register
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export async function registerUser(
-  payload: RegisterRequest
+  payload: RegisterRequest,
 ): Promise<RegisterResponse> {
   try {
     const res = await fetchWithTimeout(`${BASE_URL}/auth/register`, {
@@ -43,7 +48,7 @@ export async function registerUser(
         errorMessage,
         "(Status:",
         res.status,
-        ")"
+        ")",
       );
       throw new Error(errorMessage);
     }

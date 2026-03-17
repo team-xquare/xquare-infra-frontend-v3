@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface DeploymentSummary {
   applicationId: number;
   commitHash: string;
@@ -15,19 +13,17 @@ export interface DeploymentListResponse {
   deployments: DeploymentSummary[];
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
- * 특정 애플리케이션의 배포 정보 조회
- * GET /api/v1/applications/{applicationId}/deployments
- *
- * @param applicationId - 애플리케이션 ID
- * @param page - 페이지 번호 (기본값: 0)
- * @param limit - 조회 개수 (기본값: 20)
- * @returns DeploymentListResponse 배포 정보 목록
+ * 배포상태 조회
+ * - 경로: GET {API_BASE_URL}/applications/{applicationId}/deployments
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const getDeploymentSummary = async (
   applicationId: number,
   page = 0,
-  limit = 20
+  limit = 20,
 ): Promise<DeploymentListResponse> => {
   /* console.log("[deployment] getDeploymentSummary", {
     applicationId,
@@ -41,7 +37,7 @@ export const getDeploymentSummary = async (
 
   const accessToken = getAccessToken();
   const url = new URL(
-    `${API_BASE_URL}/applications/${applicationId}/deployments`
+    `${API_BASE_URL}/applications/${applicationId}/deployments`,
   );
 
   url.searchParams.append("applicationId", String(applicationId));
@@ -62,7 +58,7 @@ export const getDeploymentSummary = async (
         statusText: response.statusText,
       });
       throw new Error(
-        `배포 정보 조회 실패 (HTTP ${response.status} ${response.statusText || ""})`
+        `배포 정보 조회 실패 (HTTP ${response.status} ${response.statusText || ""})`,
       );
     }
 
@@ -93,7 +89,7 @@ export const getDeploymentSummary = async (
 export const getMultipleDeploymentSummaries = async (
   applicationIds: number[],
   page = 0,
-  limit = 20
+  limit = 20,
 ): Promise<Record<number, DeploymentListResponse>> => {
   /* console.log("[deployment] getMultipleDeploymentSummaries", {
     applicationCount: applicationIds.length,
@@ -105,7 +101,7 @@ export const getMultipleDeploymentSummaries = async (
     const promises = applicationIds.map((appId) =>
       getDeploymentSummary(appId, page, limit)
         .then((data) => ({ appId, data, error: null }))
-        .catch((error) => ({ appId, data: null, error }))
+        .catch((error) => ({ appId, data: null, error })),
     );
 
     const results = await Promise.all(promises);
@@ -115,7 +111,7 @@ export const getMultipleDeploymentSummaries = async (
       if (error) {
         console.warn(
           `[deployment] Failed to fetch deployment for app ${appId}`,
-          error
+          error,
         );
       } else if (data) {
         summaries[appId] = data;

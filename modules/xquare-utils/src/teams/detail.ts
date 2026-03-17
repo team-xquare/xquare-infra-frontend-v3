@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface TeamMember {
   userId: number;
   role: "admin" | "member";
@@ -19,6 +17,8 @@ interface TeamDetailApiResponse {
   success: boolean;
   data: TeamDetail;
 }
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 /**
  * 팀 상세정보 조회

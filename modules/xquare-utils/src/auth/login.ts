@@ -1,12 +1,6 @@
 import { validateAuthResponse } from "./validation";
 import { fetchWithTimeout } from "../fetch";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-if (!BASE_URL) {
-  throw new Error("VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다.");
-}
-
 export interface LoginRequest {
   username: string;
   password: string;
@@ -22,6 +16,17 @@ export interface LoginResponse {
   data: LoginResponseData;
 }
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!BASE_URL) {
+  throw new Error("VITE_API_BASE_URL 환경 변수가 설정되지 않았습니다.");
+}
+
+/**
+ * 로그인
+ * - 경로: POST {API_BASE_URL}/auth/login
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export async function loginUser(payload: LoginRequest): Promise<LoginResponse> {
   try {
     const res = await fetchWithTimeout(`${BASE_URL}/auth/login`, {

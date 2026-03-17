@@ -16,12 +16,12 @@ export * from "./src/components/loadingoverlays/index";
 export * from "./src/components/teammembers/index";
 export * from "./src/styles";
 
-export { default as Logo } from "./src/assets/icons/Logo.svg";
-export { default as Logo256 } from "./src/assets/icons/Logo_256.png";
-export { default as Logo512 } from "./src/assets/icons/Logo_512.png";
+export { default as Logo } from "./src/assets/icons/logo.svg";
+export { default as Logo256 } from "./src/assets/icons/logo-256.png";
+export { default as Logo512 } from "./src/assets/icons/logo-512.png";
 export { default as QuestionIcon } from "./src/assets/icons/QuestionIcon";
 export { default as InfoIcon } from "./src/assets/icons/InfoIcon";
-export { default as HomeImg } from "./src/assets/home_img.png";
+export { default as HomeImg } from "./src/assets/home-img.png";
 
 export { default as PodImg } from "./src/assets/pod.svg";
 export { default as DatabaseImg } from "./src/assets/db.svg";

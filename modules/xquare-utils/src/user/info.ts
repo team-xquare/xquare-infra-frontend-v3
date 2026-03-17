@@ -15,14 +15,13 @@ export interface GetUserDetailResponse {
   data: UserDetail;
 }
 
-/**
- * 유저 상세 정보를 조회합니다.
- * @param userId 유저의 ID
- * @returns 유저 상세 정보
- */
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+/**
+ * 유저 상세 정보 조회
+ * - 경로: GET {API_BASE_URL}/users/{userId}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export async function getUserDetail(
   userId: number,
 ): Promise<UserDetail | null> {

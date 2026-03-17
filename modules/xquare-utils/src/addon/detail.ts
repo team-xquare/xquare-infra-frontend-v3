@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export type AddonType =
   | "mysql"
   | "postgres"
@@ -38,9 +36,12 @@ interface GetAddonDetailApiResponse {
   } | null;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
  * 애드온 상세 조회
- * - 경로: GET /api/v1/addons/{addonId}
+ * - 경로: GET {API_BASE_URL}/addons/{addonId}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const getAddonDetail = async (addonId: number): Promise<AddonDetail> => {
   if (!isAuthenticated()) {

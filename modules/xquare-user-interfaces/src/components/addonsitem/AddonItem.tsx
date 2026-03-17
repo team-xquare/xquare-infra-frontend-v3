@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import type { KeyboardEvent } from "react";
-import { Xquare_colors } from "../../styles/colors";
+import { Xquare_colors } from "../../styles/Colors.styles";
 import { Typography } from "../typography";
 import PodImg from "../../assets/pod.svg";
 import DatabaseImg from "../../assets/db.svg";

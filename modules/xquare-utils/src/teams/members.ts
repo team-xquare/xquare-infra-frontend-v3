@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface TeamMemberUpdate {
   id: number;
   role: "admin" | "contributor";
@@ -16,14 +14,16 @@ interface UpdateTeamMembersApiResponse {
   success: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
  * 팀 멤버 추가 또는 수정
- * - 경로: PATCH {API_BASE_URL}/api/v1/teams/{teamId}/members
+ * - 경로: PATCH {API_BASE_URL}/teams/{teamId}/members
  * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const updateTeamMembers = async (
   teamId: number,
-  request: UpdateTeamMembersRequest
+  request: UpdateTeamMembersRequest,
 ): Promise<void> => {
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");
@@ -51,7 +51,7 @@ export const updateTeamMembers = async (
           Accept: "*/*",
         },
         body: JSON.stringify(request),
-      }
+      },
     );
   } catch (err) {
     console.error("[updateTeamMembers] fetch 실패:", err);
@@ -62,12 +62,16 @@ export const updateTeamMembers = async (
     console.error("[updateTeamMembers] 응답 에러:", response.status);
 
     if (response.status === 403) {
-      throw new Error("팀 멤버는 팀원을 추가할 수 없습니다. 관리자 계정으로 시도하세요.");
-      console.error("[updateTeamMembers] 권한 없음: 팀 멤버는 팀원을 추가할 수 없습니다.");
+      throw new Error(
+        "팀 멤버는 팀원을 추가할 수 없습니다. 관리자 계정으로 시도하세요.",
+      );
+      console.error(
+        "[updateTeamMembers] 권한 없음: 팀 멤버는 팀원을 추가할 수 없습니다.",
+      );
     }
 
     throw new Error(
-      `팀 멤버 수정에 실패했습니다. (status: ${response.status})`
+      `팀 멤버 수정에 실패했습니다. (status: ${response.status})`,
     );
   }
 

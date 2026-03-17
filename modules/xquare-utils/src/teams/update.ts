@@ -2,8 +2,6 @@ import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 import { validateTeamName } from "./create";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface UpdateTeamRequest {
   name: string;
   type: "club" | "team" | "individual";
@@ -13,12 +11,17 @@ interface UpdateTeamApiResponse {
   success: boolean;
 }
 
-//팀 정보 수정
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ * 팀 정보 수정
+ * - 경로: PATCH {API_BASE_URL}/teams/{teamId}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const updateTeam = async (
   teamId: number,
-  request: UpdateTeamRequest
+  request: UpdateTeamRequest,
 ): Promise<void> => {
-  // 팀 이름 검증
   const validation = validateTeamName(request.name);
   if (!validation.valid) {
     throw new Error(validation.error);
@@ -59,7 +62,7 @@ export const updateTeam = async (
 
     if (response.status === 403) {
       throw new Error(
-        "팀 멤버는 팀을 수정할 수 없습니다. 관리자 계정으로 시도하세요."
+        "팀 멤버는 팀을 수정할 수 없습니다. 관리자 계정으로 시도하세요.",
       );
     }
 

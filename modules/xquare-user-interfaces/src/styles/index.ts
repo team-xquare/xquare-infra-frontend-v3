@@ -1,2 +1,2 @@
-export * from "./colors";
-export { default } from "./colors";
+export * from "./Colors.styles";
+export { default } from "./Colors.styles";

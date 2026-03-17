@@ -49,7 +49,13 @@ export function useTeamAddons(teamId?: number) {
   }, [teamId, isValidId]);
 
   useEffect(() => {
-    fetchAddons().catch(() => undefined);
+    const timerId = setTimeout(() => {
+      fetchAddons().catch(() => undefined);
+    }, 0);
+
+    return () => {
+      clearTimeout(timerId);
+    };
   }, [fetchAddons]);
 
   const computedError = !isValidId

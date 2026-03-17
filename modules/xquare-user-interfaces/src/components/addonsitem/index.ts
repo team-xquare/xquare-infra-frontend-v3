@@ -1,1 +1,1 @@
-export { AddonItem } from "./addonsitem";
+export { AddonItem } from "./AddonItem";

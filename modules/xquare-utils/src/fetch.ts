@@ -4,7 +4,7 @@ import { clearAllTokens } from "./auth/token";
 import { AUTH_RELOGIN_EVENT } from "./auth/events";
 
 const TIMEOUT_MS = 15000; // 15 seconds
-const LOGOUT_OVERLAY_DELAY_MS = 200;
+const LOGOUT_OVERLAY_DELAY_MS = 200; // 0.2 seconds
 const LOGOUT_OVERLAY_ID = "xquare-auth-logout-overlay";
 const SPINNER_STYLE_ID = "xquare-auth-logout-spinner-style";
 

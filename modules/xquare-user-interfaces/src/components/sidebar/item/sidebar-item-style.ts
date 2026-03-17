@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Xquare_colors } from "../../../styles/colors";
+import { Xquare_colors } from "../../../styles/Colors.styles";
 
 const ITEM_PADDING = "10px 0";
 const LABEL_FONT_SIZE = "15px";

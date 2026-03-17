@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface TeamAddon {
   id: number;
   name: string;
@@ -18,10 +16,12 @@ interface TeamAddonsApiResponse {
   };
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
  * 팀의 모든 애드온 조회
- * - 경로: GET /api/v1/teams/{teamId}/addons
- * - 헤더: Authorization: Bearer <accessToken>, Accept: (wildcard all)
+ * - 경로: GET {API_BASE_URL}/teams/{teamId}/addons
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const getTeamAddons = async (teamId: number): Promise<TeamAddon[]> => {
   if (!isAuthenticated()) {
@@ -62,7 +62,7 @@ export const getTeamAddons = async (teamId: number): Promise<TeamAddon[]> => {
 
   if (!response.ok) {
     throw new Error(
-      `팀 애드온 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `팀 애드온 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
-import { Xquare_colors } from "../../styles/colors";
+import { Xquare_colors } from "../../styles/Colors.styles";
 
 // 타입정의
 interface InputProps {
@@ -8,29 +8,26 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   disabled?: boolean;
-  type?: "text" | "number";
+  type?: "text" | "password" | "email" | "number";
   width?: string;
   height?: string;
 }
 
 // 스타일 정의
 const StyledInput = styled.input<InputProps>`
-  width: ${({ width }) => width || "600px"};
-  height: ${({ height }) => height || "60px"};
-  box-sizing: border-box;
+  width: ${({ width }) => width || "300px"};
+  height: ${({ height }) => height || "50px"};
 
   border: none;
-  background-color: ${Xquare_colors.purple[700]};
-  border-radius: 10px;
+  border-bottom: 1.2px solid ${Xquare_colors.gray[500]};
+  background-color: ${Xquare_colors.white};
   cursor: text;
 
-  padding: 22px;
-
-  color: ${Xquare_colors.white};
+  color: ${Xquare_colors.black};
   font-family: "Pretendard";
-  font-size: 1rem;
-  font-weight: 300;
-  line-height: 1rem;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.1rem;
 
   &::placeholder {
     color: ${Xquare_colors.gray[500]};
@@ -38,10 +35,11 @@ const StyledInput = styled.input<InputProps>`
 
   &:focus {
     outline: none;
-    color: ${Xquare_colors.white};
+    border-bottom: 1.2px solid ${Xquare_colors.purple[500]};
+    color: ${Xquare_colors.purple[500]};
 
     &::placeholder {
-      color: ${Xquare_colors.white};
+      color: ${Xquare_colors.purple[500]};
     }
   }
 
@@ -56,7 +54,7 @@ const StyledInput = styled.input<InputProps>`
 `;
 
 // 컴포넌트
-export const Input_record: React.FC<InputProps> = ({
+export const Input_default: React.FC<InputProps> = ({
   value,
   onChange,
   placeholder,

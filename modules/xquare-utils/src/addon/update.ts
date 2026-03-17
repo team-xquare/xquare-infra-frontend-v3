@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface UpdateAddonRequest {
   storageGi: number;
 }
@@ -11,10 +9,12 @@ interface UpdateAddonApiResponse {
   success: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
- * 애드온 수정 요청
- * - 경로: PATCH /api/v1/addons/{addonId}
- * - 본문: { "storageGi": number }
+ * 애드온 정보를 수정하는 함수
+ * - 경로: PATCH {API_BASE_URL}/addons/{addonId}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const updateAddon = async (
   addonId: number,

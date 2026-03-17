@@ -1,10 +1,6 @@
 import { getAccessToken, isAuthenticated } from "./../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-/* ======================
- * 타입
- * ====================== */
-
 export interface Me {
   id: number;
   username: string;
@@ -19,11 +15,13 @@ interface MeApiResponse {
   data: Me;
 }
 
-/* ======================
- * API 호출
- * ====================== */
-
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ * 현재 유저의 정보 조회
+ * - 경로: GET {API_BASE_URL}/users/me
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const USERNAME_CACHE_KEY = "xquare:username";
 
 const canUseStorage = () =>
@@ -73,7 +71,7 @@ export const checkUser = async (): Promise<Me> => {
 
   if (!response.ok) {
     throw new Error(
-      `유저 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `유저 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 

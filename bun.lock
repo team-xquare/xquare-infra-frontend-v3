@@ -101,7 +101,12 @@
       "name": "@xquare/user-interfaces",
       "version": "1.0.0",
       "dependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
         "@xquare/hooks": "workspace:*",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "react-router-dom": "^7.10.1",
       },
     },
     "modules/xquare-utils": {

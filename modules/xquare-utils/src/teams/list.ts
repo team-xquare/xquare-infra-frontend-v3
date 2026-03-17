@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface TeamMember {
   userId: number;
   role: "admin" | "member";
@@ -21,6 +19,8 @@ interface TeamsApiResponse {
     teams: Team[];
   };
 }
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 /**
  * 현재 유저의 전체 팀 조회
@@ -67,7 +67,7 @@ export const getTeams = async (): Promise<Team[]> => {
       throw new Error("팀 목록에 접근 권한이 없습니다. (403)");
     }
     throw new Error(
-      `팀 목록 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`
+      `팀 목록 조회 실패 (HTTP ${response.status} ${response.statusText ?? ""})`,
     );
   }
 

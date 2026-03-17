@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface NoticeDetail {
   id: number;
   title: string;
@@ -17,11 +15,15 @@ interface NoticeDetailApiResponse {
   data: NoticeDetail;
 }
 
-// 공지 상세 조회 유틸리티
-// - Authorization 헤더에 액세스 토큰 포함
-// - 실패 시 오류 메시지와 함께 throw
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ * 공지 상세 조회
+ * - 경로: GET {API_BASE_URL}/notices/{noticeId}
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const getNoticeDetail = async (
-  noticeId: number
+  noticeId: number,
 ): Promise<NoticeDetail> => {
   // 인증 상태 확인
   if (!isAuthenticated()) {
@@ -50,7 +52,7 @@ export const getNoticeDetail = async (
 
     if (!response.ok) {
       console.error(
-        `[getNoticeDetail] HTTP 오류: status=${response.status}, statusText=${response.statusText}`
+        `[getNoticeDetail] HTTP 오류: status=${response.status}, statusText=${response.statusText}`,
       );
       throw new Error(`공지 상세 조회 실패 (HTTP ${response.status})`);
     }
@@ -59,7 +61,7 @@ export const getNoticeDetail = async (
     if (!result.success || !result.data) {
       console.error(
         "[getNoticeDetail] 응답 성공 플래그가 false이거나 data가 없습니다.",
-        result
+        result,
       );
       throw new Error("공지 상세 조회 실패");
     }

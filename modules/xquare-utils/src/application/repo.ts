@@ -16,7 +16,7 @@ export const getRepoInfo = async (
   accessToken: string,
   owner: string,
   repo: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<RepoInfo> => {
   // console.log("[github] getRepoInfo", { owner, repo });
   const res = await fetchWithTimeout(
@@ -29,7 +29,7 @@ export const getRepoInfo = async (
         "X-GitHub-Api-Version": "2022-11-28",
       },
       signal,
-    }
+    },
   );
   if (!res.ok) {
     console.error("[github] getRepoInfo error", res.status);
@@ -49,7 +49,7 @@ export const listBranches = async (
   owner: string,
   repo: string,
   perPage = 100,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string[]> => {
   // console.log("[github] listBranches", { owner, repo, perPage });
   const res = await fetchWithTimeout(
@@ -62,7 +62,7 @@ export const listBranches = async (
         "X-GitHub-Api-Version": "2022-11-28",
       },
       signal,
-    }
+    },
   );
   if (!res.ok) {
     console.error("[github] listBranches error", {
@@ -70,7 +70,7 @@ export const listBranches = async (
       statusText: res.statusText,
     });
     throw new Error(
-      `브랜치 목록 조회 실패 (HTTP ${res.status} ${res.statusText || ""})`
+      `브랜치 목록 조회 실패 (HTTP ${res.status} ${res.statusText || ""})`,
     );
   }
 
@@ -89,7 +89,7 @@ export const listBranches = async (
       receivedValue: json,
     });
     throw new Error(
-      `브랜치 목록이 배열이 아닙니다. (받은 타입: ${typeof json})`
+      `브랜치 목록이 배열이 아닙니다. (받은 타입: ${typeof json})`,
     );
   }
 
@@ -106,7 +106,7 @@ export const getLatestCommitSha = async (
   owner: string,
   repo: string,
   branch: string,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string> => {
   // console.log("[github] getLatestCommitSha", { owner, repo, branch });
   const res = await fetchWithTimeout(
@@ -119,7 +119,7 @@ export const getLatestCommitSha = async (
         "X-GitHub-Api-Version": "2022-11-28",
       },
       signal,
-    }
+    },
   );
   if (!res.ok) {
     console.error("[github] getLatestCommitSha error", res.status);

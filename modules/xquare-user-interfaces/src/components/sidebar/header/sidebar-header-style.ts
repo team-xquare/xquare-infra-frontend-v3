@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Xquare_colors } from "../../../styles/colors";
+import { Xquare_colors } from "../../../styles/Colors.styles";
 
 const HEADER_PADDING = "20px";
 const TEXT_FONT_SIZE = "13px";

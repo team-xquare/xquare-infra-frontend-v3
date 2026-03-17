@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface CreateTeamMember {
   id: number;
   role: "admin" | "member";
@@ -19,7 +17,10 @@ export interface CreateTeamRequest {
  * - 3~45자
  * - 알파벳 소문자만 허용
  */
-export function validateTeamName(name: string): { valid: boolean; error?: string } {
+export function validateTeamName(name: string): {
+  valid: boolean;
+  error?: string;
+} {
   if (!name || name.trim().length === 0) {
     return { valid: false, error: "팀 이름을 입력해주세요." };
   }
@@ -36,7 +37,10 @@ export function validateTeamName(name: string): { valid: boolean; error?: string
 
   const lowercasePattern = /^[a-z]+$/;
   if (!lowercasePattern.test(trimmedName)) {
-    return { valid: false, error: "팀 이름은 알파벳 소문자만 사용 가능합니다." };
+    return {
+      valid: false,
+      error: "팀 이름은 알파벳 소문자만 사용 가능합니다.",
+    };
   }
 
   return { valid: true };
@@ -49,13 +53,15 @@ interface CreateTeamApiResponse {
   };
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
  * 새로운 팀 생성
- * - 경로: POST {API_BASE_URL}/api/v1/teams
+ * - 경로: POST {API_BASE_URL}/teams
  * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const createTeam = async (
-  request: CreateTeamRequest
+  request: CreateTeamRequest,
 ): Promise<number> => {
   // 팀 이름 검증
   const validation = validateTeamName(request.name);

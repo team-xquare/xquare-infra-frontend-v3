@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface ApplicationEndpoint {
   port: number;
   routes: string[];
@@ -47,9 +45,12 @@ interface CreateApplicationApiResponse {
   };
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
  * 애플리케이션 생성
- * - POST {API_BASE_URL}/api/v1/applications
+ * - 경로: POST {API_BASE_URL}/api/v1/applications
+ * - 헤더: Authorization Bearer, Content-Type: application/json
  */
 export const createApplication = async (
   request: CreateApplicationRequest,

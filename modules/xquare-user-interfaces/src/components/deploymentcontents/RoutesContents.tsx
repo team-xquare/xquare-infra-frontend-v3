@@ -2,7 +2,7 @@ import { useEffect, useState, startTransition } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
-import { Xquare_colors } from "../../styles/colors";
+import { Xquare_colors } from "../../styles/Colors.styles";
 import { ErrorMessage } from "../errormessage";
 import type {
   ApplicationEndpointDetail,

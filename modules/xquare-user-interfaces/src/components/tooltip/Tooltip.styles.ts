@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
-import { Xquare_colors } from "../../styles/colors";
+import { Xquare_colors } from "../../styles/Colors.styles";
 
 const fadeIn = keyframes`
   from {

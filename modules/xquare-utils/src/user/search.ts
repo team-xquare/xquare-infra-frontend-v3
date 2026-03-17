@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface UserSearchResult {
   id: number;
   username: string;
@@ -19,8 +17,15 @@ interface UserSearchResponse {
   };
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ * 이름으로 유저 검색
+ * - 경로: GET {API_BASE_URL}/users/search
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const searchUsersByName = async (
-  name: string
+  name: string,
 ): Promise<UserSearchResult[]> => {
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");

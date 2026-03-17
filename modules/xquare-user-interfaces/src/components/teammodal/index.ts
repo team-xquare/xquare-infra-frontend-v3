@@ -1,1 +1,1 @@
-export { TeamModal } from "./teammodal";
+export { TeamModal } from "./TeamModal";

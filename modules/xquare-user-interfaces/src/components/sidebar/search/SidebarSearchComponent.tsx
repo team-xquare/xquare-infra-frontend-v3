@@ -22,7 +22,7 @@ function SidebarSearchComponent({
     (e: ChangeEvent<HTMLInputElement>) => {
       onSearch?.(e.target.value);
     },
-    [onSearch]
+    [onSearch],
   );
 
   return (

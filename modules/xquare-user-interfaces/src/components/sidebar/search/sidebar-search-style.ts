@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Xquare_colors } from "../../../styles/colors";
+import { Xquare_colors } from "../../../styles/Colors.styles";
 
 const SEARCH_CONTAINER_GAP = "5px";
 const SEARCH_CONTAINER_PADDING = "20px";

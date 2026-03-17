@@ -1,17 +1,21 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface AddOrUpdateEnvironmentVariableRequest {
   name: string;
   value: string;
 }
 
-// 환경변수 추가 또는 수정
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ * 환경변수 추가 또는 수정
+ * - 경로: POST {API_BASE_URL}/applications/{applicationId}/environment-variables
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const addOrUpdateEnvironmentVariable = async (
   applicationId: number,
-  request: AddOrUpdateEnvironmentVariableRequest
+  request: AddOrUpdateEnvironmentVariableRequest,
 ): Promise<void> => {
   /* console.log("[environment] addOrUpdateEnvironmentVariable", {
     applicationId,
@@ -46,7 +50,7 @@ export const addOrUpdateEnvironmentVariable = async (
         statusText: response.statusText,
       });
       throw new Error(
-        `환경변수 저장 실패 (HTTP ${response.status} ${response.statusText || ""})`
+        `환경변수 저장 실패 (HTTP ${response.status} ${response.statusText || ""})`,
       );
     }
 

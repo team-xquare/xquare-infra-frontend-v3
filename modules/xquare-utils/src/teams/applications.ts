@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface ApplicationEndpoint {
   port: number;
   routes: string[];
@@ -49,9 +47,11 @@ interface TeamApplicationsApiResponse {
   };
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 /**
  * 팀의 모든 애플리케이션 조회
- * - 경로: GET {API_BASE_URL}/api/v1/teams/{teamId}/applications
+ * - 경로: GET {API_BASE_URL}/teams/{teamId}/applications
  * - 헤더: Authorization Bearer, Accept: all
  */
 export const getTeamApplications = async (

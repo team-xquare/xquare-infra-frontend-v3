@@ -1,8 +1,6 @@
 import { getAccessToken, isAuthenticated } from "../auth/token";
 import { fetchWithTimeout } from "../fetch";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 export interface EnvironmentVariable {
   name: string;
   value: string;
@@ -18,9 +16,15 @@ interface EnvironmentVariablesResponse {
   };
 }
 
-// 환경변수 조회
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+/**
+ *  환경변수 조회
+ * - 경로: GET {API_BASE_URL}/applications/{applicationId}/environment-variables
+ * - 헤더: Authorization Bearer, Content-Type: application/json
+ */
 export const getEnvironmentVariables = async (
-  applicationId: number
+  applicationId: number,
 ): Promise<EnvironmentVariable[]> => {
   // console.log("[environment] getEnvironmentVariables", { applicationId });
 
@@ -46,7 +50,7 @@ export const getEnvironmentVariables = async (
         statusText: response.statusText,
       });
       throw new Error(
-        `환경변수 조회 실패 (HTTP ${response.status} ${response.statusText || ""})`
+        `환경변수 조회 실패 (HTTP ${response.status} ${response.statusText || ""})`,
       );
     }
 

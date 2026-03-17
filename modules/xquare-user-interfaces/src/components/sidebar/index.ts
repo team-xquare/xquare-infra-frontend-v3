@@ -1,5 +1,5 @@
-export { Sidebar } from "./sidebar";
-export { SidebarHeader } from "./header/sidebar-header";
-export { SidebarSearch } from "./search/sidebar-search";
-export { SidebarItem } from "./item/sidebar-item";
-export { SidebarFooter } from "./footer/sidebar-footer";
+export { Sidebar } from "./Sidebar";
+export { SidebarHeader } from "./header/SidebarHeaderComponent";
+export { SidebarSearch } from "./search/SidebarSearchComponent";
+export { SidebarItem } from "./item/SidebarItemComponent";
+export { SidebarFooter } from "./footer/SidebarFooterComponent";

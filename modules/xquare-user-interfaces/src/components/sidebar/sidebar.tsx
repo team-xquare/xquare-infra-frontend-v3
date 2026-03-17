@@ -1,16 +1,16 @@
 import { useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import type { Team } from "@xquare/utils";
-import { SidebarHeader } from "./header/sidebar-header";
-import { SidebarSearch } from "./search/sidebar-search";
-import { SidebarItem } from "./item/sidebar-item";
-import { SidebarFooter } from "./footer/sidebar-footer";
+import { SidebarHeader } from "./header/SidebarHeaderComponent";
+import { SidebarSearch } from "./search/SidebarSearchComponent";
+import { SidebarItem } from "./item/SidebarItemComponent";
+import { SidebarFooter } from "./footer/SidebarFooterComponent";
 import {
   SidebarContainer,
   SidebarContent,
   SidebarNavContainer,
   SidebarNavContent,
-} from "./sidebar-style";
+} from "./Sidebar-style";
 
 interface SidebarNavItem {
   id: string;
