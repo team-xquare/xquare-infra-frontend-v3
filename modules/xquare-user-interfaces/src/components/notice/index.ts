@@ -1,3 +1,3 @@
-export { NoticeItem } from "./Noticeitem/index";
-export { Notice } from "./Notice";
-export { Feed } from "./Feed";
+export { NoticeItem } from "./noticeitem/index";
+export { Notice } from "./notice";
+export { Feed } from "./feed";

@@ -10,7 +10,7 @@ import {
   SidebarContent,
   SidebarNavContainer,
   SidebarNavContent,
-} from "./Sidebar-style";
+} from "./sidebar-style";
 
 interface SidebarNavItem {
   id: string;

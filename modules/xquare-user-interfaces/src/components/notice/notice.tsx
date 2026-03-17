@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
-import { NoticeItem } from "./Noticeitem/index";
+import { NoticeItem } from "./noticeitem/index";
 import { Subtitle } from "../title/index";
 import { Typography } from "../typography/index";
 import { SearchBox } from "../input/index";
@@ -31,7 +31,7 @@ function Notice({ page }: NoticeProps) {
 
   const currentPage = useMemo(
     () => (pagination.pageKey === page ? pagination.index : 0),
-    [pagination.pageKey, pagination.index, page]
+    [pagination.pageKey, pagination.index, page],
   );
 
   const isFullList = page === 3;
@@ -60,7 +60,7 @@ function Notice({ page }: NoticeProps) {
           setError(
             e instanceof Error
               ? e.message
-              : "공지 목록을 불러오는데 실패했습니다."
+              : "공지 목록을 불러오는데 실패했습니다.",
           );
         }
       }
@@ -73,7 +73,7 @@ function Notice({ page }: NoticeProps) {
 
   const { displayItems, hasNext } = useMemo(() => {
     const filtered = items.filter((n) =>
-      n.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+      n.title.toLowerCase().includes(searchValue.trim().toLowerCase()),
     );
 
     if (!isFullList) {

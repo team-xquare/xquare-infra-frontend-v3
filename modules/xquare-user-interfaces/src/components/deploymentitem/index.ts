@@ -1,1 +1,1 @@
-export { DeploymentItem } from "./DeploymentItem";
+export { DeploymentItem } from "./deploymentitem";

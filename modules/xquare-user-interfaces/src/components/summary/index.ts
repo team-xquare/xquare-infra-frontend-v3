@@ -1,2 +1,2 @@
-export { Summary } from "./Summary";
-export { SummaryItem } from "./Summaryitem";
+export { Summary } from "./summary";
+export { SummaryItem } from "./summaryitem";
