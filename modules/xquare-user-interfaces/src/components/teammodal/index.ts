@@ -1,2 +1,2 @@
-export { TeamModal } from "./TeamModal";
-export { TeamModal as default } from "./TeamModal";
+export { TeamModal } from "./team-modal";
+export { TeamModal as default } from "./team-modal";

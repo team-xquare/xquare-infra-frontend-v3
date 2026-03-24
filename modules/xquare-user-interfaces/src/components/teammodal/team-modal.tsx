@@ -26,7 +26,7 @@ export const TeamModal = ({
   const [activeTab, setActiveTab] = useState<"select" | "create">("select");
   const [teamName, setTeamName] = useState("");
   const [teamType, setTeamType] = useState<"club" | "team" | "individual">(
-    "team"
+    "team",
   );
   const [validationError, setValidationError] = useState<string | null>(null);
   const {
@@ -39,7 +39,7 @@ export const TeamModal = ({
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (e.target === e.currentTarget && !isCreating) onClose();
     },
-    [onClose, isCreating]
+    [onClose, isCreating],
   );
 
   const handleCreateTeam = useCallback(
@@ -87,7 +87,7 @@ export const TeamModal = ({
         }
       }
     },
-    [teamName, teamType, createTeam, onTeamCreated]
+    [teamName, teamType, createTeam, onTeamCreated],
   );
 
   return createPortal(
@@ -162,7 +162,7 @@ export const TeamModal = ({
                   value={teamType}
                   onChange={(e) =>
                     setTeamType(
-                      e.target.value as "club" | "team" | "individual"
+                      e.target.value as "club" | "team" | "individual",
                     )
                   }
                   disabled={isCreating}
@@ -193,7 +193,7 @@ export const TeamModal = ({
         )}
       </ModalContent>
     </ModalBackground>,
-    document.body
+    document.body,
   );
 };
 
