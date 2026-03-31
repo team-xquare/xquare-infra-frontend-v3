@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router";
 import { Xquare_colors } from "@xquare/user-interfaces";
 
 export default function NotFound() {
@@ -8,7 +8,7 @@ export default function NotFound() {
   const location = useLocation();
 
   console.warn(
-    `[Pagenotfound] 존재하지 않는 페이지 접근: ${location.pathname}`
+    `[Pagenotfound] 존재하지 않는 페이지 접근: ${location.pathname}`,
   );
   // console.log(location);
 

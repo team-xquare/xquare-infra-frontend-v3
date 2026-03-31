@@ -7,7 +7,7 @@ import {
   LoadingOverlay,
 } from "@xquare/user-interfaces";
 import { useAuthGuard, useNoticeDetail } from "@xquare/hooks";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useEffect } from "react";
 
 const NoticeView = () => {
