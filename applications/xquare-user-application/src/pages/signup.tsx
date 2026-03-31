@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { useGuestGuard, useRegister } from "@xquare/hooks"; // 훅 import
 import type { RegisterRequest } from "@xquare/utils"; // 타입 import
 import { setTokens, startTokenAutoReissue } from "@xquare/utils"; // 토큰 저장 유틸
