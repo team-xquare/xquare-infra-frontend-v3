@@ -15,6 +15,7 @@ export const deleteTeamMembers = async (
   teamId: number,
   request: DeleteMemberRequest,
 ): Promise<void> => {
+  // 입력 검증
   if (!Number.isInteger(teamId) || teamId <= 0) {
     throw new Error("유효하지 않은 팀 ID입니다.");
   }
@@ -40,6 +41,7 @@ export const deleteTeamMembers = async (
 
   let response: Response;
 
+  // API 호출
   try {
     response = await fetchWithTimeout(
       `${API_BASE_URL}/teams/${teamId}/members`,
@@ -59,10 +61,21 @@ export const deleteTeamMembers = async (
   }
 
   if (!response.ok) {
-    console.error("[deleteTeamMembers] 응답 에러:", response.status);
-    throw new Error(
-      `팀 멤버 삭제에 실패했습니다. (status: ${response.status})`,
-    );
+    switch (response.status) {
+      case 400:
+        throw new Error("잘못된 요청입니다. 입력값을 확인해주세요.");
+      case 401:
+        throw new Error("인증이 필요합니다. 다시 로그인해주세요.");
+      case 403:
+        throw new Error("권한이 없습니다.");
+      case 404:
+        throw new Error("팀 또는 멤버를 찾을 수 없습니다.");
+      default:
+        console.error("[deleteTeamMembers] 응답 에러:", response.status);
+        throw new Error(
+          `팀 멤버 삭제에 실패했습니다. (status: ${response.status})`,
+        );
+    }
   }
 
   let json: DeleteTeamMemberResponse;
