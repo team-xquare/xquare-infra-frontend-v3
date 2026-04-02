@@ -15,6 +15,16 @@ export const deleteTeamMembers = async (
   teamId: number,
   request: DeleteMemberRequest,
 ): Promise<void> => {
+  if (!Number.isInteger(teamId) || teamId <= 0) {
+    throw new Error("유효하지 않은 팀 ID입니다.");
+  }
+  if (!Array.isArray(request.ids) || request.ids.length === 0) {
+    throw new Error("삭제할 멤버 ID 목록이 비어있습니다.");
+  }
+  if (request.ids.some((id) => !Number.isInteger(id) || id <= 0)) {
+    throw new Error("유효하지 않은 멤버 ID가 포함되어 있습니다.");
+  }
+
   if (!isAuthenticated()) {
     throw new Error("인증되지 않은 상태입니다.");
   }
