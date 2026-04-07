@@ -12,8 +12,8 @@ export default function ViewSizeWarning() {
     height: typeof window === "undefined" ? 0 : window.innerHeight,
   }));
 
-  const MIN_WIDTH = 1100;
-  const MIN_HEIGHT = 720;
+  const MIN_WIDTH = 950;
+  const MIN_HEIGHT = 580;
 
   useEffect(() => {
     console.warn(`[ViewSizeWarning] 화면 크기 제한: ${location.pathname}`);
