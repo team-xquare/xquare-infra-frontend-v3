@@ -43,8 +43,8 @@ function App() {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      if (window.innerWidth < 1100) setIsBlocked(true);
-      else if (window.innerHeight < 720) setIsBlocked(true);
+      if (window.innerWidth < 950) setIsBlocked(true);
+      else if (window.innerHeight < 580) setIsBlocked(true);
       else setIsBlocked(false);
     };
 
