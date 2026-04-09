@@ -6,6 +6,7 @@ import { Typography } from "../typography";
 import { Xquare_colors } from "../../styles";
 import { getUserDetail } from "@xquare/utils";
 import type { UserDetail } from "@xquare/utils";
+import { TrashCanIcon } from "@xquare/user-interfaces";
 
 function maskEmail(email?: string | null) {
   if (!email) return "이메일 없음";
@@ -19,12 +20,14 @@ interface TeamMembersDetailListProps {
   members: Array<{ userId: number; role: string }>;
   loading: boolean;
   error: unknown;
+  isCurrentUserAdmin?: boolean;
 }
 
 export function TeamMembersDetailList({
   members,
   loading,
   error,
+  isCurrentUserAdmin = false,
 }: TeamMembersDetailListProps) {
   const [userDetails, setUserDetails] = useState<
     Record<number, UserDetail | null>
@@ -110,6 +113,9 @@ export function TeamMembersDetailList({
                 </MemberMeta>
               )}
             </MemberInfo>
+            {isCurrentUserAdmin && member.role === "contributor" && (
+              <TrashIcon src={TrashCanIcon} alt="멤버 제거" />
+            )}
           </MemberItem>
         );
       })}
@@ -171,4 +177,10 @@ const MemberRoleBadge = styled.span<{ variant: "admin" | "contributor" }>`
   font-size: 12px;
   font-weight: 700;
   line-height: 1.2;
+`;
+
+const TrashIcon = styled.img`
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 `;

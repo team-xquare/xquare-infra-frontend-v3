@@ -288,6 +288,12 @@ export default function TeamPage() {
     [selectedTeam, teamMembers, updateTeamMembers],
   );
 
+  const isCurrentUserTeamAdmin =
+    currentUserId !== null &&
+    (teamDetail?.members ?? []).some(
+      (member) => member.userId === currentUserId && member.role === "admin",
+    );
+
   return (
     <>
       <Helmet>
@@ -352,6 +358,7 @@ export default function TeamPage() {
                 members={teamDetail?.members || []}
                 loading={teamDetailLoading}
                 error={teamDetailError}
+                isCurrentUserAdmin={isCurrentUserTeamAdmin}
               />
             </FormContainer>
             <FormContainer>
