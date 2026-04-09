@@ -25,3 +25,4 @@ export { default as HomeImg } from "./src/assets/home_img.png";
 
 export { default as PodImg } from "./src/assets/pod.svg";
 export { default as DatabaseImg } from "./src/assets/db.svg";
+export { default as TrashCanIcon } from "./src/assets/icons/TrashCanIcon.svg";
