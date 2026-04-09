@@ -12,6 +12,7 @@ export { useTeamApplications } from "./src/useTeamApplications";
 export { useTeams } from "./src/useTeams";
 export { useCreateTeam } from "./src/useCreateTeam";
 export { useUpdateTeam } from "./src/useUpdateTeam";
+export { useDeleteTeamMembers } from "./src/useDeleteTeamMembers";
 export { useUpdateTeamMembers } from "./src/useUpdateTeamMembers";
 export { useSearchUsers } from "./src/useSearchUsers";
 export { useCreateApplication } from "./src/useCreateApplication";
