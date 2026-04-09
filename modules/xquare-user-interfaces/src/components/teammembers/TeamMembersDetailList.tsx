@@ -21,6 +21,8 @@ interface TeamMembersDetailListProps {
   loading: boolean;
   error: unknown;
   isCurrentUserAdmin?: boolean;
+  onDeleteMember?: (userId: number) => void;
+  deleting?: boolean;
 }
 
 export function TeamMembersDetailList({
@@ -28,6 +30,8 @@ export function TeamMembersDetailList({
   loading,
   error,
   isCurrentUserAdmin = false,
+  onDeleteMember,
+  deleting = false,
 }: TeamMembersDetailListProps) {
   const [userDetails, setUserDetails] = useState<
     Record<number, UserDetail | null>
@@ -114,7 +118,12 @@ export function TeamMembersDetailList({
               )}
             </MemberInfo>
             {isCurrentUserAdmin && member.role === "contributor" && (
-              <TrashIcon src={TrashCanIcon} alt="멤버 제거" />
+              <TrashIconButton
+                onClick={() => onDeleteMember?.(member.userId)}
+                disabled={deleting}
+              >
+                <TrashIcon src={TrashCanIcon} alt="멤버 제거" />
+              </TrashIconButton>
             )}
           </MemberItem>
         );
@@ -182,5 +191,11 @@ const MemberRoleBadge = styled.span<{ variant: "admin" | "contributor" }>`
 const TrashIcon = styled.img`
   width: 20px;
   height: 20px;
+`;
+
+const TrashIconButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
 `;
