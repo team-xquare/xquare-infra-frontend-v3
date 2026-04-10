@@ -76,7 +76,6 @@ export default function TeamPage() {
   const {
     search,
     results: searchResults,
-    loading: searching,
     error: searchError,
   } = useSearchUsers();
 
@@ -190,36 +189,6 @@ export default function TeamPage() {
     },
     [selectedTeam, teamName, teamType, updateTeam],
   );
-
-  const handleSearchUsers = useCallback(async () => {
-    setMembersError(null);
-    setMembersSuccess(null);
-
-    const trimmed = searchName.trim();
-    if (!trimmed) {
-      setMembersError("검색할 이름을 입력해주세요.");
-      return;
-    }
-
-    try {
-      await search(trimmed);
-    } catch (err) {
-      setMembersError(
-        err instanceof Error ? err.message : "유저 검색에 실패했습니다.",
-      );
-    }
-  }, [search, searchName]);
-
-  useEffect(() => {
-    const trimmed = searchName.trim();
-    if (!trimmed) return;
-
-    const timer = setTimeout(() => {
-      handleSearchUsers();
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [handleSearchUsers, searchName]);
 
   const handleAddMember = useCallback(
     (user: UserSearchResult) => {
@@ -408,11 +377,16 @@ export default function TeamPage() {
                       placeholder="사용자 이름을 입력하세요"
                       value={searchName}
                       onChange={(e) => {
-                        setSearchName(e.target.value);
+                        const value = e.target.value;
+                        setSearchName(value);
                         setMembersError(null);
                         setMembersSuccess(null);
+
+                        if (value.trim()) {
+                          search(value.trim());
+                        }
                       }}
-                      disabled={isUpdatingMembers || searching}
+                      disabled={isUpdatingMembers}
                       width="200px"
                     />
                     <InlineText>을(를)</InlineText>
