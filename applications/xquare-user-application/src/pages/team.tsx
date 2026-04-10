@@ -378,13 +378,15 @@ export default function TeamPage() {
                       value={searchName}
                       onChange={(e) => {
                         const value = e.target.value;
+                        const trimmed = value.trim();
                         setSearchName(value);
                         setMembersError(null);
                         setMembersSuccess(null);
 
-                        if (value.trim()) {
-                          search(value.trim());
-                        }
+                        if (!trimmed) return;
+                        void search(trimmed).catch((err) => {
+                          console.error("사용자 검색 실패:", err);
+                        });
                       }}
                       disabled={isUpdatingMembers}
                       width="200px"
@@ -403,7 +405,7 @@ export default function TeamPage() {
                     <InlineText>역할로 추가</InlineText>
                   </InputRow>
                 </FormGroup>
-                {searchResults.length > 0 && (
+                {searchName.trim().length > 0 && searchResults.length > 0 && (
                   <FormGroup>
                     <Label>검색 결과 ({searchResults.length}명)</Label>
                     <SearchResultsList>
@@ -439,7 +441,9 @@ export default function TeamPage() {
                     </SearchResultsList>
                   </FormGroup>
                 )}
-                {searchError && <ErrorMessage message={searchError.message} />}
+                {searchError?.message && (
+                  <ErrorMessage message={searchError.message} />
+                )}
                 {teamMembers.length > 0 && (
                   <FormGroup>
                     <Label>추가할 팀원 목록 ({teamMembers.length}명)</Label>
