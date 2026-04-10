@@ -6,7 +6,7 @@ import { Typography } from "../typography";
 import { Xquare_colors } from "../../styles";
 import { getUserDetail } from "@xquare/utils";
 import type { UserDetail } from "@xquare/utils";
-import { TrashCanIcon } from "@xquare/user-interfaces";
+import TrashCanIcon from "../../assets/icons/TrashCanIcon.svg";
 
 function maskEmail(email?: string | null) {
   if (!email) return "이메일 없음";
@@ -117,7 +117,7 @@ export function TeamMembersDetailList({
                 </MemberMeta>
               )}
             </MemberInfo>
-            {isCurrentUserAdmin && member.role === "contributor" && (
+            {isCurrentUserAdmin && member.role !== "admin" && (
               <TrashIconButton
                 onClick={() => onDeleteMember?.(member.userId)}
                 disabled={deleting}
