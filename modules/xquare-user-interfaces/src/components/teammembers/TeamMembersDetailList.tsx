@@ -117,14 +117,18 @@ export function TeamMembersDetailList({
                 </MemberMeta>
               )}
             </MemberInfo>
-            {isCurrentUserAdmin && member.role !== "admin" && (
-              <TrashIconButton
-                onClick={() => onDeleteMember?.(member.userId)}
-                disabled={deleting}
-              >
-                <TrashIcon src={TrashCanIcon} alt="멤버 제거" />
-              </TrashIconButton>
-            )}
+            {isCurrentUserAdmin &&
+              onDeleteMember &&
+              member.role !== "admin" && (
+                <TrashIconButton
+                  type="button"
+                  aria-label="멤버 제거"
+                  onClick={() => onDeleteMember(member.userId)}
+                  disabled={deleting}
+                >
+                  <TrashIcon src={TrashCanIcon} aria-hidden="true" />
+                </TrashIconButton>
+              )}
           </MemberItem>
         );
       })}
