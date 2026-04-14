@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGuestGuard, useRegister } from "@xquare/hooks"; // 훅 import
 import type { RegisterRequest } from "@xquare/utils"; // 타입 import
 import { setTokens, startTokenAutoReissue } from "@xquare/utils"; // 토큰 저장 유틸
-import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
 import {
   Logo,
@@ -14,6 +13,48 @@ import {
   Xquare_colors,
   ErrorMessage,
 } from "@xquare/user-interfaces";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const USERNAME_PATTERN = /^[A-Za-z0-9_-]+$/;
+const PASSWORD_SPECIAL_PATTERN = /[!@#$%^&*(),.?":{}|<>]/;
+const STUDENT_ID_PATTERN = /^\d{4}$/;
+const NAME_PATTERN = /^[가-힣]+$/;
+
+const USERNAME_MIN_LENGTH = 4;
+const USERNAME_MAX_LENGTH = 15;
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_MAX_LENGTH = 20;
+const STUDENT_ID_MIN = 1000;
+const STUDENT_ID_MAX = 3999;
+const STUDENT_ID_MAX_DIGITS = 4;
+
+const isValidEmail = (value: string) => EMAIL_PATTERN.test(value);
+
+const isValidUsername = (value: string) => {
+  const hasValidLength =
+    value.length >= USERNAME_MIN_LENGTH && value.length <= USERNAME_MAX_LENGTH;
+
+  return hasValidLength && USERNAME_PATTERN.test(value);
+};
+
+const isValidPassword = (value: string) => {
+  const hasValidLength =
+    value.length >= PASSWORD_MIN_LENGTH && value.length <= PASSWORD_MAX_LENGTH;
+
+  return hasValidLength && PASSWORD_SPECIAL_PATTERN.test(value);
+};
+
+const isValidStudentId = (value: string) => {
+  if (!STUDENT_ID_PATTERN.test(value)) return false;
+
+  const studentIdNumber = Number(value);
+  return studentIdNumber >= STUDENT_ID_MIN && studentIdNumber <= STUDENT_ID_MAX;
+};
+
+const isValidName = (value: string) => NAME_PATTERN.test(value);
+
+const sanitizeStudentId = (value: string) =>
+  value.replace(/\D/g, "").slice(0, STUDENT_ID_MAX_DIGITS);
 
 const SignupPage: React.FC = () => {
   useGuestGuard();
@@ -42,23 +83,8 @@ const SignupPage: React.FC = () => {
   // 회원가입 훅 연결
   const { register, loading, error } = useRegister();
 
-  const isValidEmail = (value: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  const usernamePattern = /^[A-Za-z0-9_-]+$/;
-  const isValidUsername = (value: string) =>
-    value.length >= 4 && value.length <= 15 && usernamePattern.test(value);
-  const passwordSpecialPattern = /[!@#$%^&*(),.?":{}|<>]/;
-  const isValidPassword = (value: string) =>
-    value.length >= 8 &&
-    value.length <= 20 &&
-    passwordSpecialPattern.test(value);
-  const isValidStudentId = (value: string) =>
-    /^\d{4}$/.test(value) && Number(value) >= 1000 && Number(value) <= 3999;
-  const namePattern = /^[가-힣]+$/;
-  const isValidName = (value: string) => namePattern.test(value);
-
   const handleStudentIdChange = (value: string) => {
-    const sanitized = value.replace(/\D/g, "").slice(0, 4);
+    const sanitized = sanitizeStudentId(value);
     setStudentId(sanitized);
     if (tokenError) setTokenError(null);
   };

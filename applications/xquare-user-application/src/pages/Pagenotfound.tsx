@@ -8,7 +8,7 @@ export default function NotFound() {
   const location = useLocation();
 
   console.warn(
-    `[Pagenotfound] 존재하지 않는 페이지 접근: ${location.pathname}`
+    `[Pagenotfound] 존재하지 않는 페이지 접근: ${location.pathname}`,
   );
   // console.log(location);
 

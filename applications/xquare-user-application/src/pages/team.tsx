@@ -13,6 +13,7 @@ import {
 } from "@xquare/user-interfaces";
 import {
   useAuthGuard,
+  useDeleteTeamMembers,
   useUpdateTeam,
   useUpdateTeamMembers,
   useSearchUsers,
@@ -154,6 +155,8 @@ export default function TeamPage() {
   const { mutate: updateTeam, loading: isUpdatingTeam } = useUpdateTeam();
   const { mutate: updateTeamMembers, loading: isUpdatingMembers } =
     useUpdateTeamMembers();
+  const { mutate: deleteMembers, loading: isDeletingMembers } =
+    useDeleteTeamMembers();
 
   const handleUpdateTeamInfo = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -257,6 +260,35 @@ export default function TeamPage() {
     setTeamMembers((prev) => prev.filter((m) => m.id !== userId));
   }, []);
 
+  const handleDeleteMember = useCallback(
+    async (userId: number) => {
+      if (!selectedTeam) {
+        setMembersError("선택된 팀이 없습니다. 먼저 팀을 선택해주세요.");
+        return;
+      }
+
+      const confirmed = window.confirm("정말 이 팀원을 삭제하시겠습니까?");
+      if (!confirmed) {
+        return;
+      }
+
+      setMembersError(null);
+      setMembersSuccess(null);
+
+      try {
+        const result = await deleteMembers(selectedTeam.id, { ids: [userId] });
+        if (result) {
+          setMembersSuccess("팀원이 성공적으로 삭제되었습니다.");
+        }
+      } catch (err) {
+        setMembersError(
+          err instanceof Error ? err.message : "팀원 삭제에 실패했습니다.",
+        );
+      }
+    },
+    [deleteMembers, selectedTeam],
+  );
+
   const handleSubmitMembers = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -287,6 +319,12 @@ export default function TeamPage() {
     },
     [selectedTeam, teamMembers, updateTeamMembers],
   );
+
+  const isCurrentUserTeamAdmin =
+    currentUserId !== null &&
+    (teamDetail?.members ?? []).some(
+      (member) => member.userId === currentUserId && member.role === "admin",
+    );
 
   return (
     <>
@@ -352,6 +390,9 @@ export default function TeamPage() {
                 members={teamDetail?.members || []}
                 loading={teamDetailLoading}
                 error={teamDetailError}
+                isCurrentUserAdmin={isCurrentUserTeamAdmin}
+                onDeleteMember={handleDeleteMember}
+                deleting={isDeletingMembers}
               />
             </FormContainer>
             <FormContainer>

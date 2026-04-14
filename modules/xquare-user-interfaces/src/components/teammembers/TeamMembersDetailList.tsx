@@ -6,6 +6,7 @@ import { Typography } from "../typography";
 import { Xquare_colors } from "../../styles";
 import { getUserDetail } from "@xquare/utils";
 import type { UserDetail } from "@xquare/utils";
+import TrashCanIcon from "../../assets/icons/TrashCanIcon.svg";
 
 function maskEmail(email?: string | null) {
   if (!email) return "이메일 없음";
@@ -19,12 +20,18 @@ interface TeamMembersDetailListProps {
   members: Array<{ userId: number; role: string }>;
   loading: boolean;
   error: unknown;
+  isCurrentUserAdmin?: boolean;
+  onDeleteMember?: (userId: number) => void;
+  deleting?: boolean;
 }
 
 export function TeamMembersDetailList({
   members,
   loading,
   error,
+  isCurrentUserAdmin = false,
+  onDeleteMember,
+  deleting = false,
 }: TeamMembersDetailListProps) {
   const [userDetails, setUserDetails] = useState<
     Record<number, UserDetail | null>
@@ -110,6 +117,18 @@ export function TeamMembersDetailList({
                 </MemberMeta>
               )}
             </MemberInfo>
+            {isCurrentUserAdmin &&
+              onDeleteMember &&
+              member.role !== "admin" && (
+                <TrashIconButton
+                  type="button"
+                  aria-label="멤버 제거"
+                  onClick={() => onDeleteMember(member.userId)}
+                  disabled={deleting}
+                >
+                  <TrashIcon src={TrashCanIcon} aria-hidden="true" />
+                </TrashIconButton>
+              )}
           </MemberItem>
         );
       })}
@@ -171,4 +190,16 @@ const MemberRoleBadge = styled.span<{ variant: "admin" | "contributor" }>`
   font-size: 12px;
   font-weight: 700;
   line-height: 1.2;
+`;
+
+const TrashIcon = styled.img`
+  width: 20px;
+  height: 20px;
+`;
+
+const TrashIconButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 `;

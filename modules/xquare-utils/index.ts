@@ -122,6 +122,12 @@ export type { Team, TeamMember } from "./src/teams/list";
 export { createTeam, validateTeamName } from "./src/teams/create";
 export type { CreateTeamRequest, CreateTeamMember } from "./src/teams/create";
 
+export { deleteTeamMembers } from "./src/teams/deleteMember";
+export type {
+  DeleteMemberRequest,
+  DeleteTeamMemberResponse,
+} from "./src/teams/deleteMember";
+
 export { updateTeam } from "./src/teams/update";
 export type { UpdateTeamRequest } from "./src/teams/update";
 
