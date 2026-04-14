@@ -76,7 +76,6 @@ export default function TeamPage() {
   const {
     search,
     results: searchResults,
-    loading: searching,
     error: searchError,
   } = useSearchUsers();
 
@@ -190,36 +189,6 @@ export default function TeamPage() {
     },
     [selectedTeam, teamName, teamType, updateTeam],
   );
-
-  const handleSearchUsers = useCallback(async () => {
-    setMembersError(null);
-    setMembersSuccess(null);
-
-    const trimmed = searchName.trim();
-    if (!trimmed) {
-      setMembersError("검색할 이름을 입력해주세요.");
-      return;
-    }
-
-    try {
-      await search(trimmed);
-    } catch (err) {
-      setMembersError(
-        err instanceof Error ? err.message : "유저 검색에 실패했습니다.",
-      );
-    }
-  }, [search, searchName]);
-
-  useEffect(() => {
-    const trimmed = searchName.trim();
-    if (!trimmed) return;
-
-    const timer = setTimeout(() => {
-      handleSearchUsers();
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [handleSearchUsers, searchName]);
 
   const handleAddMember = useCallback(
     (user: UserSearchResult) => {
@@ -408,11 +377,18 @@ export default function TeamPage() {
                       placeholder="사용자 이름을 입력하세요"
                       value={searchName}
                       onChange={(e) => {
-                        setSearchName(e.target.value);
+                        const value = e.target.value;
+                        const trimmed = value.trim();
+                        setSearchName(value);
                         setMembersError(null);
                         setMembersSuccess(null);
+
+                        if (!trimmed) return;
+                        void search(trimmed).catch((err) => {
+                          console.error("사용자 검색 실패:", err);
+                        });
                       }}
-                      disabled={isUpdatingMembers || searching}
+                      disabled={isUpdatingMembers}
                       width="200px"
                     />
                     <InlineText>을(를)</InlineText>
@@ -429,7 +405,7 @@ export default function TeamPage() {
                     <InlineText>역할로 추가</InlineText>
                   </InputRow>
                 </FormGroup>
-                {searchResults.length > 0 && (
+                {searchName.trim().length > 0 && searchResults.length > 0 && (
                   <FormGroup>
                     <Label>검색 결과 ({searchResults.length}명)</Label>
                     <SearchResultsList>
@@ -465,7 +441,9 @@ export default function TeamPage() {
                     </SearchResultsList>
                   </FormGroup>
                 )}
-                {searchError && <ErrorMessage message={searchError.message} />}
+                {searchError?.message && (
+                  <ErrorMessage message={searchError.message} />
+                )}
                 {teamMembers.length > 0 && (
                   <FormGroup>
                     <Label>추가할 팀원 목록 ({teamMembers.length}명)</Label>
