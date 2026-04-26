@@ -138,6 +138,7 @@ export default function SecretContents({
         </Typography>
         {secrets.map((item, i) => (
           <InputArea key={item.id}>
+            {(() => null)()}
             <Input_basic
               value={item.key}
               onChange={(e) => handleKeyChange(i, e.target.value)}
@@ -158,7 +159,10 @@ export default function SecretContents({
               align="right"
             />
 
-            <ToggleBtn onClick={() => toggleSecretVisibility(item.id)}>
+            <ToggleBtn
+              type="button"
+              onClick={() => toggleSecretVisibility(item.id)}
+            >
               {visibleSecretIds.includes(item.id) ? "숨기기" : "보기"}
             </ToggleBtn>
 
