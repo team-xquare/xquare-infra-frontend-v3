@@ -360,6 +360,7 @@ export default function TeamPage() {
                 loading={teamDetailLoading}
                 error={teamDetailError}
                 isCurrentUserAdmin={isCurrentUserTeamAdmin}
+                currentUserId={currentUserId}
                 onDeleteMember={handleDeleteMember}
                 deleting={isDeletingMembers}
               />
