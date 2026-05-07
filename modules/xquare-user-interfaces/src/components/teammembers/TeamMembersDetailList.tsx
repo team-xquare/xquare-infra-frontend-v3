@@ -121,6 +121,7 @@ export function TeamMembersDetailList({
             </MemberInfo>
             {isCurrentUserAdmin &&
               onDeleteMember &&
+              currentUserId !== null &&
               member.userId !== currentUserId && (
                 <TrashIconButton
                   type="button"
