@@ -26,6 +26,7 @@ export default function SecretContents({
     useEnvironmentVariables(id);
 
   const [secrets, setSecrets] = useState<SecretItem[]>([]);
+  const [visibleSecretIds, setVisibleSecretIds] = useState<string[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -37,6 +38,7 @@ export default function SecretContents({
     }));
     startTransition(() => {
       setSecrets(items);
+      setVisibleSecretIds([]);
       setIsDirty(false);
     });
   }, [variables]);
@@ -58,6 +60,7 @@ export default function SecretContents({
   const removeSecret = async (index: number) => {
     const secret = secrets[index];
     if (!secret.key.trim()) {
+      setVisibleSecretIds((prev) => prev.filter((id) => id !== secret.id));
       setSecrets((prev) => prev.filter((_, i) => i !== index));
       setIsDirty(true);
       return;
@@ -79,6 +82,22 @@ export default function SecretContents({
       { id: crypto.randomUUID(), key: "", value: "" },
     ]);
     setIsDirty(true);
+  };
+
+  const toggleSecretVisibility = (secretId: string) => {
+    const isVisible = visibleSecretIds.includes(secretId);
+
+    if (isVisible) {
+      setVisibleSecretIds((prev) => prev.filter((id) => id !== secretId));
+      return;
+    }
+
+    const confirmResult = window.confirm(
+      "환경 변수의 값을 표시합니다. \n민감한 정보가 포함될 수 있으니 주의해서 사용해주세요.",
+    );
+    if (confirmResult) {
+      setVisibleSecretIds((prev) => [...prev, secretId]);
+    }
   };
 
   const saveSecrets = async () => {
@@ -119,6 +138,7 @@ export default function SecretContents({
         </Typography>
         {secrets.map((item, i) => (
           <InputArea key={item.id}>
+            {(() => null)()}
             <Input_basic
               value={item.key}
               onChange={(e) => handleKeyChange(i, e.target.value)}
@@ -132,12 +152,19 @@ export default function SecretContents({
               value={item.value}
               onChange={(e) => handleValueChange(i, e.target.value)}
               placeholder="Value"
-              type="text"
+              type={visibleSecretIds.includes(item.id) ? "text" : "password"}
               width="580px"
               height="35px"
               disabled={!editable}
               align="right"
             />
+
+            <ToggleBtn
+              type="button"
+              onClick={() => toggleSecretVisibility(item.id)}
+            >
+              {visibleSecretIds.includes(item.id) ? "숨기기" : "보기"}
+            </ToggleBtn>
 
             {editable && (
               <DeleteBtn onClick={() => removeSecret(i)}>삭제</DeleteBtn>
@@ -203,6 +230,22 @@ const DeleteBtn = styled.button`
   color: red;
   cursor: pointer;
   font-size: 0.85rem;
+  width: 50px;
+  height: 30px;
+
+  &:hover {
+    opacity: 0.6;
+  }
+`;
+
+const ToggleBtn = styled.button`
+  background: none;
+  border: none;
+  color: ${Xquare_colors.gray[500]};
+  cursor: pointer;
+  font-size: 0.85rem;
+  width: 50px;
+  height: 30px;
 
   &:hover {
     opacity: 0.6;
