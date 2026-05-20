@@ -1,4 +1,4 @@
-import { useEffect, useState, startTransition } from "react";
+import { useEffect, useState, startTransition, useCallback } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
@@ -104,7 +104,7 @@ export default function SecretContents({
     }
   };
 
-  const toggleAllSecretsVisibility = () => {
+  const toggleAllSecretsVisibility = useCallback(() => {
     if (allSecretIds.length === 0) {
       return;
     }
@@ -121,7 +121,7 @@ export default function SecretContents({
     if (confirmResult) {
       setVisibleSecretIds(allSecretIds);
     }
-  };
+  }, [allSecretIds, allVisible]);
 
   const saveSecrets = async () => {
     // console.log("[SecretContents] 전송될 데이터:", secrets);
