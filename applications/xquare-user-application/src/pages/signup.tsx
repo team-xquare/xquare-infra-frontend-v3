@@ -18,6 +18,7 @@ const EMAIL_REGX = /^[^\s@]+@dsm\.hs\.kr$/;
 const USERNAME_REGX = /^[A-Za-z0-9_-]+$/;
 const PASSWORD_SPECIAL_REGX = /[!@#$%^&*(),.?":{}|<>]/;
 const STUDENT_ID_REGX = /^\d{4}$/;
+const VERIFY_CODE_REGX = /^\d{6}$/;
 const NAME_REGX = /^[가-힣]+$/;
 
 const USERNAME_MIN_LENGTH = 4;
@@ -27,8 +28,11 @@ const PASSWORD_MAX_LENGTH = 20;
 const STUDENT_ID_MIN = 1000;
 const STUDENT_ID_MAX = 3999;
 const STUDENT_ID_MAX_DIGITS = 4;
+const PAGE_DEEP = 4; // 총 단계 수
 
 const isValidEmail = (value: string) => EMAIL_REGX.test(value);
+
+const isValidVerifyCode = (value: string) => VERIFY_CODE_REGX.test(value);
 
 const isValidUsername = (value: string) => {
   const hasValidLength =
@@ -72,9 +76,12 @@ const SignupPage: React.FC = () => {
   const [studentId, setStudentId] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [verifyCode, setVerifyCode] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+  const [showVerifyInput, setShowVerifyInput] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
@@ -91,7 +98,7 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (step !== 3) return;
+    if (step !== PAGE_DEEP) return;
 
     if (!isValidStudentId(studentId)) {
       setTokenError("학번은 숫자 4자리로 입력해주세요.");
@@ -155,13 +162,29 @@ const SignupPage: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (step < 3) changeStepSmooth(step + 1);
+    if (step < PAGE_DEEP) changeStepSmooth(step + 1);
     // console.log("[SignupPage] handleNext, 현재 step:", step + 1);
   };
 
   const handlePrev = () => {
-    if (step > 1) changeStepSmooth(step - 1);
+    if (step > 1) {
+      if (step === 2 && isEmailVerified) return;
+      changeStepSmooth(step - 1);
+    }
     // console.log("[SignupPage] handlePrev, step:", step - 1);
+  };
+
+  const handleNextOrSend = () => {
+    if (step === 1 && !showVerifyInput) {
+      setShowVerifyInput(true);
+      return;
+    }
+
+    if (step === 1 && showVerifyInput) {
+      setIsEmailVerified(true);
+    }
+
+    handleNext();
   };
 
   return (
@@ -196,13 +219,43 @@ const SignupPage: React.FC = () => {
                   titleColor={String(Xquare_colors.red[500])}
                   type="email"
                 />
+
+                <VerifyInputWrap className={showVerifyInput ? "show" : "hide"}>
+                  <Input_text
+                    value={verifyCode}
+                    onChange={(e) => setVerifyCode(e.target.value)}
+                    placeholder="인증코드를 입력해주세요"
+                    title={
+                      verifyCode && !isValidVerifyCode(verifyCode)
+                        ? "유효한 인증코드를 입력하세요."
+                        : ""
+                    }
+                    titleColor={String(Xquare_colors.red[500])}
+                    type="text"
+                    disabled={!showVerifyInput}
+                  />
+                </VerifyInputWrap>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <Input_text
+                  ref={emailRef}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={true}
+                  placeholder="이메일을 입력해주세요"
+                  type="email"
+                />
+
                 <Input_text
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="사용할 아이디를 입력해주세요"
                   title={
                     username && !isValidUsername(username)
-                      ? "아이디는 4~15자의 영문, 숫자, -, _만 허용합니다."
+                      ? "아이디는 4~15자의 영문, 숫자, -, _만 허용 합니다."
                       : ""
                   }
                   titleColor={String(Xquare_colors.red[500])}
@@ -211,7 +264,7 @@ const SignupPage: React.FC = () => {
               </>
             )}
 
-            {step === 2 && (
+            {step === 3 && (
               <>
                 <Input_text
                   ref={passwordRef}
@@ -241,7 +294,7 @@ const SignupPage: React.FC = () => {
               </>
             )}
 
-            {step === 3 && (
+            {step === 4 && (
               <>
                 <Input_text
                   ref={studentIdRef}
@@ -273,24 +326,25 @@ const SignupPage: React.FC = () => {
           </Inputs>
 
           <FormActions>
-            {step < 3 ? (
+            {step < PAGE_DEEP ? (
               <Button_square
                 type="button"
-                onClick={handleNext}
+                onClick={handleNextOrSend}
                 disabled={
                   (step === 1 &&
-                    (!username ||
-                      !email ||
+                    (!email ||
                       !isValidEmail(email) ||
-                      !isValidUsername(username))) ||
-                  (step === 2 &&
+                      (showVerifyInput &&
+                        (!verifyCode || !isValidVerifyCode(verifyCode))))) ||
+                  (step === 2 && (!username || !isValidUsername(username))) ||
+                  (step === 3 &&
                     (!password ||
                       !passwordCheck ||
                       password !== passwordCheck ||
                       !isValidPassword(password)))
                 }
               >
-                다음으로
+                {step === 1 && !showVerifyInput ? "인증코드 전송" : "다음으로"}
               </Button_square>
             ) : (
               <Button_square
@@ -312,7 +366,7 @@ const SignupPage: React.FC = () => {
               </Typography>
             )}
 
-            {step > 1 && (
+            {step > 1 && !(step === 2 && isEmailVerified) && (
               <LinkRow>
                 <Typography size="2x" weight="regular">
                   잘못입력하셨나요?
@@ -330,7 +384,7 @@ const SignupPage: React.FC = () => {
               </LinkRow>
             )}
 
-            {step === 1 && (
+            {step == 1 && (
               <LinkRow>
                 <Typography size="2x" weight="regular">
                   XQUARE계정이 있으신가요?
@@ -445,6 +499,26 @@ const Inputs = styled.div`
 
   @media (max-width: 650px) {
     margin-bottom: 3rem;
+  }
+`;
+
+const VerifyInputWrap = styled.div`
+  width: fit-content;
+  max-width: 100%;
+  align-self: center;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
+
+  &.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &.hide {
+    pointer-events: none;
   }
 `;
 
