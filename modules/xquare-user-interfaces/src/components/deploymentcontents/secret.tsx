@@ -1,4 +1,4 @@
-import { useEffect, useState, startTransition } from "react";
+import { useEffect, useState, startTransition, useCallback } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
@@ -29,6 +29,10 @@ export default function SecretContents({
   const [visibleSecretIds, setVisibleSecretIds] = useState<string[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  const allSecretIds = secrets.map((secret) => secret.id);
+  const allVisible =
+    secrets.length > 0 && visibleSecretIds.length === secrets.length;
 
   useEffect(() => {
     const items = variables.map((v) => ({
@@ -100,6 +104,25 @@ export default function SecretContents({
     }
   };
 
+  const toggleAllSecretsVisibility = useCallback(() => {
+    if (allSecretIds.length === 0) {
+      return;
+    }
+
+    if (allVisible) {
+      setVisibleSecretIds([]);
+      return;
+    }
+
+    const confirmResult = window.confirm(
+      "모든 환경 변수의 값을 표시합니다. \n민감한 정보가 포함될 수 있으니 주의해서 사용해주세요.",
+    );
+
+    if (confirmResult) {
+      setVisibleSecretIds(allSecretIds);
+    }
+  }, [allSecretIds, allVisible]);
+
   const saveSecrets = async () => {
     // console.log("[SecretContents] 전송될 데이터:", secrets);
     setSaveError(null);
@@ -133,9 +156,18 @@ export default function SecretContents({
       {error && <ErrorMessage message={error} />}
       {saveError && <ErrorMessage message={saveError} />}
       <ValueBox>
-        <Typography size="6x" weight="bold">
-          Secret
-        </Typography>
+        <HeaderRow>
+          <Typography size="6x" weight="bold">
+            Secret
+          </Typography>
+          <BulkToggleBtn
+            type="button"
+            onClick={toggleAllSecretsVisibility}
+            disabled={allSecretIds.length === 0}
+          >
+            {allVisible ? "전체 숨기기" : "전체 보기"}
+          </BulkToggleBtn>
+        </HeaderRow>
         {secrets.map((item, i) => (
           <InputArea key={item.id}>
             {(() => null)()}
@@ -200,6 +232,14 @@ const ValueBox = styled.div`
   margin-bottom: 2rem;
 `;
 
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+`;
+
 const InputArea = styled.div`
   display: flex;
   flex-direction: row;
@@ -249,6 +289,27 @@ const ToggleBtn = styled.button`
 
   &:hover {
     opacity: 0.6;
+  }
+`;
+
+const BulkToggleBtn = styled.button`
+  background: ${Xquare_colors.gray[100]};
+  border: 1px solid ${Xquare_colors.gray[300]};
+  color: ${Xquare_colors.gray[700]};
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+
+  &:hover {
+    background: ${Xquare_colors.gray[200]};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 `;
 
