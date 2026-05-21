@@ -14,11 +14,11 @@ import {
   ErrorMessage,
 } from "@xquare/user-interfaces";
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const USERNAME_PATTERN = /^[A-Za-z0-9_-]+$/;
-const PASSWORD_SPECIAL_PATTERN = /[!@#$%^&*(),.?":{}|<>]/;
-const STUDENT_ID_PATTERN = /^\d{4}$/;
-const NAME_PATTERN = /^[가-힣]+$/;
+const EMAIL_REGX = /^[^\s@]+@dsm\.hs\.kr$/;
+const USERNAME_REGX = /^[A-Za-z0-9_-]+$/;
+const PASSWORD_SPECIAL_REGX = /[!@#$%^&*(),.?":{}|<>]/;
+const STUDENT_ID_REGX = /^\d{4}$/;
+const NAME_REGX = /^[가-힣]+$/;
 
 const USERNAME_MIN_LENGTH = 4;
 const USERNAME_MAX_LENGTH = 15;
@@ -28,30 +28,30 @@ const STUDENT_ID_MIN = 1000;
 const STUDENT_ID_MAX = 3999;
 const STUDENT_ID_MAX_DIGITS = 4;
 
-const isValidEmail = (value: string) => EMAIL_PATTERN.test(value);
+const isValidEmail = (value: string) => EMAIL_REGX.test(value);
 
 const isValidUsername = (value: string) => {
   const hasValidLength =
     value.length >= USERNAME_MIN_LENGTH && value.length <= USERNAME_MAX_LENGTH;
 
-  return hasValidLength && USERNAME_PATTERN.test(value);
+  return hasValidLength && USERNAME_REGX.test(value);
 };
 
 const isValidPassword = (value: string) => {
   const hasValidLength =
     value.length >= PASSWORD_MIN_LENGTH && value.length <= PASSWORD_MAX_LENGTH;
 
-  return hasValidLength && PASSWORD_SPECIAL_PATTERN.test(value);
+  return hasValidLength && PASSWORD_SPECIAL_REGX.test(value);
 };
 
 const isValidStudentId = (value: string) => {
-  if (!STUDENT_ID_PATTERN.test(value)) return false;
+  if (!STUDENT_ID_REGX.test(value)) return false;
 
   const studentIdNumber = Number(value);
   return studentIdNumber >= STUDENT_ID_MIN && studentIdNumber <= STUDENT_ID_MAX;
 };
 
-const isValidName = (value: string) => NAME_PATTERN.test(value);
+const isValidName = (value: string) => NAME_REGX.test(value);
 
 const sanitizeStudentId = (value: string) =>
   value.replace(/\D/g, "").slice(0, STUDENT_ID_MAX_DIGITS);
@@ -190,7 +190,7 @@ const SignupPage: React.FC = () => {
                   placeholder="이메일을 입력해주세요"
                   title={
                     email && !isValidEmail(email)
-                      ? "이메일이 유효하지 않습니다."
+                      ? "유효한 학교 이메일(@dsm.hs.kr)을 입력하세요."
                       : ""
                   }
                   titleColor={String(Xquare_colors.red[500])}
@@ -202,7 +202,7 @@ const SignupPage: React.FC = () => {
                   placeholder="사용할 아이디를 입력해주세요"
                   title={
                     username && !isValidUsername(username)
-                      ? "아이디는 4~15자의 영문, 숫자, -, _만 허용 합니다."
+                      ? "아이디는 4~15자의 영문, 숫자, -, _만 허용합니다."
                       : ""
                   }
                   titleColor={String(Xquare_colors.red[500])}
