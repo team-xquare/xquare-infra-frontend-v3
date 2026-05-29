@@ -17,6 +17,8 @@ interface AddonItemProps {
   charge?: string | null;
   onClick?: () => void;
   disabled?: boolean;
+  onDelete?: () => void;
+  deleteDisabled?: boolean;
 }
 
 function AddonItem({

@@ -7,8 +7,13 @@ import {
   type ChangeEventHandler,
 } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams } from "react-router-dom";
-import { useAddonDetail, useAuthGuard, useUpdateAddon } from "@xquare/hooks";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  useAddonDetail,
+  useAuthGuard,
+  useUpdateAddon,
+  useDeleteAddon,
+} from "@xquare/hooks";
 import {
   Title,
   LoadingOverlay,
@@ -24,6 +29,7 @@ const noop: ChangeEventHandler<HTMLInputElement> = () => undefined;
 function AddonDetailPage() {
   useAuthGuard();
   const { addonId: addonIdParam } = useParams<{ addonId: string }>();
+  const navigate = useNavigate();
 
   const addonId = useMemo(() => {
     if (!addonIdParam) {
@@ -35,6 +41,7 @@ function AddonDetailPage() {
 
   const { data, loading, error, refetch } = useAddonDetail(addonId);
   const { mutate: updateAddon, loading: updateLoading } = useUpdateAddon();
+  const { mutate: deleteAddon, loading: deleteLoading } = useDeleteAddon();
 
   const [storageInput, setStorageInput] = useState("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -105,6 +112,28 @@ function AddonDetailPage() {
       setSuccessMessage(null);
     }
   }, [addonId, data, refetch, storageInput, updateAddon, updateLoading]);
+
+  const handleDelete = useCallback(async () => {
+    if (!addonId || deleteLoading || !data) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `정말 ${data.name} 애드온을 삭제하시겠습니까?`,
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteAddon(addonId);
+      alert(`${data.name} 애드온이 삭제되었습니다.`);
+      navigate("/addons");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "애드온 삭제에 실패했습니다.";
+      alert(message);
+    }
+  }, [deleteAddon, addonId, navigate, data, deleteLoading]);
 
   const configurationContent = (
     <>
@@ -179,6 +208,13 @@ function AddonDetailPage() {
         <ActionRow>
           <Button_round
             width="160px"
+            onClick={handleDelete}
+            disabled={deleteLoading || !data || updateLoading}
+          >
+            {deleteLoading ? "삭제 중" : "삭제하기"}
+          </Button_round>
+          <Button_round
+            width="160px"
             onClick={handleSave}
             disabled={updateLoading || !data}
           >
@@ -221,7 +257,7 @@ function AddonDetailPage() {
       <Helmet>
         <title>XQUARE | Addon Detail</title>
       </Helmet>
-      <LoadingOverlay isLoading={loading || updateLoading} />
+      <LoadingOverlay isLoading={loading || updateLoading || deleteLoading} />
       <ContentsArea>
         <Title
           title={"Addon Detail"}
@@ -312,6 +348,7 @@ const ActionRow = styled.div`
   display: flex;
   margin-top: 10px;
   justify-content: flex-end;
+  gap: 12px;
 `;
 
 const ConfigList = styled.div`
