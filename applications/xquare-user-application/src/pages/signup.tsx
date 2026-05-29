@@ -53,8 +53,10 @@ const SignupPage: React.FC = () => {
   const navigate = useNavigate();
 
   const { register, loading, error } = useRegister();
-  const { emailVerifySendHandler } = useEmailVerifySend();
-  const { emailVerifySubmitHandler } = useEmailVerifySubmit();
+  const { emailVerifySendHandler, loading: emailVerifyLoading } =
+    useEmailVerifySend();
+  const { emailVerifySubmitHandler, loading: emailVerifySubmitLoading } =
+    useEmailVerifySubmit();
 
   const [step, setStep] = useState(1);
 
@@ -134,6 +136,12 @@ const SignupPage: React.FC = () => {
     (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
       let value = e.target.value;
 
+      if (key === "email") {
+        setShowVerifyInput(false);
+        setIsEmailVerified(false);
+        setEmailVerifiedToken("");
+      }
+
       if (key === "studentId") {
         value = sanitizeStudentId(value);
       }
@@ -141,6 +149,7 @@ const SignupPage: React.FC = () => {
       setForm((prev) => ({
         ...prev,
         [key]: value,
+        ...(key === "email" ? { verifyCode: "" } : {}),
       }));
 
       if (tokenError) {
@@ -221,6 +230,8 @@ const SignupPage: React.FC = () => {
 
     if (res.success) {
       setEmailVerifiedToken(res.data.emailVerifiedToken);
+      setIsEmailVerified(true);
+      handleNext();
     } else {
       setTokenError("인증코드 검증 실패: 다시 시도해주세요.");
     }
@@ -424,9 +435,9 @@ const SignupPage: React.FC = () => {
                 <Button_square
                   type="button"
                   onClick={() => handleEmailVerifySend({ email: form.email })}
-                  disabled={!validations.email}
+                  disabled={!validations.email || emailVerifyLoading}
                 >
-                  인증코드 전송
+                  {emailVerifyLoading ? "인증코드 발송 중..." : "인증코드 발송"}
                 </Button_square>
               ) : step === 1 ? (
                 <Button_square
@@ -437,9 +448,13 @@ const SignupPage: React.FC = () => {
                       otp: form.verifyCode,
                     })
                   }
-                  disabled={!validations.email || !validations.verifyCode}
+                  disabled={
+                    !validations.email ||
+                    !validations.verifyCode ||
+                    emailVerifySubmitLoading
+                  }
                 >
-                  인증코드 확인
+                  {emailVerifySubmitLoading ? "검증 중..." : "인증코드 검증"}
                 </Button_square>
               ) : (
                 <Button_square
@@ -454,12 +469,6 @@ const SignupPage: React.FC = () => {
               <Button_square type="submit" disabled={isNextDisabled}>
                 {loading ? "가입 중..." : "회원가입 완료"}
               </Button_square>
-            )}
-
-            {error && (
-              <Typography size="2x" weight="regular" color="red">
-                {error}
-              </Typography>
             )}
 
             {step > 1 && !(step === 2 && isEmailVerified) && (
