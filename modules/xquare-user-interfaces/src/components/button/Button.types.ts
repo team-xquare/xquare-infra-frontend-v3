@@ -8,4 +8,5 @@ export interface ButtonProps {
   width?: string;
   height?: string;
   type?: "button" | "submit" | "reset";
+  variant?: "default" | "danger";
 }

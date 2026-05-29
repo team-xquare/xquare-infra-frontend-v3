@@ -210,6 +210,7 @@ function AddonDetailPage() {
             width="160px"
             onClick={handleDelete}
             disabled={deleteLoading || !data || updateLoading}
+            variant="danger"
           >
             {deleteLoading ? "삭제 중" : "삭제하기"}
           </Button_round>
