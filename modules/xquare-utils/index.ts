@@ -3,6 +3,19 @@ export type {
   TeamDetail,
   TeamMember as TeamDetailMember,
 } from "./src/teams/detail";
+
+export type {
+  EmailVerifySendRequest,
+  EmailVerifySendResponse,
+} from "./src/auth/emailVerifySend";
+export { emailVerifySend } from "./src/auth/emailVerifySend";
+
+export type {
+  EmailVerifySubmitRequest,
+  EmailVerifySubmitResponse,
+} from "./src/auth/emailVerifySubmit";
+export { emailVerifySubmit } from "./src/auth/emailVerifySubmit";
+
 export type { RegisterRequest, RegisterResponse } from "./src/auth/register";
 export { registerUser } from "./src/auth/register";
 

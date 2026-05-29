@@ -13,6 +13,7 @@ export interface RegisterRequest {
   studentNumber: number;
   name: string;
   email: string;
+  emailVerifiedToken: string;
 }
 
 export interface RegisterResponseData {
@@ -26,7 +27,7 @@ export interface RegisterResponse {
 }
 
 export async function registerUser(
-  payload: RegisterRequest
+  payload: RegisterRequest,
 ): Promise<RegisterResponse> {
   try {
     const res = await fetchWithTimeout(`${BASE_URL}/auth/register`, {
@@ -43,7 +44,7 @@ export async function registerUser(
         errorMessage,
         "(Status:",
         res.status,
-        ")"
+        ")",
       );
       throw new Error(errorMessage);
     }
