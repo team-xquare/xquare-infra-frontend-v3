@@ -24,14 +24,27 @@ const StyledButton = styled.button<ButtonProps>`
   transition: 0.2s ease;
 
   &:hover {
-    color: ${Xquare_colors.purple[500]};
-    border: 1px solid ${Xquare_colors.purple[500]};
+    color: ${({ variant }) =>
+      variant === "danger"
+        ? Xquare_colors.red[500]
+        : Xquare_colors.purple[500]};
+    border: 1px solid
+      ${({ variant }) =>
+        variant === "danger"
+          ? Xquare_colors.red[500]
+          : Xquare_colors.purple[500]};
   }
 
   &:active {
-    color: ${Xquare_colors.purple[600]};
-    border: 1px solid ${Xquare_colors.purple[600]};
-    background-color: ${Xquare_colors.purple[200]};
+    color: ${({ variant }) =>
+      variant === "danger"
+        ? Xquare_colors.red[600]
+        : Xquare_colors.purple[600]};
+    border: 1px solid
+      ${({ variant }) =>
+        variant === "danger"
+          ? Xquare_colors.red[600]
+          : Xquare_colors.purple[600]};
   }
 
   &:disabled {
@@ -49,6 +62,7 @@ export const Button_round: React.FC<ButtonProps> = ({
   width,
   height,
   type = "button",
+  variant = "default",
 }) => {
   return (
     <StyledButton
@@ -57,6 +71,7 @@ export const Button_round: React.FC<ButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       type={type}
+      variant={variant}
     >
       {children}
     </StyledButton>
