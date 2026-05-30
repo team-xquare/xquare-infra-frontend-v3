@@ -18,7 +18,6 @@ interface AddonItemProps {
   onClick?: () => void;
   disabled?: boolean;
   onDelete?: () => void;
-  deleteDisabled?: boolean;
 }
 
 function AddonItem({
