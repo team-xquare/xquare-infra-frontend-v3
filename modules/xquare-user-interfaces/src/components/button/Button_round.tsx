@@ -45,10 +45,6 @@ const StyledButton = styled.button<ButtonProps>`
         variant === "danger"
           ? Xquare_colors.red[600]
           : Xquare_colors.purple[600]};
-    background-color: ${({ variant }) =>
-      variant === "danger"
-        ? Xquare_colors.red[200]
-        : Xquare_colors.purple[200]};
   }
 
   &:disabled {
