@@ -56,7 +56,16 @@ export const deleteAddon = async (addonId: number): Promise<void> => {
       );
     }
 
-    const result = (await response.json()) as DeleteAddonApiResponse;
+    if (response.status === 204) {
+      return;
+    }
+
+    const responseText = await response.text();
+    if (!responseText.trim()) {
+      return;
+    }
+
+    const result = JSON.parse(responseText) as DeleteAddonApiResponse;
 
     if (!result.success) {
       throw new Error("애드온 삭제에 실패했습니다.");
