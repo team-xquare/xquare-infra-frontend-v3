@@ -1,4 +1,4 @@
-import { useEffect, useState, startTransition, useCallback } from "react";
+import { useEffect, useState, startTransition, useCallback, useMemo } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
@@ -30,7 +30,10 @@ export default function SecretContents({
   const [isDirty, setIsDirty] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const allSecretIds = secrets.map((secret) => secret.id);
+  const allSecretIds = useMemo(
+    () => secrets.map((secret) => secret.id),
+    [secrets],
+  );
   const allVisible =
     secrets.length > 0 && visibleSecretIds.length === secrets.length;
 
@@ -88,21 +91,24 @@ export default function SecretContents({
     setIsDirty(true);
   };
 
-  const toggleSecretVisibility = (secretId: string) => {
-    const isVisible = visibleSecretIds.includes(secretId);
+  const toggleSecretVisibility = useCallback(
+    (secretId: string) => {
+      const isVisible = visibleSecretIds.includes(secretId);
 
-    if (isVisible) {
-      setVisibleSecretIds((prev) => prev.filter((id) => id !== secretId));
-      return;
-    }
+      if (isVisible) {
+        setVisibleSecretIds((prev) => prev.filter((id) => id !== secretId));
+        return;
+      }
 
-    const confirmResult = window.confirm(
-      "환경 변수의 값을 표시합니다. \n민감한 정보가 포함될 수 있으니 주의해서 사용해주세요.",
-    );
-    if (confirmResult) {
-      setVisibleSecretIds((prev) => [...prev, secretId]);
-    }
-  };
+      const confirmResult = window.confirm(
+        "환경 변수의 값을 표시합니다. \n민감한 정보가 포함될 수 있으니 주의해서 사용해주세요.",
+      );
+      if (confirmResult) {
+        setVisibleSecretIds((prev) => [...prev, secretId]);
+      }
+    },
+    [visibleSecretIds],
+  );
 
   const toggleAllSecretsVisibility = useCallback(() => {
     if (allSecretIds.length === 0) {
@@ -170,7 +176,6 @@ export default function SecretContents({
         </HeaderRow>
         {secrets.map((item, i) => (
           <InputArea key={item.id}>
-            {(() => null)()}
             <Input_basic
               value={item.key}
               onChange={(e) => handleKeyChange(i, e.target.value)}
@@ -199,7 +204,7 @@ export default function SecretContents({
             </ToggleBtn>
 
             {editable && (
-              <DeleteBtn onClick={() => removeSecret(i)}>삭제</DeleteBtn>
+              <DeleteBtn type="button" onClick={() => removeSecret(i)}>삭제</DeleteBtn>
             )}
           </InputArea>
         ))}

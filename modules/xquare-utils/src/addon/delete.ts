@@ -56,10 +56,15 @@ export const deleteAddon = async (addonId: number): Promise<void> => {
       );
     }
 
+    // 204 No Content: 응답 바디가 없으므로 JSON 파싱을 건너뜁니다.
+    if (response.status === 204) {
+      return;
+    }
+
     const result = (await response.json()) as DeleteAddonApiResponse;
 
     if (!result.success) {
-      throw new Error("애드온 삭제에 실패했습니다.");
+
     }
   } catch (error) {
     console.error("[deleteAddon] error", error);

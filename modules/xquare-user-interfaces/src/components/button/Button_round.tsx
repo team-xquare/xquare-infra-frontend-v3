@@ -4,7 +4,9 @@ import { Xquare_colors } from "../../styles/colors";
 import type { ButtonProps } from "./Button.types";
 
 // 스타일 정의
-const StyledButton = styled.button<ButtonProps>`
+const StyledButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "variant",
+})<ButtonProps>`
   width: ${({ width }) => width || "120px"};
   height: ${({ height }) => height || "40px"};
 

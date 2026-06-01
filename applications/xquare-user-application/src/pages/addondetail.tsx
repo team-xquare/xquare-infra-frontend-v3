@@ -217,7 +217,7 @@ function AddonDetailPage() {
           <Button_round
             width="160px"
             onClick={handleSave}
-            disabled={updateLoading || !data}
+            disabled={updateLoading || !data || deleteLoading}
           >
             {updateLoading ? "저장 중" : "저장하기"}
           </Button_round>
