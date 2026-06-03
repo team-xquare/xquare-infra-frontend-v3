@@ -21,6 +21,7 @@ interface TeamMembersDetailListProps {
   loading: boolean;
   error: unknown;
   isCurrentUserAdmin?: boolean;
+  currentUserId?: number | null;
   onDeleteMember?: (userId: number) => void;
   deleting?: boolean;
 }
@@ -30,6 +31,7 @@ export function TeamMembersDetailList({
   loading,
   error,
   isCurrentUserAdmin = false,
+  currentUserId = null,
   onDeleteMember,
   deleting = false,
 }: TeamMembersDetailListProps) {
@@ -119,7 +121,8 @@ export function TeamMembersDetailList({
             </MemberInfo>
             {isCurrentUserAdmin &&
               onDeleteMember &&
-              member.role !== "admin" && (
+              currentUserId !== null &&
+              member.userId !== currentUserId && (
                 <TrashIconButton
                   type="button"
                   aria-label="멤버 제거"

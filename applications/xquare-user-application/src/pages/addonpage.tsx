@@ -92,6 +92,7 @@ function AddonPage() {
     },
     [navigate],
   );
+
   return (
     <Container>
       <Helmet>

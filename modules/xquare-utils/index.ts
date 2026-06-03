@@ -65,6 +65,7 @@ export type {
 } from "./src/addon/detail";
 export { updateAddon } from "./src/addon/update";
 export type { UpdateAddonRequest } from "./src/addon/update";
+export { deleteAddon } from "./src/addon/delete";
 
 export { exchangeGithubToken } from "./src/githubapp/token";
 export {

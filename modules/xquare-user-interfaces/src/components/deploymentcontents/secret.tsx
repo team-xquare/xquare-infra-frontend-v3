@@ -1,4 +1,4 @@
-import { useEffect, useState, startTransition } from "react";
+import { useEffect, useState, startTransition, useCallback } from "react";
 import styled from "@emotion/styled";
 import { Input_basic } from "../input";
 import { Typography } from "../typography/index";
@@ -26,8 +26,13 @@ export default function SecretContents({
     useEnvironmentVariables(id);
 
   const [secrets, setSecrets] = useState<SecretItem[]>([]);
+  const [visibleSecretIds, setVisibleSecretIds] = useState<string[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  const allSecretIds = secrets.map((secret) => secret.id);
+  const allVisible =
+    secrets.length > 0 && visibleSecretIds.length === secrets.length;
 
   useEffect(() => {
     const items = variables.map((v) => ({
@@ -37,6 +42,7 @@ export default function SecretContents({
     }));
     startTransition(() => {
       setSecrets(items);
+      setVisibleSecretIds([]);
       setIsDirty(false);
     });
   }, [variables]);
@@ -58,6 +64,7 @@ export default function SecretContents({
   const removeSecret = async (index: number) => {
     const secret = secrets[index];
     if (!secret.key.trim()) {
+      setVisibleSecretIds((prev) => prev.filter((id) => id !== secret.id));
       setSecrets((prev) => prev.filter((_, i) => i !== index));
       setIsDirty(true);
       return;
@@ -80,6 +87,41 @@ export default function SecretContents({
     ]);
     setIsDirty(true);
   };
+
+  const toggleSecretVisibility = (secretId: string) => {
+    const isVisible = visibleSecretIds.includes(secretId);
+
+    if (isVisible) {
+      setVisibleSecretIds((prev) => prev.filter((id) => id !== secretId));
+      return;
+    }
+
+    const confirmResult = window.confirm(
+      "환경 변수의 값을 표시합니다. \n민감한 정보가 포함될 수 있으니 주의해서 사용해주세요.",
+    );
+    if (confirmResult) {
+      setVisibleSecretIds((prev) => [...prev, secretId]);
+    }
+  };
+
+  const toggleAllSecretsVisibility = useCallback(() => {
+    if (allSecretIds.length === 0) {
+      return;
+    }
+
+    if (allVisible) {
+      setVisibleSecretIds([]);
+      return;
+    }
+
+    const confirmResult = window.confirm(
+      "모든 환경 변수의 값을 표시합니다. \n민감한 정보가 포함될 수 있으니 주의해서 사용해주세요.",
+    );
+
+    if (confirmResult) {
+      setVisibleSecretIds(allSecretIds);
+    }
+  }, [allSecretIds, allVisible]);
 
   const saveSecrets = async () => {
     // console.log("[SecretContents] 전송될 데이터:", secrets);
@@ -114,11 +156,21 @@ export default function SecretContents({
       {error && <ErrorMessage message={error} />}
       {saveError && <ErrorMessage message={saveError} />}
       <ValueBox>
-        <Typography size="6x" weight="bold">
-          Secret
-        </Typography>
+        <HeaderRow>
+          <Typography size="6x" weight="bold">
+            Secret
+          </Typography>
+          <BulkToggleBtn
+            type="button"
+            onClick={toggleAllSecretsVisibility}
+            disabled={allSecretIds.length === 0}
+          >
+            {allVisible ? "전체 숨기기" : "전체 보기"}
+          </BulkToggleBtn>
+        </HeaderRow>
         {secrets.map((item, i) => (
           <InputArea key={item.id}>
+            {(() => null)()}
             <Input_basic
               value={item.key}
               onChange={(e) => handleKeyChange(i, e.target.value)}
@@ -132,12 +184,19 @@ export default function SecretContents({
               value={item.value}
               onChange={(e) => handleValueChange(i, e.target.value)}
               placeholder="Value"
-              type="text"
+              type={visibleSecretIds.includes(item.id) ? "text" : "password"}
               width="580px"
               height="35px"
               disabled={!editable}
               align="right"
             />
+
+            <ToggleBtn
+              type="button"
+              onClick={() => toggleSecretVisibility(item.id)}
+            >
+              {visibleSecretIds.includes(item.id) ? "숨기기" : "보기"}
+            </ToggleBtn>
 
             {editable && (
               <DeleteBtn onClick={() => removeSecret(i)}>삭제</DeleteBtn>
@@ -173,6 +232,14 @@ const ValueBox = styled.div`
   margin-bottom: 2rem;
 `;
 
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+`;
+
 const InputArea = styled.div`
   display: flex;
   flex-direction: row;
@@ -203,9 +270,46 @@ const DeleteBtn = styled.button`
   color: red;
   cursor: pointer;
   font-size: 0.85rem;
+  width: 50px;
+  height: 30px;
 
   &:hover {
     opacity: 0.6;
+  }
+`;
+
+const ToggleBtn = styled.button`
+  background: none;
+  border: none;
+  color: ${Xquare_colors.gray[500]};
+  cursor: pointer;
+  font-size: 0.85rem;
+  width: 50px;
+  height: 30px;
+
+  &:hover {
+    opacity: 0.6;
+  }
+`;
+
+const BulkToggleBtn = styled.button`
+  background: ${Xquare_colors.gray[100]};
+  border: 1px solid ${Xquare_colors.gray[300]};
+  color: ${Xquare_colors.gray[700]};
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+
+  &:hover {
+    background: ${Xquare_colors.gray[200]};
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
   }
 `;
 
