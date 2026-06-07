@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "@emotion/styled";
-import { Sidebar } from "@xquare/user-interfaces";
+import { Sidebar, TeamModal } from "@xquare/user-interfaces";
 import { useUserName, useTeams } from "@xquare/hooks";
 import { useNavigate } from "react-router-dom";
+import { getSelectedTeam } from "@xquare/utils";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,18 @@ function Layout({
     error: teamsError,
     refetch: refetchTeams,
   } = useTeams();
+  const [autoTeamModalOpen, setAutoTeamModalOpen] = React.useState(false);
+  const hasCheckedInitialTeamRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (hasCheckedInitialTeamRef.current || teamsLoading || teamsError) return;
+
+    hasCheckedInitialTeamRef.current = true;
+
+    if (!getSelectedTeam() && teams && teams.length > 0) {
+      setAutoTeamModalOpen(true);
+    }
+  }, [teams, teamsLoading, teamsError]);
 
   const navItems = React.useMemo(
     () => [
@@ -34,7 +47,7 @@ function Layout({
       { id: "team", label: "TEAM", path: "/team" },
       // { id: "feed", label: "FEED", path: "/feed" },
     ],
-    []
+    [],
   );
 
   const handleNavItemClick = (itemId: string) => {
@@ -69,6 +82,17 @@ function Layout({
         onTeamUpdated={refetchTeams}
       />
       <Page>{children}</Page>
+
+      {autoTeamModalOpen && (
+        <TeamModal
+          teams={teams ?? []}
+          loading={teamsLoading}
+          error={teamsError}
+          onSelectTeam={() => setAutoTeamModalOpen(false)}
+          onClose={() => setAutoTeamModalOpen(false)}
+          onTeamCreated={refetchTeams}
+        />
+      )}
     </Container>
   );
 }
