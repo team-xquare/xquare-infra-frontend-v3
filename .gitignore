@@ -4,6 +4,7 @@ node_modules
 bun.lockb
 
 dist
+dev-dist
 dist-ssr
 .next
 .turbo
