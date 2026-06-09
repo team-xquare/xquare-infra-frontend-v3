@@ -27,3 +27,5 @@ export {
   useMultipleDeploymentSummaries,
 } from "./src/useDeploymentSummary";
 export { useEnvironmentVariables } from "./src/useEnvironmentVariables";
+export { useEmailVerifySend } from "./src/useEmailVerifySend";
+export { useEmailVerifySubmit } from "./src/useEmailVerifySubmit";
