@@ -2,10 +2,11 @@ import {
   clearAllTokens,
   getSelectedTeam,
   saveSelectedTeam,
+  SELECTED_TEAM_EVENT,
   type Team,
 } from "@xquare/utils";
 import { useNavigate } from "react-router-dom";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { TeamModal } from "../../teammodal";
 import {
   SideBarFooter,
@@ -49,6 +50,23 @@ function SidebarFooterComponent({
     const savedTeam = getSelectedTeam();
     return savedTeam?.id ?? null;
   });
+
+  useEffect(() => {
+    const syncSelectedTeam = () => {
+      const savedTeam = getSelectedTeam();
+      setSelectedProject(savedTeam?.name ?? project);
+      setSelectedTeamId(savedTeam?.id ?? null);
+      setIsUserSelectedTeam(savedTeam !== null);
+    };
+
+    window.addEventListener(SELECTED_TEAM_EVENT, syncSelectedTeam);
+    window.addEventListener("storage", syncSelectedTeam);
+
+    return () => {
+      window.removeEventListener(SELECTED_TEAM_EVENT, syncSelectedTeam);
+      window.removeEventListener("storage", syncSelectedTeam);
+    };
+  }, [project]);
 
   const handleLogout = useCallback(() => {
     if (!window.confirm("로그아웃하시겠습니까?")) return;
