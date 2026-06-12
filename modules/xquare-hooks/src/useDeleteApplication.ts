@@ -20,7 +20,9 @@ export function useDeleteApplication() {
   const inFlightRef = useRef(false);
 
   const mutate = useCallback(async (applicationId: number) => {
-    if (inFlightRef.current) return;
+    if (inFlightRef.current) {
+      throw new Error("어플리케이션 삭제가 이미 진행 중입니다.");
+    }
     inFlightRef.current = true;
     setState({ loading: true, error: null, success: false });
 

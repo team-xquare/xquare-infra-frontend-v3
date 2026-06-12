@@ -195,7 +195,7 @@ const DeploymentView = () => {
             <Button_round
               children={"삭제하기"}
               onClick={handleDeleteClick}
-              disabled={appLoading}
+              disabled={appLoading || deleteLoading}
             />
           ) : (
             <Button_round
