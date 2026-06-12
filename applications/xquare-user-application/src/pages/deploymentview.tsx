@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "@emotion/styled";
 import { useState, useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Title,
   Xquare_colors,
@@ -20,9 +20,11 @@ import {
   useAuthGuard,
   useApplicationDetail,
   useUpdateApplicationConfiguration,
+  useDeleteApplication,
 } from "@xquare/hooks";
 
 const DeploymentView = () => {
+  const navigate = useNavigate();
   useAuthGuard();
   const { id: appIdParam } = useParams<{ id: string }>();
   const applicationId = appIdParam ? parseInt(appIdParam, 10) : undefined;
@@ -63,6 +65,34 @@ const DeploymentView = () => {
     // 하위 컴포넌트가 저장에 성공하면 편집 모드만 종료한다 (API 재호출 없음)
     setEditable(false);
   }, []);
+
+  // 애플리케이션 삭제
+  const { mutate: deleteApplication, loading: deleteLoading } =
+    useDeleteApplication();
+
+  const handleDeleteClick = useCallback(async () => {
+    if (!applicationId || deleteLoading || !appDetail) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `정말 ${appDetail.name} 애플리케이션을 삭제하시겠습니까?`,
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteApplication(applicationId);
+      alert(`${appDetail.name} 애플리케이션이 삭제되었습니다.`);
+      navigate("/deployment");
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "애플리케이션 삭제에 실패했습니다.";
+      alert(message);
+    }
+  }, [deleteApplication, applicationId, navigate, appDetail, deleteLoading]);
 
   const tabContents = [
     <SummaryContents
@@ -161,11 +191,19 @@ const DeploymentView = () => {
           )}
         </NavBar>
         <div style={{ minWidth: 100 }}>
-          <Button_round
-            children={editable ? "취소하기" : "수정하기"}
-            onClick={handleeditClick}
-            disabled={appLoading}
-          />
+          {activeTab === 0 ? (
+            <Button_round
+              children={"삭제하기"}
+              onClick={handleDeleteClick}
+              disabled={appLoading}
+            />
+          ) : (
+            <Button_round
+              children={editable ? "취소하기" : "수정하기"}
+              onClick={handleeditClick}
+              disabled={appLoading}
+            />
+          )}
         </div>
       </ButtonArea>
       <Contents>{tabContents[activeTab]}</Contents>
