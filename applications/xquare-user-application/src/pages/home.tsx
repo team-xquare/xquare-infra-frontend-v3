@@ -19,7 +19,7 @@ import {
   ErrorMessage,
   LoadingOverlay,
 } from "@xquare/user-interfaces";
-import { getSelectedTeamId } from "@xquare/utils";
+import { clearAllTokens, getSelectedTeamId } from "@xquare/utils";
 
 const HomePage = () => {
   useAuthGuard();
@@ -90,6 +90,12 @@ const HomePage = () => {
     navigate("/notice");
   }, [navigate]);
 
+  const handleLogout = useCallback(() => {
+    if (!window.confirm("로그아웃하시겠습니까?")) return;
+    clearAllTokens();
+    navigate("/login");
+  }, [navigate]);
+
   const tabContents = [
     <TabContentWrapper key="notice">
       <TextGroup>
@@ -143,7 +149,9 @@ const HomePage = () => {
             title={`Welcome, Back ${userName ?? (loading ? "Loading..." : "")}`}
             subTitle={"Deploy your service via xquare infra"}
           ></Title>
-          <LogoutButton type="button">로그아웃</LogoutButton>
+          <LogoutButton type="button" onClick={handleLogout}>
+            로그아웃
+          </LogoutButton>
         </HeaderRow>
       </ContentsArea>
 
