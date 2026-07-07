@@ -138,10 +138,13 @@ const HomePage = () => {
       </Helmet>
       <LoadingOverlay isLoading={deploymentLoading && !!applicationIds} />
       <ContentsArea>
-        <Title
-          title={`Welcome, Back ${userName ?? (loading ? "Loading..." : "")}`}
-          subTitle={"Deploy your service via xquare infra"}
-        ></Title>
+        <HeaderRow>
+          <Title
+            title={`Welcome, Back ${userName ?? (loading ? "Loading..." : "")}`}
+            subTitle={"Deploy your service via xquare infra"}
+          ></Title>
+          <LogoutButton type="button">로그아웃</LogoutButton>
+        </HeaderRow>
       </ContentsArea>
 
       {deploymentError && applicationIds && (
@@ -247,6 +250,47 @@ const ContentsArea = styled.div`
   width: 100%;
   margin-bottom: 15px;
   cursor: default;
+`;
+
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const LogoutButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 30px;
+  border: 1px solid ${Xquare_colors.gray[400]};
+  border-radius: 20px;
+  background-color: ${Xquare_colors.white};
+  color: ${Xquare_colors.gray[400]};
+  font-family: "Pretendard";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    border-color: ${Xquare_colors.purple[500]};
+    background-color: ${Xquare_colors.purple[100]};
+    color: ${Xquare_colors.purple[600]};
+    box-shadow: 0 4px 14px rgba(138, 56, 245, 0.16);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 `;
 
 const NoticeContent = styled.div`
