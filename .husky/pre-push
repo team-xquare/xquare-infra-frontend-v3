@@ -1,1 +1,23 @@
-bun run build "--filter=...[origin/main]"
+if command -v bun >/dev/null 2>&1; then
+  BUN="bun"
+elif command -v bun.exe >/dev/null 2>&1; then
+  BUN="bun.exe"
+elif [ -x "${BUN_INSTALL:-$HOME/.bun}/bin/bun" ]; then
+  BUN="${BUN_INSTALL:-$HOME/.bun}/bin/bun"
+elif [ -x "${BUN_INSTALL:-$HOME/.bun}/bin/bun.exe" ]; then
+  BUN="${BUN_INSTALL:-$HOME/.bun}/bin/bun.exe"
+else
+  BUN=""
+fi
+
+if [ -z "$BUN" ]; then
+  echo "bun not found"
+  echo "Install Bun or add it to PATH before pushing."
+  exit 127
+fi
+
+case "$BUN" in
+  */*) export PATH="${BUN%/*}:$PATH" ;;
+esac
+
+"$BUN" run build "--filter=...[origin/main]"
