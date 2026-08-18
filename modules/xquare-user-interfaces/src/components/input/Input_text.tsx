@@ -15,6 +15,7 @@ interface InputProps {
   height?: string;
   title?: string;
   titleColor?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 interface TitleProps {
@@ -98,6 +99,7 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
       height,
       title,
       titleColor,
+      onKeyDown,
     },
     ref,
   ) => {
@@ -109,6 +111,7 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
           height={height}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           placeholder={placeholder}
           disabled={disabled}
           type={type}
