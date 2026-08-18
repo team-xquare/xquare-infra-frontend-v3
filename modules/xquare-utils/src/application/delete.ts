@@ -67,13 +67,23 @@ export const deleteApplication = async (
       return;
     }
 
-    const result = JSON.parse(responseText) as DeleteApplicationApiResponse;
+    let result: DeleteApplicationApiResponse;
+    try {
+      result = JSON.parse(responseText);
+    } catch {
+      throw new Error("삭제 응답을 해석할 수 없습니다.");
+    }
 
-    if (!result.success) {
+    if (typeof result.success !== "boolean" || !result.success) {
       throw new Error("애플리케이션 삭제에 실패했습니다.");
     }
   } catch (error) {
-    console.error("[deleteApplication] error", error);
+    if (
+      !(error instanceof Error) ||
+      !error.message.includes("애플리케이션 삭제")
+    ) {
+      console.error("[deleteApplication] error", error);
+    }
     throw error;
   }
 };

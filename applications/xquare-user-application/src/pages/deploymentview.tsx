@@ -15,6 +15,7 @@ import {
   LogContents,
   ErrorMessage,
   LoadingOverlay,
+  ConfirmModal,
 } from "@xquare/user-interfaces";
 import {
   useAuthGuard,
@@ -46,6 +47,8 @@ const DeploymentView = () => {
 
   const [activeTab, setActiveTab] = useState(0);
   const [editable, setEditable] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // appDetail 또는 기본값 사용
   const id = appDetail?.id ?? 0;
@@ -67,32 +70,45 @@ const DeploymentView = () => {
   }, []);
 
   // 애플리케이션 삭제
-  const { mutate: deleteApplication, loading: deleteLoading } =
+  const { mutate: deleteApplicationMutation, loading: deleteLoading } =
     useDeleteApplication();
 
-  const handleDeleteClick = useCallback(async () => {
+  const handleDeleteClick = useCallback(() => {
     if (!applicationId || deleteLoading || !appDetail) {
       return;
     }
 
-    const confirmed = window.confirm(
-      `정말 ${appDetail.name} 애플리케이션을 삭제하시겠습니까?`,
-    );
+    setDeleteError(null);
+    setDeleteModalOpen(true);
+  }, [applicationId, deleteLoading, appDetail]);
 
-    if (!confirmed) return;
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!applicationId || deleteLoading || !appDetail) return;
 
+    setDeleteError(null);
     try {
-      await deleteApplication(applicationId);
-      alert(`${appDetail.name} 애플리케이션이 삭제되었습니다.`);
+      await deleteApplicationMutation(applicationId);
       navigate("/deployment");
     } catch (err) {
       const message =
         err instanceof Error
           ? err.message
           : "애플리케이션 삭제에 실패했습니다.";
-      alert(message);
+      setDeleteError(message);
     }
-  }, [deleteApplication, applicationId, navigate, appDetail, deleteLoading]);
+  }, [
+    deleteApplicationMutation,
+    applicationId,
+    navigate,
+    appDetail,
+    deleteLoading,
+  ]);
+
+  const handleDeleteModalClose = useCallback(() => {
+    if (deleteLoading) return;
+    setDeleteModalOpen(false);
+    setDeleteError(null);
+  }, [deleteLoading]);
 
   const tabContents = [
     <SummaryContents
@@ -169,6 +185,17 @@ const DeploymentView = () => {
         <title>XQUARE | Deployment Detail</title>
       </Helmet>
       <LoadingOverlay isLoading={appLoading} />
+      {deleteModalOpen && appDetail && (
+        <ConfirmModal
+          title="애플리케이션 삭제"
+          description={`정말 ${appDetail.name} 애플리케이션을 삭제하시겠습니까? 삭제한 애플리케이션은 복구할 수 없습니다.`}
+          confirmLabel="삭제하기"
+          loading={deleteLoading}
+          errorMessage={deleteError}
+          onConfirm={handleDeleteConfirm}
+          onClose={handleDeleteModalClose}
+        />
+      )}
       <ContentsArea>
         <Title title={`${servicename}`} subTitle={`${servicedesc}`}></Title>
         {updateError && (
