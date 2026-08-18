@@ -1,11 +1,9 @@
 import {
-  clearAllTokens,
   getSelectedTeam,
   saveSelectedTeam,
   SELECTED_TEAM_EVENT,
   type Team,
 } from "@xquare/utils";
-import { useNavigate } from "react-router-dom";
 import { memo, useCallback, useEffect, useState } from "react";
 import { TeamModal } from "../../teammodal";
 import {
@@ -32,7 +30,6 @@ function SidebarFooterComponent({
   teamsError,
   onTeamCreated,
 }: SidebarFooterProps) {
-  const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
 
   // 사용자가 명시적으로 팀을 선택했는지 추적
@@ -68,12 +65,6 @@ function SidebarFooterComponent({
     };
   }, [project]);
 
-  const handleLogout = useCallback(() => {
-    if (!window.confirm("로그아웃하시겠습니까?")) return;
-    clearAllTokens();
-    navigate("/login");
-  }, [navigate]);
-
   const handleTeamSelect = useCallback((teamName: string, teamId: number) => {
     // console.log("[SidebarFooter] 팀 선택:", { teamName, teamId });
     setSelectedProject(teamName);
@@ -98,9 +89,7 @@ function SidebarFooterComponent({
     <>
       <SideBarFooter>
         <SideBarFooterDiv>
-          <SideBarFooterNameSpan onClick={handleLogout}>
-            {name}
-          </SideBarFooterNameSpan>
+          <SideBarFooterNameSpan>{name}</SideBarFooterNameSpan>
 
           <SideBarFooterProjectDiv onClick={() => setModalOpen(true)}>
             {isTeamSelected ? selectedProject : "팀 선택"}

@@ -290,6 +290,7 @@ const SignupPage: React.FC = () => {
                   : ""
               }
               titleColor={String(Xquare_colors.red[500])}
+              disabled={showVerifyInput}
             />
 
             <VerifyInputWrap className={showVerifyInput ? "show" : "hide"}>

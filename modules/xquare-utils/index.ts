@@ -130,6 +130,8 @@ export {
   type UpdateApplicationConfigurationRequest,
 } from "./src/application/update";
 
+export { deleteApplication } from "./src/application/delete";
+
 export { getTeams } from "./src/teams/list";
 export type { Team, TeamMember } from "./src/teams/list";
 
