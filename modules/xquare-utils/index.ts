@@ -1,3 +1,4 @@
+// import { RecoveryPasswordEmailSendRequest } from "./src/auth/recoveryPassword";
 export { getTeamDetail } from "./src/teams/detail";
 export type {
   TeamDetail,
@@ -199,3 +200,21 @@ export {
 } from "./src/environment/update";
 
 export { deleteEnvironmentVariable } from "./src/environment/delete";
+
+export type {
+  ResetPasswordRequest,
+  ResetPasswordResponse,
+} from "./src/auth/resetPassword";
+export { resetPasswordUser } from "./src/auth/resetPassword";
+
+export {
+  sendRecoveryPasswordEmail,
+  verifyRecoveryPasswordEmail,
+} from "./src/auth/recoveryPassword";
+
+export type {
+  RecoveryPasswordEmailSendRequest,
+  RecoveryPasswordEmailVerifyRequest,
+  RecoveryPasswordEmailVerifyResponse,
+  BaseSuccessResponse,
+} from "./src/auth/recoveryPassword";

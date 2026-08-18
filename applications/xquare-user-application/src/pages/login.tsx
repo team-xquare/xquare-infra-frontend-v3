@@ -112,8 +112,8 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력해주세요"
-              title={errorType.type === "password" ? errorType.message : ""}
-              titleColor={String(Xquare_colors.red[500])}
+              title="비밀번호 찾기"
+              titleColor={String(Xquare_colors.gray[500])}
               type="password"
             />
           </Inputs>
