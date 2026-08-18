@@ -2,6 +2,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
+import { Link } from "react-router-dom";
 
 // 타입정의
 interface InputProps {
@@ -71,17 +72,17 @@ const StyledInput = styled.input<InputProps>`
 
 const Box = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
   height: 1rem;
   cursor: default;
 `;
 
-const Title = styled.span<TitleProps>`
-  font-size: 0.9rem;
+const Title = styled.a<TitleProps>`
+  font-size: 0.8rem;
   font-weight: 500;
-  color: ${({ titleColor }) => titleColor || Xquare_colors.red[500]};
-  cursor: default;
+  cursor: pointer;
+  color: ${({ titleColor }) => titleColor};
 `;
 
 // 컴포넌트
@@ -98,7 +99,7 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
       title,
       titleColor,
     },
-    ref
+    ref,
   ) => {
     return (
       <Wraper>
@@ -112,10 +113,23 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
           disabled={disabled}
           type={type}
         />
-        <Box>{title && <Title titleColor={titleColor}>{title}</Title>}</Box>
+        <Box>
+          {title && (
+            <Link
+              to="/find-pwd"
+              style={{
+                textDecoration: "none",
+                height: "1.8rem",
+                color: "inherit",
+              }}
+            >
+              <Title titleColor={titleColor}>{title}</Title>
+            </Link>
+          )}
+        </Box>
       </Wraper>
     );
-  }
+  },
 );
 
 Input_text.displayName = "Input_text";
