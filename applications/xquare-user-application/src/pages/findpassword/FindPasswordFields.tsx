@@ -150,7 +150,7 @@ export const FindPasswordFields = ({ form }: FindPasswordFieldsProps) => {
             }
             titleColor={errorColor}
             type="email"
-            disabled={form.showVerifyInput}
+            disabled={form.showVerifyInput || form.emailVerifyLoading}
             onKeyDown={(event) => {
               if (
                 isEnterKey(event) &&
@@ -238,7 +238,8 @@ export const FindPasswordFields = ({ form }: FindPasswordFieldsProps) => {
               if (
                 isEnterKey(event) &&
                 isValidPassword(form.newPassword) &&
-                form.newPassword === form.newPasswordCheck
+                form.newPassword === form.newPasswordCheck &&
+                !form.resetLoading
               ) {
                 event.currentTarget.form?.requestSubmit();
               }

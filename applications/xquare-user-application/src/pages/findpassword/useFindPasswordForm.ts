@@ -107,6 +107,7 @@ export const useFindPasswordForm = () => {
       return;
     }
     if (step !== LAST_STEP) return;
+    if (resetLoading) return;
     if (!isValidPassword(newPassword) || newPassword !== newPasswordCheck) {
       setErrorMsg(
         newPassword !== newPasswordCheck
