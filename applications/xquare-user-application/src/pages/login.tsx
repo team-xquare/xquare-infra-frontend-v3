@@ -112,10 +112,11 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="비밀번호를 입력해주세요"
-              title="비밀번호 찾기"
-              titleColor={String(Xquare_colors.gray[500])}
+              title={errorType.type === "password" ? errorType.message : ""}
+              titleColor={String(Xquare_colors.red[500])}
               type="password"
             />
+            <PasswordHelpLink to="/find-pwd">비밀번호 찾기</PasswordHelpLink>
           </Inputs>
 
           <FormActions>
@@ -238,6 +239,15 @@ const FormActions = styled.div`
   flex-direction: column;
   gap: 0.9rem;
   align-items: center;
+`;
+
+const PasswordHelpLink = styled(Link)`
+  width: 300px;
+  color: ${Xquare_colors.gray[500]};
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: right;
+  text-decoration: none;
 `;
 
 const LinkRow = styled.div`

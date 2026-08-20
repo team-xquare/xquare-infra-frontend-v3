@@ -15,6 +15,7 @@ interface InputProps {
   height?: string;
   title?: string;
   titleColor?: string;
+  titleHref?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -79,7 +80,7 @@ const Box = styled.div`
   cursor: default;
 `;
 
-const Title = styled.a<TitleProps>`
+const Title = styled.span<TitleProps>`
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -99,6 +100,7 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
       height,
       title,
       titleColor,
+      titleHref,
       onKeyDown,
     },
     ref,
@@ -117,9 +119,9 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
           type={type}
         />
         <Box>
-          {title && (
+          {title && titleHref ? (
             <Link
-              to="/find-pwd"
+              to={titleHref}
               style={{
                 textDecoration: "none",
                 height: "1.8rem",
@@ -128,7 +130,9 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
             >
               <Title titleColor={titleColor}>{title}</Title>
             </Link>
-          )}
+          ) : title ? (
+            <Title titleColor={titleColor}>{title}</Title>
+          ) : null}
         </Box>
       </Wraper>
     );

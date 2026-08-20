@@ -19,7 +19,6 @@ export async function resetPasswordUser(
   payload: ResetPasswordRequest,
 ): Promise<ResetPasswordResponse> {
   try {
-    console.log("[Auth-resetPassword] payload:", payload);
     const res = await fetchWithTimeout(`${BASE_URL}/auth/recovery/password`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
