@@ -7,6 +7,7 @@ import ViewSizeWarning from "./pages/viewsizewarning";
 import Layout from "./layout";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signup";
+import FindPwd from "./pages/findpassword";
 import HomePage from "./pages/home";
 import NoticePage from "./pages/noticepage";
 // import FeedPage from "./pages/feedpage";
@@ -64,6 +65,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/find-pwd" element={<FindPwd />} />
           <Route path="/github/callback" element={<GithubCallback />} />
 
           <Route
@@ -83,6 +85,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/find-pwd" element={<FindPwd />} />
         <Route path="/github/callback" element={<GithubCallback />} />
 
         <Route

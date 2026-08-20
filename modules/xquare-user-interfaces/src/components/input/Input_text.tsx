@@ -2,6 +2,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { Xquare_colors } from "../../styles/colors";
+import { Link } from "react-router-dom";
 
 // 타입정의
 interface InputProps {
@@ -14,6 +15,8 @@ interface InputProps {
   height?: string;
   title?: string;
   titleColor?: string;
+  titleHref?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 interface TitleProps {
@@ -71,17 +74,17 @@ const StyledInput = styled.input<InputProps>`
 
 const Box = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
   height: 1rem;
   cursor: default;
 `;
 
 const Title = styled.span<TitleProps>`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: ${({ titleColor }) => titleColor || Xquare_colors.red[500]};
-  cursor: default;
+  cursor: pointer;
+  color: ${({ titleColor }) => titleColor};
 `;
 
 // 컴포넌트
@@ -97,8 +100,10 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
       height,
       title,
       titleColor,
+      titleHref,
+      onKeyDown,
     },
-    ref
+    ref,
   ) => {
     return (
       <Wraper>
@@ -108,14 +113,30 @@ export const Input_text = React.forwardRef<HTMLInputElement, InputProps>(
           height={height}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           placeholder={placeholder}
           disabled={disabled}
           type={type}
         />
-        <Box>{title && <Title titleColor={titleColor}>{title}</Title>}</Box>
+        <Box>
+          {title && titleHref ? (
+            <Link
+              to={titleHref}
+              style={{
+                textDecoration: "none",
+                height: "1.8rem",
+                color: "inherit",
+              }}
+            >
+              <Title titleColor={titleColor}>{title}</Title>
+            </Link>
+          ) : title ? (
+            <Title titleColor={titleColor}>{title}</Title>
+          ) : null}
+        </Box>
       </Wraper>
     );
-  }
+  },
 );
 
 Input_text.displayName = "Input_text";
