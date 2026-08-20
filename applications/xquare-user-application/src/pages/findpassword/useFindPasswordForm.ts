@@ -19,7 +19,9 @@ import {
   isValidVerifyCode,
 } from "./validation";
 
-export const LAST_STEP = 3;
+export type FindPasswordStep = 1 | 2 | 3;
+
+export const LAST_STEP: FindPasswordStep = 3;
 
 export const useFindPasswordForm = () => {
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ export const useFindPasswordForm = () => {
     useRecoveryPasswordEmailVerify();
   const { resetPassword, loading: resetLoading } = useResetPassword();
 
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<FindPasswordStep>(1);
   const [isFading, setIsFading] = useState(false);
   const [username, setUsername] = useState("");
   const [studentNumber, setStudentNumber] = useState("");
@@ -42,7 +44,7 @@ export const useFindPasswordForm = () => {
   const [passwordResetToken, setPasswordResetToken] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const changeStepSmooth = (nextStep: number) => {
+  const changeStepSmooth = (nextStep: FindPasswordStep) => {
     setErrorMsg(null);
     setIsFading(true);
     window.setTimeout(() => {
@@ -132,7 +134,7 @@ export const useFindPasswordForm = () => {
     changeStepSmooth(1);
   };
 
-  const isStepValid = {
+  const stepValidity: Record<FindPasswordStep, boolean> = {
     1:
       isValidUsername(username) &&
       isValidStudentNumber(studentNumber) &&
@@ -141,7 +143,8 @@ export const useFindPasswordForm = () => {
       ? isValidEmail(email) && isValidVerifyCode(verifyCode)
       : isValidEmail(email),
     3: isValidPassword(newPassword) && newPassword === newPasswordCheck,
-  }[step];
+  };
+  const isStepValid = stepValidity[step];
 
   return {
     step,

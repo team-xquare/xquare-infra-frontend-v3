@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
+import type React from "react";
 import { Input_text, Xquare_colors } from "@xquare/user-interfaces";
 import { RevealInput } from "./styles";
-import type { FindPasswordForm } from "./useFindPasswordForm";
+import type { FindPasswordForm, FindPasswordStep } from "./useFindPasswordForm";
 import {
   isValidEmail,
   isValidName,
@@ -27,8 +29,11 @@ export const FindPasswordFields = ({ form }: FindPasswordFieldsProps) => {
 
   useEffect(() => {
     if (form.isFading) return;
-    const focusMap = { 1: usernameRef, 2: emailRef, 3: passwordRef };
-    focusMap[form.step as keyof typeof focusMap].current?.focus();
+    const focusMap: Record<
+      FindPasswordStep,
+      React.RefObject<HTMLInputElement | null>
+    > = { 1: usernameRef, 2: emailRef, 3: passwordRef };
+    focusMap[form.step].current?.focus();
   }, [form.step, form.isFading]);
 
   useEffect(() => {
@@ -245,5 +250,3 @@ export const FindPasswordFields = ({ form }: FindPasswordFieldsProps) => {
       return null;
   }
 };
-import { useEffect, useRef } from "react";
-import type React from "react";
