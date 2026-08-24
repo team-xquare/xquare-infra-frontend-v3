@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { deleteApplication } from "@xquare/utils";
 
 interface UseDeleteApplicationState {
@@ -18,22 +18,35 @@ export function useDeleteApplication() {
     success: false,
   });
   const inFlightRef = useRef(false);
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   const mutate = useCallback(async (applicationId: number) => {
     if (inFlightRef.current) {
       throw new Error("어플리케이션 삭제가 이미 진행 중입니다.");
     }
     inFlightRef.current = true;
-    setState({ loading: true, error: null, success: false });
+    if (isMountedRef.current) {
+      setState({ loading: true, error: null, success: false });
+    }
 
     try {
       await deleteApplication(applicationId);
-      setState({ loading: false, error: null, success: true });
+      if (isMountedRef.current) {
+        setState({ loading: false, error: null, success: true });
+      }
     } catch (err) {
       const error =
         err instanceof Error ? err : new Error("어플리케이션 삭제 실패");
       console.error("[useDeleteApplication] 어플리케이션 삭제 실패:", error);
       setState({ loading: false, error, success: false });
+      if (isMountedRef.current) {
+        setState({ loading: false, error, success: false });
+      }
       throw error;
     } finally {
       inFlightRef.current = false;

@@ -30,3 +30,8 @@ export {
 export { useEnvironmentVariables } from "./src/useEnvironmentVariables";
 export { useEmailVerifySend } from "./src/useEmailVerifySend";
 export { useEmailVerifySubmit } from "./src/useEmailVerifySubmit";
+export { useResetPassword } from "./src/useResetPassword";
+export {
+  useRecoveryPasswordEmailVerify,
+  useRecoveryPasswordEmailSend,
+} from "./src/useRecoveryPasswordEmail";
