@@ -21,11 +21,11 @@ env:
 jobs:
   build:
     name: Build
-    if: github.ref_name == 'main' || github.ref_name == 'develop'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     env:
-      BUILD_SCRIPT: ${{ github.ref_name == 'main' && 'build' || 'build:stag' }}
-      FRONTEND_URL: ${{ github.ref_name == 'main' && 'https://xquare.dsmhs.kr' || 'https://xquare-stag.dsmhs.kr' }}
+      BUILD_SCRIPT: ${{ github.ref == 'refs/heads/main' && 'build' || 'build:stag' }}
+      FRONTEND_URL: ${{ github.ref == 'refs/heads/main' && 'https://xquare.dsmhs.kr' || 'https://xquare-stag.dsmhs.kr' }}
 
     steps:
       - name: Checkout
@@ -67,11 +67,11 @@ jobs:
     needs: build
     runs-on: [self-hosted, xquare-frontend]
     environment:
-      name: ${{ github.ref_name == 'main' && 'prod' || 'stag' }}
-      url: ${{ github.ref_name == 'main' && 'https://xquare.dsmhs.kr' || 'https://xquare-stag.dsmhs.kr' }}
+      name: ${{ github.ref == 'refs/heads/main' && 'prod' || 'stag' }}
+      url: ${{ github.ref == 'refs/heads/main' && 'https://xquare.dsmhs.kr' || 'https://xquare-stag.dsmhs.kr' }}
     env:
-      TARGET: ${{ github.ref_name == 'main' && '/var/www/xquare-prod' || '/var/www/xquare-stag' }}
-      PORT: ${{ github.ref_name == 'main' && '80' || '8080' }}
+      TARGET: ${{ github.ref == 'refs/heads/main' && '/var/www/xquare-prod' || '/var/www/xquare-stag' }}
+      PORT: ${{ github.ref == 'refs/heads/main' && '80' || '8080' }}
 
     steps:
       - name: Download dist
@@ -85,7 +85,9 @@ jobs:
         run: |
           SRC="$RUNNER_TEMP/dist"
           test -f "$SRC/index.html"
-          rsync -a --delete-after --delay-updates --chmod=D755,F644 "$SRC/" "$TARGET/"
+          rsync -a --delay-updates --chmod=D755,F644 "$SRC/" "$TARGET/"
+          # 이전 페이지를 연 사용자를 위해 예전 assets는 바로 지우지 않고, 7일 넘게 배포에 안 쓰인 것만 정리
+          find "$TARGET/assets" -type f -mtime +7 -delete
 
       - name: Check nginx
         shell: bash
