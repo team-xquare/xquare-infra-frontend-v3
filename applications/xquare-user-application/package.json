@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:stag": "tsc -b && vite build --mode staging",
     "lint": "eslint .",
     "preview": "vite preview --host 0.0.0.0 --port 3000",
     "start": "vite preview --host 0.0.0.0 --port 3000"
