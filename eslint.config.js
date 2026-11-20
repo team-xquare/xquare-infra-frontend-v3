@@ -3,4 +3,7 @@ import storybook from "eslint-plugin-storybook";
 
 import eslintConfiguration from "@xquare/eslint-configs";
 
-export default eslintConfiguration;
+export default [
+  ...eslintConfiguration,
+  ...storybook.configs["flat/recommended"],
+];

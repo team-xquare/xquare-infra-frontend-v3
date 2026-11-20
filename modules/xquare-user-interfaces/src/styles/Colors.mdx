@@ -1,0 +1,50 @@
+import { Meta, ColorPalette, ColorItem } from "@storybook/addon-docs/blocks";
+
+import { Xquare_colors } from "./colors";
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+XQUARE 디자인 시스템의 색상 토큰입니다. 모든 값은 `modules/xquare-user-interfaces/src/styles/colors.ts`의 `Xquare_colors`에서 읽어오므로, 토큰을 수정하면 이 페이지도 자동으로 갱신됩니다.
+
+## 사용법
+
+```tsx
+import styled from "@emotion/styled";
+import { Xquare_colors } from "@xquare/user-interfaces";
+
+const Box = styled.div`
+  color: ${Xquare_colors.purple[500]};
+  border: 1px solid ${Xquare_colors.gray[300]};
+`;
+```
+
+- 색상 값을 직접 쓰지 말고 항상 토큰을 사용합니다.
+- 브랜드 메인 컬러는 `purple[500]`이며, hover/active 상태는 각각 `500` → `600` 단계를 사용합니다.
+- 위험 동작(삭제 등)은 `red` 계열을 사용합니다.
+
+## Base
+
+<ColorPalette>
+  <ColorItem
+    title="black / white"
+    subtitle="Xquare_colors.black · Xquare_colors.white"
+    colors={{ black: Xquare_colors.black, white: Xquare_colors.white }}
+  />
+</ColorPalette>
+
+## Scales
+
+<ColorPalette>
+  {Object.entries(Xquare_colors)
+    .filter(([, value]) => typeof value === "object")
+    .map(([name, shades]) => (
+      <ColorItem
+        key={name}
+        title={name}
+        subtitle={`Xquare_colors.${name}[단계]`}
+        colors={shades}
+      />
+    ))}
+</ColorPalette>

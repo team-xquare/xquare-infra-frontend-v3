@@ -1,0 +1,48 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Introduction" />
+
+# XQUARE User Interfaces
+
+`@xquare/user-interfaces` 모듈의 컴포넌트와 디자인 토큰을 모아 둔 Storybook입니다.
+사용자 앱과 관리자 앱이 함께 쓰는 UI를 이곳에서 확인하고 문서화합니다.
+
+## 실행
+
+```bash
+bun run storybook        # http://localhost:6006
+bun run build-storybook  # storybook-static/ 에 정적 빌드
+```
+
+## 구성
+
+- **Foundations**: 색상(Colors), 타이포그래피(Typography) 토큰
+- **Components**: 버튼, 입력, 모달, 사이드바 등 공통 컴포넌트
+
+## 스토리 작성 규칙
+
+1. **위치**: 스토리는 컴포넌트 옆에 `컴포넌트명.stories.tsx`로 둡니다.
+   문서 전용 페이지는 `.mdx`로 작성합니다.
+
+   ```
+   src/components/button/
+   ├─ Button_round.tsx
+   └─ Button_round.stories.tsx
+   ```
+
+2. **제목**: `title`은 `Foundations/…` 또는 `Components/그룹/컴포넌트` 형식으로 씁니다.
+3. **형식**: CSF3(`Meta`, `StoryObj`)와 `satisfies Meta<typeof Component>`를 사용합니다.
+   타입은 `@storybook/react-vite`에서 가져옵니다.
+4. **이벤트 핸들러**: `onClick` 같은 콜백은 `storybook/test`의 `fn()`을 `args`에 넣어 Actions 패널에서 확인합니다.
+5. **문서**: 모든 스토리에 autodocs가 켜져 있습니다. 컴포넌트 설명은
+   `parameters.docs.description.component`에, 스토리 설명은 스토리 위 JSDoc 주석에 씁니다.
+
+## 전역 설정
+
+`.storybook/preview.tsx`에서 모든 스토리에 다음을 적용합니다.
+
+- **전역 스타일**: 앱과 같은 reset CSS와 Pretendard 폰트
+- **라우터**: `MemoryRouter`로 감싸므로 `useNavigate`, `Link`를 쓰는 컴포넌트도 바로 렌더링됩니다.
+  시작 경로가 필요하면 스토리에 `parameters: { router: { initialEntries: ["/team"] } }`를 지정합니다.
+- **배경색**: 툴바에서 White / Gray 300 / Purple 700 배경을 바꿀 수 있습니다.
+- **모듈 alias**: `@xquare/hooks`, `@xquare/utils`, `@xquare/user-interfaces`는 각 모듈의 소스(`index.ts`)로 연결됩니다.
