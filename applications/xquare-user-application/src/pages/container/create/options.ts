@@ -20,7 +20,8 @@ export interface CreateForm {
   storage: string;
   diskGiB: string;
   bridge: string;
-  startAfterCreate: boolean;
+  // 생성 후 시작 여부는 CT/VM마다 기본값이 달라 따로 보관한다
+  autoStart: Record<InstanceType, boolean>;
   // CT 전용
   template: string;
   rootPassword: string;
@@ -44,10 +45,26 @@ export const templateOptions: SelectOption[] = [
   { value: "rockylinux-9-default", label: "Rocky Linux 9" },
 ];
 
-export const isoOptions: SelectOption[] = [
-  { value: "ubuntu-22.04.4-live-server-amd64.iso", label: "Ubuntu 22.04" },
-  { value: "debian-12.5.0-amd64-netinst.iso", label: "Debian 12" },
-  { value: "Rocky-9.3-x86_64-minimal.iso", label: "Rocky Linux 9" },
+export interface IsoOption extends SelectOption {
+  osName: string;
+}
+
+export const isoOptions: IsoOption[] = [
+  {
+    value: "ubuntu-22.04.5-live-server.iso",
+    label: "ubuntu-22.04.5-live-server.iso",
+    osName: "Ubuntu 22.04",
+  },
+  {
+    value: "debian-12.8.0-amd64-netinst.iso",
+    label: "debian-12.8.0-amd64-netinst.iso",
+    osName: "Debian 12",
+  },
+  {
+    value: "Rocky-9.5-x86_64-minimal.iso",
+    label: "Rocky-9.5-x86_64-minimal.iso",
+    osName: "Rocky Linux 9",
+  },
 ];
 
 export const guestOsOptions: SelectOption[] = [
@@ -80,7 +97,7 @@ export const initialForm: CreateForm = {
   storage: storageOptions[0].value,
   diskGiB: "",
   bridge: bridgeOptions[0].value,
-  startAfterCreate: true,
+  autoStart: { ct: true, vm: false },
   template: "",
   rootPassword: "",
   swapMiB: "",
@@ -100,13 +117,17 @@ export const TYPE_COPY = {
   ct: {
     title: "컨테이너 (CT)",
     description: "LXC 기반 · 빠른 시작과 가벼운 리소스",
+    pageDescription: "실행 환경을 선택하고 새 Proxmox 인스턴스를 구성하세요.",
     badge: "LXC",
     idPrefix: "CT",
+    idLabel: "VM / CT ID",
     nameLabel: "호스트 이름",
     namePlaceholder: "호스트 이름을 입력해주세요. (필수)",
     osTitle: "운영체제 및 인증",
     osHint: "CT에서 사용할 템플릿과 로그인 정보를 설정하세요.",
+    storageHint: "기본 브리지를 사용해 네트워크를 연결합니다.",
     diskLabel: "루트 디스크",
+    summaryDiskLabel: "루트 디스크",
     startLabel: "생성 후 컨테이너 시작",
     noteTitle: "비특권 컨테이너로 생성됩니다.",
     noteDescription: "호스트와 격리된 권한으로 안전하게 실행합니다.",
@@ -120,16 +141,20 @@ export const TYPE_COPY = {
   vm: {
     title: "가상 머신 (VM)",
     description: "KVM 기반 · 독립된 OS와 커널",
+    pageDescription: "독립된 운영체제로 실행할 새 가상 머신을 구성하세요.",
     badge: "KVM",
     idPrefix: "VM",
+    idLabel: "VM ID",
     nameLabel: "VM 이름",
     namePlaceholder: "VM 이름을 입력해주세요. (필수)",
     osTitle: "운영체제",
-    osHint: "설치할 ISO 이미지와 게스트 OS 종류를 선택하세요.",
+    osHint: "설치용 ISO 이미지와 게스트 운영체제를 선택하세요.",
+    storageHint: "VirtIO 디스크와 네트워크 장치를 사용합니다.",
     diskLabel: "디스크 용량",
-    startLabel: "생성 후 VM 시작",
-    noteTitle: "ISO 이미지로 부팅합니다.",
-    noteDescription: "생성 후 Console에서 OS 설치를 진행하세요.",
+    summaryDiskLabel: "디스크",
+    startLabel: "생성 후 가상 머신 시작",
+    noteTitle: "생성 후 OS 설치가 필요합니다.",
+    noteDescription: "콘솔에서 ISO로 부팅해 운영체제를 설치하세요.",
     submitLabel: "VM 생성하기",
     defaults: [
       { label: "BIOS", value: "SeaBIOS" },

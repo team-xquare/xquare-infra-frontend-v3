@@ -27,14 +27,12 @@ function CreateSummary({ type, form, onToggleStart }: CreateSummaryProps) {
   const copy = TYPE_COPY[type];
   const isCt = type === "ct";
 
+  const isoOs = isoOptions.find((option) => option.value === form.iso)?.osName;
   const os = isCt
     ? findLabel(templateOptions, form.template)
-    : findLabel(isoOptions, form.iso);
-  const cpu = form.cpuCores
-    ? isCt
-      ? `${form.cpuCores} Core`
-      : `${form.cpuCores} Core · ${findLabel(cpuTypeOptions, form.cpuType)}`
-    : EMPTY;
+    : isoOs && `${isoOs} (ISO)`;
+  const cpu = form.cpuCores ? `${form.cpuCores} Core` : EMPTY;
+  const autoStart = form.autoStart[type];
   const disk = form.diskGiB
     ? `${withUnit(form.diskGiB, "GiB")} · ${form.storage}`
     : EMPTY;
@@ -43,8 +41,13 @@ function CreateSummary({ type, form, onToggleStart }: CreateSummaryProps) {
     { label: "운영체제", value: os ?? EMPTY },
     { label: "CPU", value: cpu },
     { label: "메모리", value: withUnit(form.memoryMiB, "MiB") },
-    ...(isCt ? [{ label: "Swap", value: withUnit(form.swapMiB, "MiB") }] : []),
-    { label: copy.diskLabel, value: disk },
+    isCt
+      ? { label: "Swap", value: withUnit(form.swapMiB, "MiB") }
+      : {
+          label: "CPU 타입",
+          value: findLabel(cpuTypeOptions, form.cpuType) ?? EMPTY,
+        },
+    { label: copy.summaryDiskLabel, value: disk },
     {
       label: "네트워크",
       value: isCt ? `${form.bridge} · DHCP` : `${form.bridge} · VirtIO`,
@@ -78,9 +81,7 @@ function CreateSummary({ type, form, onToggleStart }: CreateSummaryProps) {
 
         <AutoStart>
           <span>생성 후 자동 시작</span>
-          <AutoStartValue $on={form.startAfterCreate}>
-            {form.startAfterCreate ? "사용" : "사용 안 함"}
-          </AutoStartValue>
+          <AutoStartValue>{autoStart ? "사용" : "사용 안 함"}</AutoStartValue>
         </AutoStart>
       </Card>
 
@@ -89,12 +90,10 @@ function CreateSummary({ type, form, onToggleStart }: CreateSummaryProps) {
         <CheckOption>
           <HiddenCheckbox
             type="checkbox"
-            checked={form.startAfterCreate}
+            checked={autoStart}
             onChange={(e) => onToggleStart(e.target.checked)}
           />
-          <CheckMark aria-hidden $checked={form.startAfterCreate}>
-            ✓
-          </CheckMark>
+          <CheckMark aria-hidden>{autoStart ? "✓" : "○"}</CheckMark>
           {copy.startLabel}
         </CheckOption>
       </Card>
@@ -213,10 +212,9 @@ const AutoStart = styled.div`
   color: ${Xquare_colors.black as string};
 `;
 
-const AutoStartValue = styled.span<{ $on: boolean }>`
+const AutoStartValue = styled.span`
   font-weight: 700;
-  color: ${({ $on }) =>
-    ($on ? Xquare_colors.purple[500] : Xquare_colors.gray[500]) as string};
+  color: ${Xquare_colors.purple[500] as string};
 `;
 
 const OptionTitle = styled.h3`
@@ -245,13 +243,12 @@ const HiddenCheckbox = styled.input`
   height: 1px;
 `;
 
-const CheckMark = styled.span<{ $checked: boolean }>`
+const CheckMark = styled.span`
   width: 20px;
   font-size: 20px;
   line-height: 1;
   text-align: center;
-  color: ${({ $checked }) =>
-    ($checked ? Xquare_colors.purple[500] : Xquare_colors.gray[400]) as string};
+  color: ${Xquare_colors.purple[500] as string};
 
   input:focus-visible + & {
     outline: 2px solid ${Xquare_colors.purple[500] as string};

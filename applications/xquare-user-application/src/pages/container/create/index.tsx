@@ -67,9 +67,7 @@ function ContainerCreatePage() {
           <span aria-current="page">생성</span>
         </Breadcrumb>
         <Title>CT · VM 생성</Title>
-        <Description>
-          실행 환경을 선택하고 새 Proxmox 인스턴스를 구성하세요.
-        </Description>
+        <Description>{copy.pageDescription}</Description>
       </Heading>
 
       <Body>
@@ -122,7 +120,7 @@ function ContainerCreatePage() {
                   />
                 )}
               </Field>
-              <Field label="VM / CT ID" required>
+              <Field label={copy.idLabel} required>
                 {(id) => (
                   <TextInput
                     id={id}
@@ -253,7 +251,7 @@ function ContainerCreatePage() {
                   )}
                 </Field>
               ) : (
-                <Field label="CPU 타입" required>
+                <Field label="CPU 타입">
                   {(id) => (
                     <SelectInput
                       id={id}
@@ -270,9 +268,7 @@ function ContainerCreatePage() {
           <Section>
             <SectionHeader>
               <SectionTitle>스토리지 및 네트워크</SectionTitle>
-              <SectionHint>
-                기본 브리지를 사용해 네트워크를 연결합니다.
-              </SectionHint>
+              <SectionHint>{copy.storageHint}</SectionHint>
             </SectionHeader>
             <Fields>
               <Field label="스토리지" required>
@@ -322,7 +318,12 @@ function ContainerCreatePage() {
         <CreateSummary
           type={type}
           form={form}
-          onToggleStart={update("startAfterCreate")}
+          onToggleStart={(checked) =>
+            setForm((prev) => ({
+              ...prev,
+              autoStart: { ...prev.autoStart, [type]: checked },
+            }))
+          }
         />
       </Body>
 
