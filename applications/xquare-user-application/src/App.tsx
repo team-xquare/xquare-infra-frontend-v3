@@ -21,6 +21,7 @@ import CreateApplication from "./pages/createapplication";
 import CreateAddon from "./pages/createaddon";
 import AddonDetailPage from "./pages/addondetail";
 import ContainerPage from "./pages/container";
+import ContainerCreatePage from "./pages/container/create";
 import TeamPage from "./pages/team";
 import GithubCallback from "./pages/githubcallback";
 import GithubSetupComplete from "./pages/githubsetupcomplete";
@@ -162,6 +163,15 @@ function App() {
           element={
             <Layout>
               <ContainerPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/container/create"
+          element={
+            <Layout>
+              <ContainerCreatePage />
             </Layout>
           }
         />
