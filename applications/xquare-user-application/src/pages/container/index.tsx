@@ -5,12 +5,13 @@ import { useAuthGuard } from "@xquare/hooks";
 import { Xquare_colors } from "@xquare/user-interfaces";
 import ContainerList from "./ContainerList";
 import SummaryTab from "./SummaryTab";
+import DiskTab from "./DiskTab";
 import { mockContainers } from "./mock";
 
 const TABS = [
   { id: "summary", label: "Summary", ready: true },
   { id: "resource", label: "Resource", ready: false },
-  { id: "disk", label: "Disk", ready: false },
+  { id: "disk", label: "Disk", ready: true },
   { id: "console", label: "Console", ready: false },
 ] as const;
 
@@ -71,6 +72,7 @@ function ContainerPage() {
         {selected && activeTab === "summary" && (
           <SummaryTab container={selected} />
         )}
+        {selected && activeTab === "disk" && <DiskTab container={selected} />}
       </Management>
     </Wrapper>
   );
