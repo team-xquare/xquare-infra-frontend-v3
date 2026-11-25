@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthGuard } from "@xquare/hooks";
 import { Xquare_colors } from "@xquare/user-interfaces";
@@ -26,6 +27,25 @@ function ContainerCreatePage() {
   const navigate = useNavigate();
   const [type, setType] = useState<InstanceType>("ct");
   const [form, setForm] = useState<CreateForm>(initialForm);
+  const typeCardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // radio 그룹처럼 방향키로 CT/VM 선택과 포커스를 함께 옮긴다
+  const handleTypeKeyDown = (
+    e: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
+    const step =
+      e.key === "ArrowRight" || e.key === "ArrowDown"
+        ? 1
+        : e.key === "ArrowLeft" || e.key === "ArrowUp"
+          ? -1
+          : 0;
+    if (step === 0) return;
+    e.preventDefault();
+    const next = (index + step + TYPES.length) % TYPES.length;
+    setType(TYPES[next]);
+    typeCardRefs.current[next]?.focus();
+  };
 
   useEffect(() => {
     document.title = "XQUARE | CT · VM 생성";
@@ -79,16 +99,21 @@ function ContainerCreatePage() {
           }}
         >
           <TypeCards role="radiogroup" aria-label="생성할 인스턴스 종류">
-            {TYPES.map((option) => {
+            {TYPES.map((option, index) => {
               const selected = option === type;
               return (
                 <TypeCard
                   key={option}
+                  ref={(el) => {
+                    typeCardRefs.current[index] = el;
+                  }}
                   type="button"
                   role="radio"
                   aria-checked={selected}
+                  tabIndex={selected ? 0 : -1}
                   $selected={selected}
                   onClick={() => setType(option)}
+                  onKeyDown={(e) => handleTypeKeyDown(e, index)}
                 >
                   <Radio $selected={selected} aria-hidden>
                     {selected ? "●" : "○"}
@@ -168,6 +193,7 @@ function ContainerCreatePage() {
                       <TextInput
                         id={id}
                         type="password"
+                        autoComplete="new-password"
                         value={form.rootPassword}
                         onChange={update("rootPassword")}
                         placeholder="비밀번호를 입력해주세요. (필수)"
@@ -243,6 +269,7 @@ function ContainerCreatePage() {
                     <TextInput
                       id={id}
                       type="number"
+                      min={0}
                       value={form.swapMiB}
                       onChange={update("swapMiB")}
                       placeholder="사용할 Swap을 입력해주세요."

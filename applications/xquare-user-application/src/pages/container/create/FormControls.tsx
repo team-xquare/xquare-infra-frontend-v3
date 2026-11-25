@@ -31,6 +31,9 @@ interface TextInputProps {
   type?: "text" | "password" | "number";
   unit?: string;
   disabled?: boolean;
+  // 숫자 입력의 최솟값. Swap처럼 0을 허용할 때만 지정한다
+  min?: number;
+  autoComplete?: string;
 }
 
 export function TextInput({
@@ -41,6 +44,8 @@ export function TextInput({
   type = "text",
   unit,
   disabled = false,
+  min = 1,
+  autoComplete,
 }: TextInputProps) {
   return (
     <Box $disabled={disabled}>
@@ -48,7 +53,8 @@ export function TextInput({
         id={id}
         type={type}
         value={value}
-        min={type === "number" ? 1 : undefined}
+        min={type === "number" ? min : undefined}
+        autoComplete={autoComplete}
         placeholder={placeholder}
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
