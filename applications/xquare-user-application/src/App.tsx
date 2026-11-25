@@ -20,6 +20,7 @@ import DeploymentView from "./pages/deploymentview";
 import CreateApplication from "./pages/createapplication";
 import CreateAddon from "./pages/createaddon";
 import AddonDetailPage from "./pages/addondetail";
+import ContainerPage from "./pages/container";
 import TeamPage from "./pages/team";
 import GithubCallback from "./pages/githubcallback";
 import GithubSetupComplete from "./pages/githubsetupcomplete";
@@ -152,6 +153,15 @@ function App() {
           element={
             <Layout>
               <AddonPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/container"
+          element={
+            <Layout>
+              <ContainerPage />
             </Layout>
           }
         />
