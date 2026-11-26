@@ -23,6 +23,20 @@ export interface PveTask {
   result: string;
 }
 
+export type PveDiskKind = "root" | "mount";
+
+export interface PveDisk {
+  id: string;
+  label: string;
+  kind: PveDiskKind;
+  storage: string;
+  mountPath: string;
+  sizeGiB: number;
+  filesystem: string;
+  backup: boolean;
+  connected: boolean;
+}
+
 export interface PveContainer {
   id: number;
   name: string;
@@ -38,4 +52,5 @@ export interface PveContainer {
   cpuTrend: number[];
   memoryTrend: number[];
   tasks: PveTask[];
+  disks: PveDisk[];
 }
